@@ -15,7 +15,10 @@
     "cf:build": "node scripts/cf-build.mjs",
     "cf:preview": "node scripts/cf-build.mjs --local && wrangler dev --port 8787",
     "cf:deploy": "node scripts/cf-build.mjs && opennextjs-cloudflare deploy",
-    "test:image-meta": "tsx scripts/tests/image-meta.test.mts"
+    "test:image-meta": "tsx scripts/tests/image-meta.test.mts",
+    "test:totp": "tsx scripts/tests/totp.test.mts",
+    "test:tr": "tsx scripts/tests/tr.test.mts",
+    "test": "npm run test:image-meta && npm run test:totp && npm run test:tr"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.3.0",
@@ -28,6 +31,7 @@
     "next": "^16.4.6",
     "nodemailer": "^10.6.1",
     "postgres": "^4.1.1",
+    "qrcode": "^1.5.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "sanitize-html": "^2.18.2",
@@ -40,6 +44,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^26.6.6",
     "@types/nodemailer": "^8.0.2",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/sanitize-html": "^2.16.2",

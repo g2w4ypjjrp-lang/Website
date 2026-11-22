@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { orders, payouts, providerProfiles } from "@/db/schema";
-import { getCurrentUser } from "@/server/auth";
+import { admin2faRequired, getCurrentUser } from "@/server/auth";
 import { audit } from "@/server/audit";
 
 const csv = (rows: (string | number | null | undefined)[][]) => "﻿" + rows.map((r) => r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");
@@ -9,6 +9,7 @@ const csv = (rows: (string | number | null | undefined)[][]) => "﻿" + rows.map
 export async function GET(req: Request) {
   const user = await getCurrentUser();
   if (!user || user.role !== "admin") return new Response("Yetkisiz", { status: 403 });
+  if (admin2faRequired() && !user.totpEnabled) return new Response("Önce iki adımlı doğrulamayı etkinleştirin.", { status: 403 });
   const tur = new URL(req.url).searchParams.get("tur");
   let body: string;
   if (tur === "hakedisler") {

@@ -7,14 +7,14 @@ import { IconMenu, IconX } from "@/components/icons";
 import { logoutAction } from "@/app/actions/auth";
 import { cn } from "@/lib/utils";
 
-export function AdminNav({ name, pending, open }: { name: string; pending: number; open: number }) {
+export function AdminNav({ name, pending, open, leads = 0 }: { name: string; pending: number; open: number; leads?: number }) {
   const p = usePathname();
   const [mobile, setMobile] = useState(false);
   const groups: [string, [string, string, number?][]][] = [
     ["Genel", [["/yonetim", "Özet ve analitik"], ["/yonetim/talepler", "İade ve şikâyetler", open]]],
-    ["Pazaryeri", [["/yonetim/kullanicilar", "Kullanıcılar"], ["/yonetim/hizmetler", "Hizmetler", pending], ["/yonetim/siparisler", "Siparişler"], ["/yonetim/degerlendirmeler", "Değerlendirmeler"], ["/yonetim/finans", "Finans"]]],
+    ["Pazaryeri", [["/yonetim/kullanicilar", "Kullanıcılar"], ["/yonetim/hizmetler", "Hizmetler", pending], ["/yonetim/siparisler", "Siparişler"], ["/yonetim/degerlendirmeler", "Değerlendirmeler"], ["/yonetim/finans", "Finans"], ["/yonetim/kurumsal", "Kurumsal başvurular", leads]]],
     ["İçerik", [["/yonetim/kategoriler", "Kategoriler"], ["/yonetim/seo", "SEO"], ["/yonetim/yerel-seo", "Yerel SEO · 81 il"], ["/yonetim/blog", "Blog"], ["/yonetim/icerik", "Sayfalar ve bannerlar"]]],
-    ["Sistem", [["/yonetim/ayarlar", "Ayarlar"], ["/yonetim/duyuru", "Sistem duyurusu"], ["/yonetim/loglar", "Denetim kayıtları"]]],
+    ["Sistem", [["/yonetim/ayarlar", "Ayarlar"], ["/yonetim/guvenlik", "Güvenlik ve 2FA"], ["/yonetim/duyuru", "Sistem duyurusu"], ["/yonetim/loglar", "Denetim kayıtları"]]],
   ];
   const active = (h: string) => (h === "/yonetim" ? p === h : p.startsWith(h));
   const nav = (

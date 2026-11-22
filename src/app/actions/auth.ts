@@ -1,10 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { and, eq, gt, isNull, sql } from "drizzle-orm";
+import { and, eq, gt, isNull, lt, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { authTokens, providerProfiles, users } from "@/db/schema";
+import { authTokens, pendingLogins, providerProfiles, users } from "@/db/schema";
+import { cookies } from "next/headers";
+import { openSecret, verifyTotp } from "@/server/totp";
 import { createSession, destroyAllSessions, destroySession, getCurrentUser, hashPassword, verifyPassword } from "@/server/auth";
 import { randomToken, sha256 } from "@/server/crypto";
 import { rateLimit } from "@/server/rate-limit";
@@ -96,6 +98,14 @@ export async function loginAction(_: FormState, form: FormData): Promise<FormSta
     return { error: "E-posta veya şifre hatalı." };
   }
   if (u.status !== "active") return { error: "Bu hesap askıya alınmış. Destek ekibiyle iletişime geçin." };
+  // Yönetici + iki adımlı doğrulama: oturum açmadan önce 6 haneli kod istenir
+  if (u.role === "admin" && u.totpEnabledAt && u.totpSecret) {
+    const token = randomToken();
+    await db.insert(pendingLogins).values({ id: sha256(token), userId: u.id, expiresAt: new Date(Date.now() + 5 * 60_000), next: safeNext(form.get("next")) });
+    (await cookies()).set(TWOFA_COOKIE, token, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 300 });
+    await audit(u.id, "auth.admin_password_ok", "user", u.id, { step: "2fa_pending" });
+    redirect("/giris/dogrulama");
+  }
   await createSession(u.id);
   await audit(u.id, u.role === "admin" ? "auth.admin_login" : "auth.login", "user", u.id);
   redirect(safeNext(form.get("next")) ?? (u.role === "admin" ? "/yonetim" : "/panel"));
@@ -176,4 +186,53 @@ export async function changePasswordAction(_: FormState, form: FormData): Promis
   await createSession(u.id);
   await audit(u.id, "auth.password_changed", "user", u.id);
   return { ok: "Şifreniz güncellendi. Diğer cihazlardaki oturumlar kapatıldı." };
+}
+
+/* ───────────── Yönetici iki adımlı doğrulama (giriş ikinci adımı) ───────────── */
+
+const TWOFA_COOKIE = "eksen_2fa";
+
+export async function verifyTwoFactorAction(_: FormState, form: FormData): Promise<FormState> {
+  const jar = await cookies();
+  const token = jar.get(TWOFA_COOKIE)?.value;
+  if (!token) return { error: "Doğrulama süresi doldu. Lütfen yeniden giriş yapın." };
+  const { ip } = await clientInfo();
+  if (!(await rateLimit(`2fa:${ip}`, 10, 15 * 60_000)).ok) return { error: "Çok fazla deneme yapıldı. 15 dakika sonra yeniden giriş yapın." };
+  // Deneme hakkı, kod kontrolünden ÖNCE ve tek sorguda düşülür: eşzamanlı isteklerle 5 sınırı aşılamaz
+  const [row] = await db
+    .update(pendingLogins)
+    .set({ attempts: sql`${pendingLogins.attempts} + 1` })
+    .where(and(eq(pendingLogins.id, sha256(token)), gt(pendingLogins.expiresAt, new Date()), lt(pendingLogins.attempts, 5)))
+    .returning();
+  if (!row) {
+    const stale = await db.query.pendingLogins.findFirst({ where: eq(pendingLogins.id, sha256(token)) });
+    if (stale) {
+      await db.delete(pendingLogins).where(eq(pendingLogins.id, stale.id));
+      if (stale.attempts >= 5) {
+        await audit(stale.userId, "auth.2fa_locked", "user", stale.userId);
+        return { error: "Çok fazla hatalı kod girildi. Güvenliğiniz için yeniden giriş yapın." };
+      }
+    }
+    return { error: "Doğrulama süresi doldu. Lütfen yeniden giriş yapın." };
+  }
+  const u = await db.query.users.findFirst({ where: eq(users.id, row.userId) });
+  if (!u?.totpSecret || u.status !== "active") return { error: "Hesap doğrulanamadı." };
+  let secret: string;
+  try {
+    secret = await openSecret(u.totpSecret);
+  } catch {
+    // Şifreleme anahtarı değiştiyse sır çözülemez; kurtarma adımı docs/CLOUDFLARE.md içinde
+    await audit(u.id, "auth.2fa_secret_unreadable", "user", u.id);
+    return { error: "Doğrulama sırrı okunamadı (TOTP_ENCRYPTION_KEY değişmiş olabilir). Sistem yöneticisine başvurun." };
+  }
+  const ok = await verifyTotp(secret, String(form.get("code") ?? ""));
+  if (!ok) {
+    await audit(u.id, "auth.2fa_failed", "user", u.id, { attempt: row.attempts });
+    return { fieldErrors: { code: [row.attempts >= 5 ? "Kod hatalı. Deneme hakkınız doldu; yeniden giriş yapın." : `Kod hatalı ya da süresi geçmiş. Kalan deneme: ${5 - row.attempts}.`] } };
+  }
+  await db.delete(pendingLogins).where(eq(pendingLogins.id, row.id));
+  jar.delete(TWOFA_COOKIE);
+  await createSession(u.id);
+  await audit(u.id, "auth.admin_login", "user", u.id, { twoFactor: true });
+  redirect(row.next ?? "/yonetim");
 }

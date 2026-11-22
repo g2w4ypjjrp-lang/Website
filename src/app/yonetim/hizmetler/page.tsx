@@ -7,11 +7,13 @@ import { getCategoryTree } from "@/server/queries";
 import { AHead, Tabs } from "@/components/admin/ui";
 import { Badge } from "@/components/ui/primitives";
 import { formatTRY, timeAgo } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Hizmetler" };
 const ST = { draft: "Taslak", pending: "Onay bekliyor", active: "Yayında", rejected: "Reddedildi", paused: "Duraklatıldı" } as const;
 
 export default async function AdminServices({ searchParams }: { searchParams: Promise<{ durum?: string; q?: string }> }) {
+  await requireAdmin();
   const sp = await searchParams;
   const status = (["pending", "active", "rejected", "paused", "draft"].includes(sp.durum ?? "") ? sp.durum : "pending") as keyof typeof ST;
   const where: (SQL | undefined)[] = [eq(services.status, status)];

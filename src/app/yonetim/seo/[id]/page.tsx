@@ -5,10 +5,12 @@ import { categories, landingPages } from "@/db/schema";
 import { saveLandingAction } from "@/app/actions/admin";
 import { AHead } from "@/components/admin/ui";
 import { AdminForm, F } from "@/components/admin/admin-form";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Açılış sayfası" };
 
 export default async function EditLanding({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdmin();
   const { id } = await params;
   const isNew = id === "yeni";
   const l = isNew ? null : await db.query.landingPages.findFirst({ where: eq(landingPages.id, id) });

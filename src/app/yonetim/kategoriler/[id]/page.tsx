@@ -5,10 +5,12 @@ import { categories } from "@/db/schema";
 import { saveCategoryAction } from "@/app/actions/admin";
 import { AHead } from "@/components/admin/ui";
 import { AdminForm, F } from "@/components/admin/admin-form";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Kategori düzenle" };
 
 export default async function EditCategory({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ ust?: string }> }) {
+  await requireAdmin();
   const [{ id }, sp] = await Promise.all([params, searchParams]);
   const isNew = id === "yeni";
   const c = isNew ? null : await db.query.categories.findFirst({ where: eq(categories.id, id) });

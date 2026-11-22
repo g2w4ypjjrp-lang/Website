@@ -6,10 +6,12 @@ import { markPayoutPaidAction, releasePayoutsAction } from "@/app/actions/admin"
 import { AHead, KPI, Table, Tabs } from "@/components/admin/ui";
 import { Badge } from "@/components/ui/primitives";
 import { formatDate, formatTRY } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Finans" };
 
 export default async function Finance({ searchParams }: { searchParams: Promise<{ sekme?: string }> }) {
+  await requireAdmin();
   const { sekme = "hakedis" } = await searchParams;
   const yearStart = new Date(new Date().getFullYear(), 0, 1);
   const [[t], [pay], monthly, payoutRows, paymentRows, [promo], promoRows] = await Promise.all([

@@ -3,10 +3,12 @@ import { db } from "@/db";
 import { auditLogs } from "@/db/schema";
 import { AHead, Table } from "@/components/admin/ui";
 import { formatDateTime } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Denetim kayıtları" };
 
 export default async function Logs({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  await requireAdmin();
   const { q } = await searchParams;
   const rows = await db.select().from(auditLogs).where(q ? sql`${auditLogs.action} ilike '%' || ${q} || '%' or ${auditLogs.entityId} ilike '%' || ${q} || '%'` : undefined).orderBy(desc(auditLogs.createdAt)).limit(300);
   return (

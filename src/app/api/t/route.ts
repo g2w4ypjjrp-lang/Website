@@ -2,13 +2,14 @@ import { sql } from "drizzle-orm";
 import { db } from "@/db";
 import { dailyStats } from "@/db/schema";
 import { rateLimitLocal } from "@/server/rate-limit";
+import { ipFromHeaders } from "@/server/request";
 
 /**
  * Çerezsiz, kişisel veri tutmayan sayaç: günlük sayfa görüntüleme, tekil ziyaretçi (tarayıcı günlük bayrağıyla)
  * ve arama motorlarından gelen organik girişler. KVKK açısından açık rıza gerektirmeyecek şekilde tasarlanmıştır.
  */
 export async function POST(req: Request) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "local";
+  const ip = ipFromHeaders(req.headers);
   if (!rateLimitLocal(`t:${ip}`, 120, 60_000).ok) return new Response(null, { status: 204 });
   if (/bot|crawl|spider|slurp/i.test(req.headers.get("user-agent") ?? "")) return new Response(null, { status: 204 });
   let body: { p?: string; r?: string; v?: boolean };

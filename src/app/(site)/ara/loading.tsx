@@ -2,7 +2,7 @@ import { SkeletonGrid } from "@/components/skeletons";
 
 export default function Loading() {
   return (
-    <div className="container-x pt-6">
+    <div className="container-x min-h-[100dvh] pt-6" role="status" aria-label="Yükleniyor">
       <div className="skeleton h-3 w-48" />
       <div className="mt-8 border-b border-line pb-8"><div className="skeleton h-10 w-72" /><div className="skeleton mt-4 h-4 w-[28rem] max-w-full" /></div>
       <div className="mt-8 grid gap-8 lg:grid-cols-[240px_1fr]">

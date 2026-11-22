@@ -6,10 +6,12 @@ import { adminReviewAction } from "@/app/actions/admin";
 import { AHead, Tabs } from "@/components/admin/ui";
 import { Badge } from "@/components/ui/primitives";
 import { formatDate } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Değerlendirmeler" };
 
 export default async function AdminReviews({ searchParams }: { searchParams: Promise<{ f?: string }> }) {
+  await requireAdmin();
   const { f = "tumu" } = await searchParams;
   const rows = await db
     .select({ r: reviews, buyer: users.name, provider: providerProfiles.displayName, code: orders.code, title: orders.title })

@@ -1,10 +1,12 @@
 import { broadcastAction } from "@/app/actions/admin";
 import { AHead } from "@/components/admin/ui";
 import { AdminForm, F } from "@/components/admin/admin-form";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Sistem duyurusu" };
 
-export default function Broadcast() {
+export default async function Broadcast() {
+  await requireAdmin();
   return (
     <>
       <AHead title="Sistem duyurusu" sub="Kullanıcıların bildirim kutusuna (isteğe bağlı e-postayla) duyuru gönderir. Bakım, kural değişikliği, yeni özellik gibi durumlar için." />

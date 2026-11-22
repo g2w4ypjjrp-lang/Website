@@ -7,10 +7,12 @@ import { AHead, Table } from "@/components/admin/ui";
 import { AdminForm, F } from "@/components/admin/admin-form";
 import { Badge } from "@/components/ui/primitives";
 import { formatDateTime } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Ayarlar" };
 
 export default async function AdminSettings() {
+  await requireAdmin();
   const [s, outbox] = await Promise.all([getSettings(), db.select().from(emailOutbox).orderBy(desc(emailOutbox.createdAt)).limit(30)]);
   const provider = process.env.PAYMENT_PROVIDER ?? "sandbox";
   const env = (k: string) => (process.env[k] ? <Badge tone="ok">Tanımlı</Badge> : <Badge tone="warn">Eksik</Badge>);

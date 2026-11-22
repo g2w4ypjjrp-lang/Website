@@ -5,10 +5,12 @@ import { staticPages } from "@/db/schema";
 import { savePageAction } from "@/app/actions/admin";
 import { AHead } from "@/components/admin/ui";
 import { AdminForm, F } from "@/components/admin/admin-form";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Sayfa düzenle" };
 
 export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdmin();
   const { id } = await params;
   const isNew = id === "yeni";
   const p = isNew ? null : await db.query.staticPages.findFirst({ where: eq(staticPages.id, id) });

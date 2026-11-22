@@ -48,11 +48,14 @@
   "images": { "binding": "IMAGES" },
 
   // Gizli olmayan ayarlar. Gizli değerler: npx wrangler secret put <AD>
-  // (CRON_SECRET, RESEND_API_KEY, IYZICO_API_KEY, IYZICO_SECRET_KEY, ADMIN_EMAIL, ADMIN_PASSWORD)
+  // (CRON_SECRET, RESEND_API_KEY, IYZICO_API_KEY, IYZICO_SECRET_KEY, TOTP_ENCRYPTION_KEY)
+  // ADMIN_EMAIL / ADMIN_PASSWORD yalnızca ilk kurulumdaki seed betiğinde kullanılır; worker’a yüklenmez.
   "vars": {
     "NEXT_PUBLIC_SITE_URL": "https://eksen.com.tr",
     "PAYMENT_PROVIDER": "iyzico",
     "IYZICO_BASE_URL": "https://api.iyzipay.com",
-    "MAIL_FROM": "Eksen <bildirim@eksen.com.tr>"
+    "MAIL_FROM": "Eksen <bildirim@eksen.com.tr>",
+    // Yönetim paneli, iki adımlı doğrulama kurulmadan kullanılamaz
+    "ADMIN_2FA_REQUIRED": "true"
   }
 }

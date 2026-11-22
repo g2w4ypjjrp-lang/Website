@@ -128,7 +128,7 @@ export default async function ProviderPage({ params }: Props) {
           )}
           <section className="mt-12">
             <h2 className="mb-5 text-[22px] font-semibold">Hizmetler</h2>
-            {svc.length ? <ServiceGrid items={svc} className="lg:grid-cols-3" /> : <p className="text-[14.5px] text-muted">Bu uzmanın şu an yayında hizmeti yok. Mesaj göndererek özel teklif isteyebilirsiniz.</p>}
+            {svc.length ? <ServiceGrid items={svc} cols={3} /> : <p className="text-[14.5px] text-muted">Bu uzmanın şu an yayında hizmeti yok. Mesaj göndererek özel teklif isteyebilirsiniz.</p>}
           </section>
           {portfolio.length > 0 && (
             <section className="mt-14">

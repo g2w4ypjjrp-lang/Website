@@ -6,10 +6,12 @@ import { AHead, KPI, Table } from "@/components/admin/ui";
 import { AdminForm } from "@/components/admin/admin-form";
 import { Badge } from "@/components/ui/primitives";
 import { CITIES, REGIONS, type Region } from "@/lib/tr-cities";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Yerel SEO" };
 
 export default async function LocalSeoAdmin() {
+  await requireAdmin();
   const [s, landings, totals] = await Promise.all([getLocalSeoSettings(), publishedLandings(), providerCountsByCity(null)]);
   const perLanding = await Promise.all(landings.map((l) => providerCountsByCity(l.categoryId)));
   const rows = CITIES.map((c) => {

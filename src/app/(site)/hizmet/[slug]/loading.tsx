@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="container-x pt-6" role="status" aria-label="Yükleniyor">
+    <div className="container-x min-h-[100dvh] pt-6" role="status" aria-label="Yükleniyor">
       <div className="skeleton h-3 w-64" />
       <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-14">
         <div>

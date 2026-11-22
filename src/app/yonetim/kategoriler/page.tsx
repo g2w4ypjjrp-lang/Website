@@ -4,10 +4,12 @@ import { db } from "@/db";
 import { categories, services } from "@/db/schema";
 import { AHead } from "@/components/admin/ui";
 import { Badge, Notice } from "@/components/ui/primitives";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Kategoriler" };
 
 export default async function AdminCategories({ searchParams }: { searchParams: Promise<{ kaydedildi?: string }> }) {
+  await requireAdmin();
   const sp = await searchParams;
   const [rows, counts] = await Promise.all([
     db.select().from(categories).orderBy(asc(categories.sortOrder), asc(categories.name)),

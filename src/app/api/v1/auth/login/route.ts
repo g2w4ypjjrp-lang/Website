@@ -7,9 +7,10 @@ import { randomToken, sha256 } from "@/server/crypto";
 import { rateLimit } from "@/server/rate-limit";
 import { audit } from "@/server/audit";
 import { apiError, json } from "@/server/api";
+import { ipFromHeaders } from "@/server/request";
 
 export async function POST(req: Request) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "local";
+  const ip = ipFromHeaders(req.headers);
   const body = z.object({ email: z.string().email(), password: z.string().min(1) }).safeParse(await req.json().catch(() => null));
   if (!body.success) return apiError(400, "E-posta ve şifre gerekli.");
   if (!(await rateLimit(`api-login:${ip}:${body.data.email}`, 8, 15 * 60_000)).ok) return apiError(429, "Çok fazla deneme.");

@@ -174,6 +174,7 @@ export function MobileMenu({ categories }: { categories: Cat[] }) {
               <li><Link href="/nasil-calisir" className="block py-3.5">Nasıl çalışır?</Link></li>
               <li><Link href="/blog" className="block py-3.5">Rehberler</Link></li>
               <li><Link href="/uzman-ol" className="block py-3.5">Uzman olarak katıl</Link></li>
+              <li><Link href="/kurumsal" className="block py-3.5">Kurumsal üyelik</Link></li>
             </ul>
           </div>
           {!loggedIn && (

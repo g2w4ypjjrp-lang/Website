@@ -68,9 +68,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   if (images && file.isPublic && file.mime.startsWith("image/") && file.mime !== "image/gif" && obj.body instanceof ReadableStream && (width || format)) {
     try {
       const t = width ? images.input(obj.body).transform({ width, fit: "scale-down" }) : images.input(obj.body);
-      const out = await t.output({ format: format ?? "image/webp", quality: 80 });
+      // WebP/AVIF desteklemeyen istemciye orijinal biçimde (JPEG/PNG) küçültülmüş sürüm
+      const outFormat = format ?? (file.mime === "image/png" ? "image/png" : "image/jpeg");
+      const out = await t.output({ format: outFormat, quality: 80 });
       const transformed = out.response();
-      const res = new Response(transformed.body, { headers: { ...baseHeaders, "Content-Type": format ?? "image/webp" } });
+      const res = new Response(transformed.body, { headers: { ...baseHeaders, "Content-Type": outFormat } });
       if (edgeCache) cf!.ctx.waitUntil(edgeCache.put(cacheKey, res.clone()));
       return res;
     } catch {

@@ -6,10 +6,12 @@ import { adminUserAction, adminRoleAction, adminProviderSeoAction } from "@/app/
 import { AHead, Table, Tabs } from "@/components/admin/ui";
 import { Badge } from "@/components/ui/primitives";
 import { formatDate } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Kullanıcılar" };
 
 export default async function AdminUsers({ searchParams }: { searchParams: Promise<{ rol?: string; q?: string; durum?: string }> }) {
+  await requireAdmin();
   const sp = await searchParams;
   const where: (SQL | undefined)[] = [];
   if (sp.rol === "customer" || sp.rol === "provider" || sp.rol === "admin") where.push(eq(users.role, sp.rol));

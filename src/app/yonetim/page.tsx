@@ -4,12 +4,14 @@ import { db } from "@/db";
 import { categories, dailyStats, orders, providerProfiles, services, users } from "@/db/schema";
 import { AHead, KPI } from "@/components/admin/ui";
 import { formatNumber, formatTRY } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Özet" };
 
 const iso = (d: Date) => d.toISOString();
 
 export default async function AdminHome({ searchParams }: { searchParams: Promise<{ gun?: string }> }) {
+  await requireAdmin();
   const { gun } = await searchParams;
   const days = [7, 30, 90].includes(Number(gun)) ? Number(gun) : 30;
   const since = new Date(Date.now() - days * 864e5);

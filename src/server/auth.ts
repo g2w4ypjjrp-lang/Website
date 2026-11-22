@@ -21,6 +21,8 @@ export type SessionUser = {
   emailVerifiedAt: Date | null;
   avatarId: string | null;
   providerSlug: string | null;
+  /** Yönetici iki adımlı doğrulaması etkin mi */
+  totpEnabled: boolean;
 };
 
 export const hashPassword = (pw: string) => bcrypt.hash(pw, 12);
@@ -70,6 +72,7 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
       emailVerifiedAt: users.emailVerifiedAt,
       avatarId: users.avatarId,
       lastSeenAt: users.lastSeenAt,
+      totpEnabledAt: users.totpEnabledAt,
       providerSlug: providerProfiles.slug,
     })
     .from(sessions)
@@ -83,8 +86,8 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
   if (!u.lastSeenAt || Date.now() - u.lastSeenAt.getTime() > 120_000) {
     await db.update(users).set({ lastSeenAt: sql`now()` }).where(eq(users.id, u.id));
   }
-  const { status: _s, lastSeenAt: _l, ...rest } = u;
-  return rest;
+  const { status: _s, lastSeenAt: _l, totpEnabledAt, ...rest } = u;
+  return { ...rest, totpEnabled: !!totpEnabledAt };
 });
 
 export async function requireUser(next?: string) {
@@ -100,9 +103,20 @@ export async function requireRole(role: SessionUser["role"] | SessionUser["role"
   return u;
 }
 
-export async function requireAdmin() {
+/** Yönetici iki adımlı doğrulaması zorunlu mu (ADMIN_2FA_REQUIRED=true) */
+export const admin2faRequired = () => process.env.ADMIN_2FA_REQUIRED === "true";
+
+export async function requireAdmin(opts: { allowWithout2fa?: boolean } = {}) {
   const u = await getCurrentUser();
   // Yönetici olmayanlar için yönetim alanının varlığını bile belli etme
   if (!u || u.role !== "admin") redirect("/giris");
+  // Zorunluysa: iki adımlı doğrulama etkinleştirilmeden yönetim işlemi yapılamaz (yalnızca görüntüleme)
+  if (!opts.allowWithout2fa && admin2faRequired() && !u.totpEnabled) redirect("/yonetim/guvenlik?zorunlu=1");
   return u;
+}
+
+/** Geçerli oturumun kimliği (sha256(token)) — "diğer oturumları kapat" için */
+export async function currentSessionId() {
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  return token ? sha256(token) : null;
 }

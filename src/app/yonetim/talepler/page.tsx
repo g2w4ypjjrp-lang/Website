@@ -6,11 +6,13 @@ import { AHead, Tabs } from "@/components/admin/ui";
 import { TicketResolver } from "@/components/admin/ticket-resolver";
 import { Badge } from "@/components/ui/primitives";
 import { formatDateTime, formatTRY } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "İade ve şikâyetler" };
 const TYPE = { refund: ["İade talebi", "bad"], dispute: ["Uyuşmazlık", "warn"], complaint: ["Şikâyet", "info"] } as const;
 
 export default async function AdminTickets({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
+  await requireAdmin();
   const { durum = "open" } = await searchParams;
   const rows = await db
     .select({ t: tickets, opener: users.name, code: orders.code, total: orders.totalKurus, orderStatus: orders.status })

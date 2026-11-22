@@ -5,10 +5,12 @@ import { blogPosts } from "@/db/schema";
 import { AHead, Table } from "@/components/admin/ui";
 import { Badge } from "@/components/ui/primitives";
 import { formatDateTime } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Blog" };
 
 export default async function AdminBlog() {
+  await requireAdmin();
   const rows = await db.select().from(blogPosts).orderBy(desc(blogPosts.updatedAt));
   return (
     <>

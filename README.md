@@ -26,12 +26,14 @@ Demo hesapları (`db:seed:demo` sonrası, şifre `demo-sifre-123`): `musteri@dem
 | Veritabanı | PostgreSQL + Drizzle ORM | Tip güvenli, sıfır çalışma zamanı motoru; Supabase/Neon/RDS'e taşınabilir |
 | Arama | pg_trgm + Türkçe normalizasyon (`search_norm`) | Ek servis olmadan yazım toleranslı arama |
 | Kimlik | Kendi oturum sistemi (bcrypt, httpOnly çerez, DB oturumları) | Rol ayrımı ve denetim tam kontrolde |
-| Gerçek zamanlı | Server-Sent Events | Mesajlaşma; ölçeklemede LISTEN/NOTIFY veya Redis |
+| Barındırma | Cloudflare Workers (OpenNext), Hyperdrive, R2, Images, Durable Objects, Cron Triggers | Türkiye'deki kenar noktalarından sunum, ISR önbelleği, sunucu yönetimi yok |
+| Gerçek zamanlı | Server-Sent Events (50 sn'de bir yenilenen, kaldığı yerden devam eden akış) | Workers süre sınırlarıyla uyumlu canlı mesajlaşma |
 | Ödeme | `PaymentProvider` arayüzü: iyzico Pazaryeri + sandbox | Split ödeme, havuz, iade, alt üye işyeri |
-| Dosya | Yerel depolama + MIME doğrulama, sharp ile WebP | S3 uyumlu depolamaya tek dosyada geçiş |
-| E-posta | Outbox tablosu + SMTP (nodemailer) | Kayıtlı, tekrar denenebilir gönderim |
+| Dosya | R2 (Cloudflare) veya yerel disk (Node), sihirli bayt doğrulaması, EXIF/konum temizleme, Images ile AVIF/WebP | Aynı API iki ortamda |
+| E-posta | Outbox tablosu + Resend HTTP API (Workers) veya SMTP (Node), `after()` ile yanıttan sonra | Kayıtlı, tekrar denenebilir gönderim |
+| Yönetici güvenliği | TOTP iki adımlı doğrulama (RFC 6238, Web Crypto), sırlar AES-GCM ile şifreli | Şifre sızsa bile panel korunur |
 
-Ayrıntılar: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+Ayrıntılar: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · Cloudflare kurulumu: [`docs/CLOUDFLARE.md`](docs/CLOUDFLARE.md)
 
 ## Komutlar
 
@@ -41,8 +43,22 @@ Ayrıntılar: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 | `npm run lint` | TypeScript tip kontrolü |
 | `npm run db:generate` | Şema değişikliğinden migrasyon üret |
 | `npm run db:migrate` | Migrasyonları uygula |
+| `npm test` | Birim testleri: görsel meta veri temizleme, TOTP (RFC 6238 vektörleri), 81 il verisi ve Türkçe ek çekimi |
+| `npm run cf:preview` | Cloudflare çalışma ortamında (workerd) yerel önizleme, http://localhost:8787 |
+| `npm run cf:deploy` | Cloudflare'e yayınla (gizli değer koruması ile) |
 
-Zamanlanmış görev (saatte bir): `curl -X POST -H "Authorization: Bearer $CRON_SECRET" https://ALAN-ADI/api/cron/run`. Otomatik onay, hakediş serbest bırakma ve planlanmış blog yayını bu görevle çalışır.
+Zamanlanmış görev (saatte bir): Cloudflare'de Cron Trigger ile otomatik çalışır. Node kurulumunda: `curl -X POST -H "Authorization: Bearer $CRON_SECRET" https://ALAN-ADI/api/cron/run`. Otomatik onay, hakediş serbest bırakma, planlanmış blog yayını ve e-posta yeniden denemesi bu görevle çalışır.
+
+## 81 il için yerel SEO
+
+- `/il` tüm illeri bölgelere göre listeler. `/il/izmir` gibi il sayfaları ilin sektör yapısına göre ihtiyaçları, o ildeki uzmanları ve açık projeleri gösterir.
+- `/web-sitesi-yaptirma/izmir` gibi hizmet × il sayfaları gerçek uzman ve fiyat verisi, sektöre özgü tavsiye, SSS ve `Service` + `FAQPage` şeması içerir.
+- **İnce sayfa üretilmez:** hizmet × il sayfası yalnızca 30 büyükşehirde veya o ilde yeterli uzman olduğunda indekslenir. Diğerleri `noindex, follow` kalır. Eşikler **Yönetim → Yerel SEO** ekranından değiştirilir.
+- Aramada il adı algılanır ("izmir web sitesi" → ilgili il sayfası önerilir). Profil, fatura ve proje formlarında il serbest metin değil, 81 il listesinden seçilir.
+
+## Yönetim paneli
+
+`/yonetim` (`/admin` da yönlenir). Yalnızca yönetici rolü girebilir; diğer kullanıcılar giriş sayfasına yönlendirilir ve sayfalar `noindex` olarak işaretlenir. **Güvenlik** sayfasından iki adımlı doğrulama kurulur. `ADMIN_2FA_REQUIRED=true` iken kurulum yapılmadan diğer yönetim sayfaları açılmaz. Açık oturumlar listelenir ve diğer cihazlardaki oturumlar kapatılabilir. **Kurumsal başvurular** ekranı `/kurumsal` formundan gelen talepleri durum ve iç notla takip eder.
 
 ## Mobil API (v1)
 

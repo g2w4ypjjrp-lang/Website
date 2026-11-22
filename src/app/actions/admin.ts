@@ -525,3 +525,65 @@ export async function saveLocalSeoAction(_: FormState, form: FormData): Promise<
   revalidatePath("/haritalar/sitemap/[__metadata_id__]", "page");
   return { ok: `Kaydedildi. ${priority.length} öncelikli il; diğer illerde en az ${min} yerel uzman olduğunda sayfalar otomatik indekslenir.` };
 }
+
+/* ───────────── Yönetici güvenliği: iki adımlı doğrulama ve oturumlar ───────────── */
+
+export async function beginTotpSetupAction() {
+  const admin = await requireAdmin({ allowWithout2fa: true });
+  const { generateSecret, sealSecret } = await import("@/server/totp");
+  const u = await db.query.users.findFirst({ where: eq(users.id, admin.id) });
+  if (u?.totpEnabledAt) return;
+  await db.update(users).set({ totpSecret: await sealSecret(generateSecret()), totpEnabledAt: null }).where(eq(users.id, admin.id));
+  await audit(admin.id, "admin.2fa.setup_started", "user", admin.id);
+  revalidatePath("/yonetim/guvenlik");
+}
+
+export async function confirmTotpAction(_: FormState, form: FormData): Promise<FormState> {
+  const admin = await requireAdmin({ allowWithout2fa: true });
+  const { openSecret, verifyTotp } = await import("@/server/totp");
+  const u = await db.query.users.findFirst({ where: eq(users.id, admin.id) });
+  if (!u?.totpSecret) return { error: "Önce kurulumu başlatın." };
+  if (!(await verifyTotp(await openSecret(u.totpSecret), str(form, "code")))) return { fieldErrors: { code: ["Kod doğrulanamadı. Uygulamadaki güncel 6 haneli kodu girin."] } };
+  await db.update(users).set({ totpEnabledAt: new Date() }).where(eq(users.id, admin.id));
+  await audit(admin.id, "admin.2fa.enabled", "user", admin.id);
+  revalidatePath("/yonetim", "layout");
+  return { ok: "İki adımlı doğrulama etkinleştirildi. Bir sonraki girişte kod istenecek." };
+}
+
+export async function disableTotpAction(_: FormState, form: FormData): Promise<FormState> {
+  const admin = await requireAdmin({ allowWithout2fa: true });
+  const { openSecret, verifyTotp } = await import("@/server/totp");
+  const u = await db.query.users.findFirst({ where: eq(users.id, admin.id) });
+  if (!u?.totpSecret || !u.totpEnabledAt) return { error: "İki adımlı doğrulama zaten kapalı." };
+  if (!(await verifyTotp(await openSecret(u.totpSecret), str(form, "code")))) return { fieldErrors: { code: ["Kapatmak için geçerli bir kod girin."] } };
+  await db.update(users).set({ totpSecret: null, totpEnabledAt: null }).where(eq(users.id, admin.id));
+  await audit(admin.id, "admin.2fa.disabled", "user", admin.id);
+  revalidatePath("/yonetim", "layout");
+  return { ok: "İki adımlı doğrulama kapatıldı." };
+}
+
+export async function revokeOtherSessionsAction() {
+  const admin = await requireAdmin({ allowWithout2fa: true });
+  const { currentSessionId } = await import("@/server/auth");
+  const { sessions } = await import("@/db/schema");
+  const current = await currentSessionId();
+  await db.delete(sessions).where(and(eq(sessions.userId, admin.id), sql`${sessions.id} <> ${current ?? ""}`));
+  await audit(admin.id, "admin.sessions.revoked_others", "user", admin.id);
+  revalidatePath("/yonetim/guvenlik");
+}
+
+/* ───────────── Kurumsal başvurular ───────────── */
+
+export async function updateLeadAction(form: FormData) {
+  const admin = await requireAdmin();
+  const { leads } = await import("@/db/schema");
+  const { LEAD_STATUSES } = await import("@/lib/leads");
+  const id = String(form.get("id") ?? "");
+  const status = String(form.get("status") ?? "");
+  if (!id || !(status in LEAD_STATUSES)) return;
+  const note = String(form.get("note") ?? "").trim().slice(0, 2000) || null;
+  await db.update(leads).set({ status, note }).where(eq(leads.id, id));
+  await audit(admin.id, "lead.updated", "lead", id, { status });
+  revalidatePath("/yonetim/kurumsal");
+  revalidatePath("/yonetim", "layout");
+}

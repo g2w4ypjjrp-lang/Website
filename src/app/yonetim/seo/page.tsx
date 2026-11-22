@@ -6,10 +6,12 @@ import { redirectAction } from "@/app/actions/admin";
 import { AHead, KPI, Table, Tabs } from "@/components/admin/ui";
 import { Badge, Notice } from "@/components/ui/primitives";
 import { site } from "@/lib/site";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "SEO" };
 
 export default async function AdminSeo({ searchParams }: { searchParams: Promise<{ sekme?: string; kaydedildi?: string }> }) {
+  await requireAdmin();
   const { sekme = "sayfalar", kaydedildi } = await searchParams;
   const [lands, reds, [idx], noindexList] = await Promise.all([
     db.select({ l: landingPages, cat: categories.name, words: sql<number>`array_length(regexp_split_to_array(trim(${landingPages.body}), '\\s+'), 1)` }).from(landingPages).leftJoin(categories, eq(categories.id, landingPages.categoryId)).orderBy(desc(landingPages.updatedAt)),

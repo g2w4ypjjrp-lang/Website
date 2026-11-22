@@ -129,7 +129,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           {result.items.length ? (
             <>
             <h2 className="sr-only">Hizmetler</h2>
-            <ServiceGrid items={result.items} className="lg:grid-cols-3" />
+            <ServiceGrid items={result.items} cols={3} />
             </>
           ) : (
             <EmptyState

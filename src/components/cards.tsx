@@ -152,9 +152,10 @@ export function ServiceCard({ s, className }: { s: ServiceCardData; className?: 
   );
 }
 
-export function ServiceGrid({ items, className }: { items: ServiceCardData[]; className?: string }) {
+/** `cols={3}`: yan sütunlu sayfalar (kategori, arama, uzman profili) için daha geniş kartlar. */
+export function ServiceGrid({ items, className, cols = 4 }: { items: ServiceCardData[]; className?: string; cols?: 3 | 4 }) {
   return (
-    <div className={cn("grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:grid-cols-4 lg:gap-5", className)}>
+    <div className={cn("grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:gap-5", cols === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4", className)}>
       {items.map((s) => (
         <ServiceCard key={s.id} s={s} />
       ))}

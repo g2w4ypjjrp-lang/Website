@@ -49,7 +49,7 @@ Geçişler satır kilidiyle (`SELECT … FOR UPDATE`) yapılır; her geçiş `or
 
 ## 6. Güvenlik
 
-bcrypt (12) şifre, httpOnly + SameSite=Lax + Secure çerez, DB'de yalnızca token özeti; e-posta doğrulama ve tek kullanımlık, süreli şifre sıfırlama; oturum iptali; giriş, kayıt, mesaj, teklif ve proje için hız sınırı; Zod ile girdi doğrulama; Drizzle parametreli sorgular; markdown beyaz liste temizleme (XSS); JSON-LD kaçışı; Server Actions origin kontrolü ve API'de Origin doğrulaması (CSRF); dosya yüklemede sihirli bayt kontrolü, boyut sınırı, görsellerin yeniden kodlanması (EXIF/konum silinir), `nosniff` ve kısıtlı CSP ile sunum; özel dosyalarda sohbet/proje bazlı yetki; güvenlik başlıkları (HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy); platform dışı iletişim tespiti ve uyarı; engelleme ve şikâyet; tüm finansal ve yönetici işlemlerinde denetim kaydı.
+bcrypt (12) şifre, httpOnly + SameSite=Lax + Secure çerez, DB'de yalnızca token özeti; e-posta doğrulama ve tek kullanımlık, süreli şifre sıfırlama; oturum iptali; giriş, kayıt, mesaj, teklif ve proje için hız sınırı; Zod ile girdi doğrulama; Drizzle parametreli sorgular; markdown beyaz liste temizleme (XSS); JSON-LD kaçışı; Server Actions origin kontrolü ve API'de Origin doğrulaması (CSRF); dosya yüklemede sihirli bayt kontrolü, boyut sınırı, görsellerin yeniden kodlanması (EXIF/konum silinir), `nosniff` ve kısıtlı CSP ile sunum; özel dosyalarda sohbet/proje bazlı yetki; güvenlik başlıkları (HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy); platform dışı iletişim tespiti ve uyarı; engelleme ve şikâyet; tüm finansal ve yönetici işlemlerinde denetim kaydı. Yönetici girişinde TOTP iki adımlı doğrulama (5 dakikalık, en fazla 5 denemeli bekleyen giriş bileti; sır AES-GCM ile şifreli), açık oturum listesi ve diğer oturumları kapatma. Cloudflare'de istemci IP'si taklit edilemeyen `cf-connecting-ip` başlığından okunur; hız sınırı sayaçları Postgres'te paylaşımlıdır.
 
 ## 7. Mobil ve PWA
 
@@ -63,14 +63,16 @@ Mobil için ayrıca tasarlanmış alt sekme çubuğu, tam ekran menü, kaydırı
 | Ödeme | iyzico (veya PayTR / Param) **pazaryeri** sözleşmesi, `IYZICO_API_KEY`, `IYZICO_SECRET_KEY`, `PAYMENT_PROVIDER=iyzico`; her uzman için alt üye işyeri kaydı |
 | Hukuk | Kullanım koşulları, KVKK aydınlatma metni, gizlilik, mesafeli satış, iade metinleri **taslaktır**; avukat onayı, şirket unvanı, VERBİS kaydı |
 | Vergi | e-Fatura / e-Arşiv entegratörü (komisyon faturaları için) |
-| E-posta | SMTP veya transactional e-posta sağlayıcısı (`SMTP_URL`, `MAIL_FROM`), SPF/DKIM/DMARC |
-| Altyapı | Yönetilen PostgreSQL, S3 uyumlu depolama, CDN, saatlik cron, yedekleme |
+| E-posta | Resend hesabı (`RESEND_API_KEY`; Node kurulumunda `SMTP_URL` de olur), `MAIL_FROM`, SPF/DKIM/DMARC |
+| Altyapı | Cloudflare hesabı (Workers Paid), Frankfurt bölgesinde yönetilen PostgreSQL ve Hyperdrive, R2 kovaları, yedekleme. Adımlar: `docs/CLOUDFLARE.md` |
+| Yönetici güvenliği | `TOTP_ENCRYPTION_KEY` (gizli değer), `ADMIN_2FA_REQUIRED=true` |
+| Kurumsal üyelik | Fiyatlandırma ve hizmet düzeyi koşulları (başvurular panelde toplanır, teklif satış ekibince verilir) |
 | Arama motorları | Search Console ve Bing doğrulama kodları |
 
 ## 9. Sonraki adımlar
 
-1. Çok sunuculu kurulum için Redis tabanlı hız sınırı ve mesajlaşma yayını.
-2. Kurumsal üyelik (şirket hesapları için toplu fatura ve ekip yönetimi) ve abonelik paketleri.
+1. Mesajlaşmada SSE yoklamasının yerine Durable Object tabanlı yayın (çok yüksek eşzamanlı kullanıcıda).
+2. Kurumsal hesaplarda ekip üyeleri ve onay akışı (başvuru ve takip ekranı hazır).
 3. Mobil API’nin sipariş oluşturma, mesajlaşma ve push bildirim uçlarıyla genişletilmesi.
 4. Otomatik test paketi (Playwright e2e senaryoları CI’a taşınmalı).
 
@@ -83,4 +85,4 @@ Mobil için ayrıca tasarlanmış alt sekme çubuğu, tam ekran menü, kaydırı
 | Premium üyelik | Uzman panelinden satın alınır (30 gün), sıralamada öncelik ve rozet; otomatik yenileme yok |
 | Sponsorlu listeleme | Yönetici tarafından işaretlenir, kartta “Sponsorlu” etiketi |
 | Reklam alanları | Banner yönetimi (ana sayfa, kategori, arama alanları) |
-| Kurumsal üyelik | Planlanan |
+| Kurumsal üyelik | `/kurumsal` başvuru sayfası, yönetimde durum ve not takibi; koşullar satış görüşmesiyle belirlenir |

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { categories } from "@/db/schema";
+import { categories, landingPages } from "@/db/schema";
 import { getCategoryTree, listProviders, listServices, openProjects } from "@/server/queries";
 import { ServiceGrid, ProviderRow } from "@/components/cards";
 import { ServiceFilters, SortSelect, Pagination, MobileFilters, filtersFromSP, activeFilterCount, one, type SP } from "@/components/listing";
@@ -12,6 +12,8 @@ import { ButtonLink } from "@/components/ui/button";
 import { formatNumber, cn } from "@/lib/utils";
 import { ProjectList } from "@/components/project-list";
 import { CitySelect } from "@/components/city-select";
+import { matchLandings, splitCityQuery } from "@/lib/search-city";
+import { locative, lowerFirst } from "@/lib/tr-grammar";
 
 export const metadata: Metadata = { title: "Arama", robots: { index: false, follow: true } };
 
@@ -32,15 +34,21 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const cat = catSlug ? flat.find((c) => c.slug === catSlug) : undefined;
   const catIds = cat ? [cat.id, ...flat.filter((c) => c.parentId === cat.id).map((c) => c.id)] : undefined;
 
-  const matchedCats = q
-    ? await db.select({ name: categories.name, slug: categories.slug }).from(categories).where(and(eq(categories.isActive, true), sql`search_norm(${categories.name}) ilike '%' || search_norm(${q}) || '%'`)).limit(6)
-    : [];
+  // "izmir web sitesi": il adı ayrılır, kalan metinle aranır, o ildeki uzmanlar öne alınır
+  const { city: qCity, rest } = splitCityQuery(q);
+  const textQ = qCity ? rest : q;
+  const [matchedCats, cityLandings] = await Promise.all([
+    textQ
+      ? db.select({ name: categories.name, slug: categories.slug }).from(categories).where(and(eq(categories.isActive, true), sql`search_norm(${categories.name}) ilike '%' || search_norm(${textQ}) || '%'`)).limit(6)
+      : Promise.resolve([] as { name: string; slug: string }[]),
+    qCity ? db.select({ h1: landingPages.h1, slug: landingPages.slug }).from(landingPages).where(eq(landingPages.isPublished, true)).then((all) => matchLandings(rest, all)) : Promise.resolve([] as { h1: string; slug: string }[]),
+  ]);
 
   const f = filtersFromSP(sp);
   const page = f.page;
-  const services = tab === "hizmetler" ? await listServices({ ...f, categoryIds: catIds }) : null;
-  const providers = tab === "uzmanlar" || tab === "ajanslar" ? await listProviders({ q, categoryId: cat?.id, accountType: tab === "ajanslar" ? "agency" : undefined, city: f.city, page }) : null;
-  const projects = tab === "projeler" ? await openProjects(20, { q, categoryIds: catIds, page }) : null;
+  const services = tab === "hizmetler" ? await listServices({ ...f, q: textQ || undefined, preferCity: qCity && !f.city ? qCity.name : undefined, categoryIds: catIds }) : null;
+  const providers = tab === "uzmanlar" || tab === "ajanslar" ? await listProviders({ q: textQ, categoryId: cat?.id, accountType: tab === "ajanslar" ? "agency" : undefined, city: f.city, page }) : null;
+  const projects = tab === "projeler" ? await openProjects(20, { q: textQ, categoryIds: catIds, page }) : null;
   const total = services?.total ?? providers?.total ?? projects?.total ?? 0;
 
   const tabHref = (t: string) => {
@@ -57,6 +65,16 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <SearchBox defaultValue={q} placeholder="Hizmet, uzman veya proje ara" />
       </div>
       <h1 className="mt-8 text-[28px] font-semibold sm:text-[34px]">{q ? <>“{q}” için sonuçlar</> : "Tüm hizmetler"}</h1>
+      {qCity && (
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-[13.5px]">
+          <span className="text-muted">{qCity.name} için:</span>
+          {cityLandings.map((l) => (
+            <Link key={l.slug} href={`/${l.slug}/${qCity.slug}`} className="rounded-sm border border-ink/20 bg-surface px-2.5 py-1 font-medium hover:border-ink/50">{qCity.name} {lowerFirst(l.h1)}</Link>
+          ))}
+          <Link href={`/il/${qCity.slug}`} className="rounded-sm border border-line bg-surface px-2.5 py-1 hover:border-ink/40">{locative(qCity.name)} tüm dijital hizmetler</Link>
+          {tab === "hizmetler" && !f.city && <span className="text-muted">· {locative(qCity.name)}ki uzmanların hizmetleri önce gösteriliyor</span>}
+        </div>
+      )}
       {matchedCats.length > 0 && (
         <div className="mt-4 flex flex-wrap items-center gap-2 text-[13.5px]">
           <span className="text-muted">Kategoriler:</span>
@@ -115,7 +133,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           ) : services ? (
             <>
             <h2 className="sr-only">Hizmetler</h2>
-            <ServiceGrid items={services.items} className="lg:grid-cols-3" />
+            <ServiceGrid items={services.items} cols={3} />
             </>
           ) : providers ? (
             <div className="divide-y divide-line border-y border-line">{providers.items.map((p) => <ProviderRow key={p.slug} p={p} />)}</div>

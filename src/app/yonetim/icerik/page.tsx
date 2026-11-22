@@ -6,10 +6,12 @@ import { bannerAction } from "@/app/actions/admin";
 import { AHead, Table } from "@/components/admin/ui";
 import { Badge } from "@/components/ui/primitives";
 import { formatDate } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Sayfalar ve bannerlar" };
 
 export default async function AdminContent() {
+  await requireAdmin();
   const [pages, bs] = await Promise.all([db.select().from(staticPages).orderBy(asc(staticPages.title)), db.select().from(banners).orderBy(desc(banners.createdAt))]);
   return (
     <>

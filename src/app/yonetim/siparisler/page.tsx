@@ -8,12 +8,14 @@ import { AHead, Table, Tabs } from "@/components/admin/ui";
 import { StatusBadge } from "@/components/panel/order-bits";
 import { ORDER_STATUS, type OrderStatus } from "@/lib/order-status";
 import { formatDateTime, formatTRY } from "@/lib/utils";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Siparişler" };
 const b = alias(users, "b");
 const p = alias(users, "p");
 
 export default async function AdminOrders({ searchParams }: { searchParams: Promise<{ durum?: string; q?: string }> }) {
+  await requireAdmin();
   const sp = await searchParams;
   const where: (SQL | undefined)[] = [];
   if (sp.durum && sp.durum in ORDER_STATUS) where.push(eq(orders.status, sp.durum as OrderStatus));

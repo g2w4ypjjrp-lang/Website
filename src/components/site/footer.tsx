@@ -36,6 +36,7 @@ export async function SiteFooter() {
           links={[
             ["/nasil-calisir", "Nasıl çalışır?"],
             ["/uzman-ol", "Uzman olarak katıl"],
+            ["/kurumsal", "Kurumsal üyelik"],
             ["/projeler", "Proje ilanları"],
             ["/uzmanlar", "Uzmanlar"],
             ["/blog", "Rehberler"],

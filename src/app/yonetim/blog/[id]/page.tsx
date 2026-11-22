@@ -7,12 +7,14 @@ import { savePostAction, deletePostAction } from "@/app/actions/admin";
 import { AHead } from "@/components/admin/ui";
 import { renderMarkdown } from "@/lib/markdown";
 import { AdminForm, F } from "@/components/admin/admin-form";
+import { requireAdmin } from "@/server/auth";
 
 export const metadata = { title: "Yazı düzenle" };
 
 const local = (d: Date | null | undefined) => (d ? new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : "");
 
 export default async function EditPost({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdmin();
   const { id } = await params;
   const isNew = id === "yeni";
   const p = isNew ? null : await db.query.blogPosts.findFirst({ where: eq(blogPosts.id, id) });
