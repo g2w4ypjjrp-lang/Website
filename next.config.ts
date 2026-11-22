@@ -10,6 +10,8 @@ const securityHeaders = [
 
 const config: NextConfig = {
   poweredByHeader: false,
+  // Meta etiketleri tüm istemciler için <head> içinde üretilsin (akış yerine); tarayıcı ve denetim araçları da aynı HTML'i görür.
+  htmlLimitedBots: /.*/,
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [],

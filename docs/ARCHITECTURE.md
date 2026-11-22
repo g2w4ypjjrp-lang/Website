@@ -69,8 +69,18 @@ Mobil için ayrıca tasarlanmış alt sekme çubuğu, tam ekran menü, kaydırı
 
 ## 9. Sonraki adımlar
 
-1. Herkese açık sayfaları önbelleğe alınabilir yapmak (kullanıcıya özel başlık kısmını istemci tarafına almak) → TTFB ve LCP iyileşmesi.
-2. Çok sunuculu kurulum için Redis tabanlı hız sınırı ve mesajlaşma yayını.
-3. Premium üyelik ve öne çıkarma için uzmanın kendi ödemesi (şu an yönetici tarafından atanıyor).
-4. React Native / Expo istemcisi için `src/server` servislerinin REST uçlarına açılması.
-5. Otomatik test paketi (Playwright e2e senaryoları bu oturumda elle çalıştırıldı).
+1. Çok sunuculu kurulum için Redis tabanlı hız sınırı ve mesajlaşma yayını.
+2. Kurumsal üyelik (şirket hesapları için toplu fatura ve ekip yönetimi) ve abonelik paketleri.
+3. Mobil API’nin sipariş oluşturma, mesajlaşma ve push bildirim uçlarıyla genişletilmesi.
+4. Otomatik test paketi (Playwright e2e senaryoları CI’a taşınmalı).
+
+## 10. Gelir modelleri (uygulananlar)
+
+| Model | Durum |
+| --- | --- |
+| Satış komisyonu | Genel / kategori / uzmana özel oran, sipariş anında sabitlenir |
+| Öne çıkarma | Uzman panelinden satın alınır (7 gün), aramada ve ana sayfada “Öne çıkan” etiketiyle |
+| Premium üyelik | Uzman panelinden satın alınır (30 gün), sıralamada öncelik ve rozet; otomatik yenileme yok |
+| Sponsorlu listeleme | Yönetici tarafından işaretlenir, kartta “Sponsorlu” etiketi |
+| Reklam alanları | Banner yönetimi (ana sayfa, kategori, arama alanları) |
+| Kurumsal üyelik | Planlanan |

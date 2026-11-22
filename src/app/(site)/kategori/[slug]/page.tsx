@@ -93,7 +93,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
               <span className="mr-1 text-muted">{f.label}:</span>
               {f.options.map((o) => {
                 const on = sp.etiket === o;
-                return <Link key={o} href={on ? base : `${base}?etiket=${encodeURIComponent(o)}`} aria-pressed={on} className={on ? "rounded-sm bg-ink px-2 py-0.5 text-white" : "rounded-sm border border-line bg-surface px-2 py-0.5 hover:border-ink/40"}>{o}</Link>;
+                return <Link key={o} href={on ? base : `${base}?etiket=${encodeURIComponent(o)}`} aria-current={on ? "true" : undefined} className={on ? "rounded-sm bg-ink px-2 py-0.5 text-white" : "rounded-sm border border-line bg-surface px-2 py-0.5 hover:border-ink/40"}>{o}</Link>;
               })}
             </div>
           ))}

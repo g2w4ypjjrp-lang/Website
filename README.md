@@ -43,3 +43,22 @@ Ayrıntılar: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 | `npm run db:migrate` | Migrasyonları uygula |
 
 Zamanlanmış görev (saatte bir): `curl -X POST -H "Authorization: Bearer $CRON_SECRET" https://ALAN-ADI/api/cron/run`. Otomatik onay, hakediş serbest bırakma ve planlanmış blog yayını bu görevle çalışır.
+
+## Mobil API (v1)
+
+Android / iOS uygulamaları web ile aynı servis katmanını kullanır. Kimlik doğrulama `Authorization: Bearer <token>` ile yapılır.
+
+| Uç | Açıklama |
+| --- | --- |
+| `POST /api/v1/auth/login` | `{ email, password }` → `{ token, expiresAt, user }` (yönetici hesapları kapalı) |
+| `GET /api/v1/me` | Oturumdaki kullanıcı |
+| `GET /api/v1/categories` | Kategori ağacı |
+| `GET /api/v1/services` | Web’deki filtrelerin aynısı: `q, kategori, min, max, teslim, puan, seviye, paket, sehir, cevrimici, siralama, sayfa` |
+| `GET /api/v1/services/:slug` | Hizmet detayı, paketler, ek hizmetler |
+| `GET /api/v1/orders` | Kullanıcının siparişleri |
+
+## Önbellek ve performans
+
+Ana sayfa (5 dk), açılış sayfaları, blog, sabit sayfalar ve kategori listesi (10 dk) ISR ile statik sunulur; yönetimden yapılan düzenlemeler ilgili sayfayı anında yeniler. Kullanıcıya özel başlık alanı `/api/me` üzerinden tarayıcıda yüklenir. PWA: `public/sw.js` yalnızca statik varlıkları önbelleğe alır, çevrimdışıyken `/cevrimdisi` gösterilir.
+
+> Production derlemesinde sandbox ödeme varsayılan olarak kapalıdır. Yerel veya staging testinde `ALLOW_SANDBOX_PAYMENTS=true`; canlıda asla.
