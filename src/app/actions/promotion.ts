@@ -17,7 +17,7 @@ import { randomCode } from "@/lib/utils";
 
 export async function buyPromotionAction(form: FormData) {
   const user = await requireRole("provider");
-  if (!rateLimit(`promo:${user.id}`, 10, 10 * 60_000).ok) redirect("/panel/tanitim?hata=limit");
+  if (!(await rateLimit(`promo:${user.id}`, 10, 10 * 60_000)).ok) redirect("/panel/tanitim?hata=limit");
   const type = z.enum(["featured", "premium"]).parse(form.get("type"));
   const s = await getSettings();
   let serviceId: string | null = null;

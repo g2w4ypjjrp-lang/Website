@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "local";
   const body = z.object({ email: z.string().email(), password: z.string().min(1) }).safeParse(await req.json().catch(() => null));
   if (!body.success) return apiError(400, "E-posta ve şifre gerekli.");
-  if (!rateLimit(`api-login:${ip}:${body.data.email}`, 8, 15 * 60_000).ok) return apiError(429, "Çok fazla deneme.");
+  if (!(await rateLimit(`api-login:${ip}:${body.data.email}`, 8, 15 * 60_000)).ok) return apiError(429, "Çok fazla deneme.");
   const u = await db.query.users.findFirst({ where: sql`lower(${users.email}) = ${body.data.email.toLowerCase()}` });
   if (!u || u.status !== "active" || !(await verifyPassword(body.data.password, u.passwordHash))) return apiError(401, "E-posta veya şifre hatalı.");
   if (u.role === "admin") return apiError(403, "Yönetici hesapları mobil API ile giriş yapamaz.");

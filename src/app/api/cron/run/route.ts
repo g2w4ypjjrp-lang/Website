@@ -6,6 +6,7 @@ import { getSettings } from "@/server/settings";
 import { transitionOrder } from "@/server/orders";
 import { safeEqual } from "@/server/crypto";
 import { audit } from "@/server/audit";
+import { retryFailedMail } from "@/server/mail";
 
 /**
  * Zamanlanmış işler (saatte bir):
@@ -33,7 +34,12 @@ export async function POST(req: Request) {
   for (const p of published) revalidatePath(`/blog/${p.slug}`);
   if (published.length) revalidatePath("/blog");
   await db.execute(sql`update services set featured_until = null where featured_until < now()`);
-  const result = { autoCompleted: completed, payoutsReleased: released.length, postsPublished: published.length };
+  // Süresi dolmuş geçici kayıtları temizle
+  await db.execute(sql`delete from rate_limits where reset_at < now() - interval '1 hour'`);
+  await db.execute(sql`delete from pending_logins where expires_at < now()`);
+  await db.execute(sql`delete from sessions where expires_at < now()`);
+  const mailRetried = await retryFailedMail();
+  const result = { autoCompleted: completed, payoutsReleased: released.length, postsPublished: published.length, mailRetried };
   await audit(null, "cron.run", "system", null, result);
   return Response.json(result);
 }

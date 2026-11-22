@@ -6,13 +6,14 @@ import { getProviderByName } from "@/server/payments";
 import { markOrderPaid } from "@/server/orders";
 import { activatePromotion } from "@/server/promotions";
 import { audit } from "@/server/audit";
-import { absoluteUrl } from "@/lib/site";
 
 /**
  * Ödeme sağlayıcısı dönüşü. Token, sağlayıcının API’sinden sunucu tarafında doğrulanır;
  * tutar sipariş tutarıyla eşleşmezse sipariş ödenmiş sayılmaz. İşlem idempotenttir.
  */
 export async function POST(req: Request, { params }: { params: Promise<{ provider: string }> }) {
+  // Yönlendirmeler isteğin geldiği adrese göre yapılır (alan adı / önizleme adresi değişse de çalışır)
+  const absoluteUrl = (path: string) => new URL(path, req.url).toString();
   const { provider: name } = await params;
   const form = await req.formData();
   const token = String(form.get("token") ?? "");

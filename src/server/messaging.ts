@@ -50,7 +50,7 @@ export async function sendMessage(senderId: string, conversationId: string, body
   if (!conv) throw new MessageError("Sohbet bulunamadı.");
   const other = conv.userAId === senderId ? conv.userBId : conv.userAId;
   if (await isBlocked(senderId, other)) throw new MessageError("Bu kullanıcıyla mesajlaşma engellenmiş.");
-  const rl = rateLimit(`msg:${senderId}`, 30, 60_000);
+  const rl = await rateLimit(`msg:${senderId}`, 30, 60_000);
   if (!rl.ok) throw new MessageError("Çok hızlı mesaj gönderiyorsunuz. Biraz bekleyin.");
   const text = body.trim().slice(0, 5000);
   if (!text && attachments.length === 0) throw new MessageError("Boş mesaj gönderilemez.");
@@ -62,7 +62,7 @@ export async function sendMessage(senderId: string, conversationId: string, body
   const preview = kind === "delivery" ? "Teslimat gönderildi" : text ? text.slice(0, 120) : `${attachments.length} dosya`;
   await db.update(conversations).set({ lastMessageAt: new Date(), lastMessagePreview: preview }).where(eq(conversations.id, conversationId));
   // Bildirim: aynı sohbet için 10 dakikada en fazla bir e-posta
-  const throttle = rateLimit(`notify-msg:${conversationId}:${other}`, 1, 10 * 60_000);
+  const throttle = await rateLimit(`notify-msg:${conversationId}:${other}`, 1, 10 * 60_000);
   await notify(other, "message_new", "Yeni mesajınız var", {
     body: preview,
     link: `/panel/mesajlar/${conversationId}`,

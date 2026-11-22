@@ -1,27 +1,8 @@
 import type { Metadata, Viewport } from "next";
-// Yalnızca Türkçe için gereken latin + latin-ext alt kümeleri (CSS boyutunu küçültür)
-import "@fontsource/ibm-plex-sans/latin-400.css";
-import "@fontsource/ibm-plex-sans/latin-ext-400.css";
-import "@fontsource/ibm-plex-sans/latin-500.css";
-import "@fontsource/ibm-plex-sans/latin-ext-500.css";
-import "@fontsource/ibm-plex-sans/latin-600.css";
-import "@fontsource/ibm-plex-sans/latin-ext-600.css";
-import "@fontsource/schibsted-grotesk/latin-500.css";
-import "@fontsource/schibsted-grotesk/latin-ext-500.css";
-import "@fontsource/schibsted-grotesk/latin-600.css";
-import "@fontsource/schibsted-grotesk/latin-ext-600.css";
-import "@fontsource/schibsted-grotesk/latin-700.css";
-import "@fontsource/schibsted-grotesk/latin-ext-700.css";
-import "@fontsource/ibm-plex-mono/latin-400.css";
-import "@fontsource/ibm-plex-mono/latin-ext-400.css";
-import "@fontsource/ibm-plex-mono/latin-500.css";
-import "@fontsource/ibm-plex-mono/latin-ext-500.css";
+import "./fonts.css";
 import "./globals.css";
 import { site } from "@/lib/site";
 import { SWRegister } from "@/components/sw-register";
-import plexLatin from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2";
-import plexLatinExt from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-ext-400-normal.woff2";
-import displayLatin from "@fontsource/schibsted-grotesk/files/schibsted-grotesk-latin-600-normal.woff2";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -46,7 +27,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // LCP metni için kritik yazı tipleri önceden yüklenir (Türkçe ğ, ş, ı karakterleri latin-ext alt kümesinde)
-  const fonts = [plexLatin, plexLatinExt, displayLatin].map((f) => (typeof f === "string" ? f : (f as { src: string }).src));
+  const fonts = ["ibm-plex-sans-latin-400-normal", "ibm-plex-sans-latin-ext-400-normal", "schibsted-grotesk-latin-600-normal", "schibsted-grotesk-latin-ext-600-normal"].map((f) => `/fonts/${f}.woff2`);
   return (
     <html lang="tr">
       <head>

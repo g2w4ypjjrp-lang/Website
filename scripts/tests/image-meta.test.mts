@@ -1,0 +1,21 @@
+import sharp from "sharp";
+import { stripImageMetadata } from "../../src/server/image-meta.ts";
+const base = sharp({ create: { width: 64, height: 32, channels: 3, background: "#c63e22" } });
+const jpg = await base.clone().jpeg().withExif({ IFD0: { Make: "TestPhone", Model: "X1", Software: "Gizli" }, IFD3: { GPSLatitudeRef: "N", GPSLatitude: "41/1 0/1 0/1" } }).withMetadata({ orientation: 6 }).toBuffer();
+const before = await sharp(jpg).metadata();
+const out = stripImageMetadata(new Uint8Array(jpg), "image/jpeg");
+const after = await sharp(Buffer.from(out)).metadata();
+const s = (b: Uint8Array) => Buffer.from(b).toString("latin1");
+console.log("JPEG önce  orientation:", before.orientation, "exif bytes:", before.exif?.length, "Make içeriyor:", s(new Uint8Array(jpg)).includes("TestPhone"));
+console.log("JPEG sonra orientation:", after.orientation, "exif bytes:", after.exif?.length, "Make içeriyor:", s(out).includes("TestPhone"), "GPS içeriyor:", s(out).includes("GPS"), "decode:", after.width + "x" + after.height);
+const png = await base.clone().png().withMetadata().toBuffer();
+// PNG'ye tEXt bloğu ekle
+const text = Buffer.concat([Buffer.from("Comment\0Konum: 41.0,29.0")]);
+const chunk = Buffer.alloc(12 + text.length); chunk.writeUInt32BE(text.length, 0); chunk.write("tEXt", 4, "latin1"); text.copy(chunk, 8);
+const zlib = await import("node:zlib"); const crc = zlib.crc32(Buffer.concat([Buffer.from("tEXt"), text])); chunk.writeUInt32BE(crc >>> 0, 8 + text.length);
+const pngWithText = Buffer.concat([png.subarray(0, png.length - 12), chunk, png.subarray(png.length - 12)]);
+const pOut = stripImageMetadata(new Uint8Array(pngWithText), "image/png");
+console.log("PNG önce metin:", s(new Uint8Array(pngWithText)).includes("Konum"), "sonra metin:", s(pOut).includes("Konum"), "decode:", (await sharp(Buffer.from(pOut)).metadata()).width);
+const webp = await base.clone().webp().withExif({ IFD0: { Make: "TestPhone" } }).toBuffer();
+const wOut = stripImageMetadata(new Uint8Array(webp), "image/webp");
+console.log("WebP önce Make:", s(new Uint8Array(webp)).includes("TestPhone"), "sonra:", s(wOut).includes("TestPhone"), "decode:", (await sharp(Buffer.from(wOut)).metadata()).width);

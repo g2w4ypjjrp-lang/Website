@@ -96,7 +96,7 @@ export function ServiceCover({ rootSlug, coverId, title, className, priority }: 
   if (coverId)
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={fileUrl(coverId)!} alt={title} width={600} height={420} loading={priority ? "eager" : "lazy"} decoding="async" className={cn("aspect-[10/7] w-full object-cover", className)} />
+      <img src={fileUrl(coverId, 640)!} srcSet={`${fileUrl(coverId, 480)} 480w, ${fileUrl(coverId, 960)} 960w`} sizes="(min-width: 1024px) 300px, 100vw" alt={title} width={600} height={420} loading={priority ? "eager" : "lazy"} decoding="async" className={cn("aspect-[10/7] w-full object-cover", className)} />
     );
   const m = MOTIFS[rootSlug] ?? MOTIFS["web-ve-yazilim"]!;
   return (

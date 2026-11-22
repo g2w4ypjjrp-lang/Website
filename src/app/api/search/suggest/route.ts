@@ -2,13 +2,13 @@ import { NextResponse } from "next/server";
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, landingPages, providerProfiles, services, users } from "@/db/schema";
-import { rateLimit } from "@/server/rate-limit";
+import { rateLimitLocal } from "@/server/rate-limit";
 
 export async function GET(req: Request) {
   const q = new URL(req.url).searchParams.get("q")?.trim().slice(0, 80) ?? "";
   if (q.length < 2) return NextResponse.json({ items: [] });
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "local";
-  if (!rateLimit(`suggest:${ip}`, 60, 60_000).ok) return NextResponse.json({ items: [] }, { status: 429 });
+  if (!rateLimitLocal(`suggest:${ip}`, 60, 60_000).ok) return NextResponse.json({ items: [] }, { status: 429 });
   const like = sql`'%' || search_norm(${q}) || '%'`;
   const [cats, lands, svcs, provs] = await Promise.all([
     db.select({ name: categories.name, slug: categories.slug }).from(categories).where(and(eq(categories.isActive, true), sql`search_norm(${categories.name}) ilike ${like}`)).limit(4),

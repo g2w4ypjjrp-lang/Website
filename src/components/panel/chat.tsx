@@ -43,7 +43,10 @@ export function Chat({ conversationId, meId, initial, otherName, disabledReason,
       const ids = new Set(JSON.parse((e as MessageEvent).data) as string[]);
       setMsgs((cur) => cur.map((m) => (ids.has(m.id) ? { ...m, readAt: new Date().toISOString() } : m)));
     });
-    es.onerror = () => setLive(false);
+    // Sunucu bağlantıyı periyodik olarak yeniler; yeniden bağlanırken (CONNECTING) durum göstergesini titretme
+    es.onerror = () => {
+      if (es.readyState === EventSource.CLOSED) setLive(false);
+    };
     return () => es.close();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);

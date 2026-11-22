@@ -1,0 +1,58 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "eksen",
+  "main": "cloudflare/worker.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  // Statik dosyalar (JS/CSS, yazı tipleri, simgeler) Cloudflare CDN’den doğrudan sunulur
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+
+  // Worker’ı veritabanına yakın bölgede çalıştırır: çok sorgulu sayfalarda gidiş-dönüş süresini kısaltır
+  "placement": { "mode": "smart" },
+
+  "observability": { "enabled": true },
+
+  // Saatte bir: otomatik onay, hakediş, planlı yayın, e-posta yeniden deneme, süresi dolmuş kayıt temizliği
+  "triggers": { "crons": ["17 * * * *"] },
+
+  // PostgreSQL bağlantısı Hyperdrive üzerinden (bağlantı havuzu, Türkiye’ye yakın kenar konumundan erişim)
+  // Oluşturma: npx wrangler hyperdrive create eksen-db --connection-string="postgres://..." --caching-disabled
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "HYPERDRIVE_ID_BURAYA",
+      "localConnectionString": "postgres://eksen:eksen_dev@localhost:5432/eksen"
+    }
+  ],
+
+  "r2_buckets": [
+    // Kullanıcı dosyaları (kapak, avatar, teslimat dosyaları)
+    { "binding": "UPLOADS", "bucket_name": "eksen-uploads" },
+    // Next.js ISR önbelleği
+    { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "eksen-opennext-cache" }
+  ],
+
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+      { "name": "NEXT_TAG_CACHE_DO_SHARDED", "class_name": "DOShardedTagCache" }
+    ]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"] }],
+
+  // Arka planda sayfa yenilemesi için worker’ın kendisine servis bağlantısı (ad, "name" ile aynı olmalı)
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "eksen" }],
+
+  // Görsel dönüştürme (AVIF/WebP, yeniden boyutlandırma)
+  "images": { "binding": "IMAGES" },
+
+  // Gizli olmayan ayarlar. Gizli değerler: npx wrangler secret put <AD>
+  // (CRON_SECRET, RESEND_API_KEY, IYZICO_API_KEY, IYZICO_SECRET_KEY, ADMIN_EMAIL, ADMIN_PASSWORD)
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://eksen.com.tr",
+    "PAYMENT_PROVIDER": "iyzico",
+    "IYZICO_BASE_URL": "https://api.iyzipay.com",
+    "MAIL_FROM": "Eksen <bildirim@eksen.com.tr>"
+  }
+}

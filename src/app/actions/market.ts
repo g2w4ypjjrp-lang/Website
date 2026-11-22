@@ -107,7 +107,7 @@ export async function createProjectAction(_: FormState, form: FormData): Promise
   const user = await getCurrentUser();
   if (!user) return { error: "Proje oluşturmak için giriş yapın." };
   if (user.role !== "customer") return { error: "Proje oluşturmak için müşteri hesabı gerekir." };
-  if (!rateLimit(`project:${user.id}`, 5, 60 * 60_000).ok) return { error: "Kısa sürede çok fazla proje oluşturdunuz." };
+  if (!(await rateLimit(`project:${user.id}`, 5, 60 * 60_000)).ok) return { error: "Kısa sürede çok fazla proje oluşturdunuz." };
   const raw = Object.fromEntries(form);
   const parsed = projectSchema.safeParse({ ...raw, budgetMin: raw.budgetMin || undefined, deadline: raw.deadline || undefined, extraInfo: raw.extraInfo || undefined });
   if (!parsed.success) return { fieldErrors: parsed.error.flatten().fieldErrors };
@@ -158,7 +158,7 @@ export async function submitOfferAction(_: FormState, form: FormData): Promise<F
   const parsed = offerSchema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { fieldErrors: parsed.error.flatten().fieldErrors };
   const d = parsed.data;
-  if (!rateLimit(`offer:${user.id}`, 20, 60 * 60_000).ok) return { error: "Saatlik teklif sınırına ulaştınız." };
+  if (!(await rateLimit(`offer:${user.id}`, 20, 60 * 60_000)).ok) return { error: "Saatlik teklif sınırına ulaştınız." };
   const p = await db.query.projects.findFirst({ where: eq(projects.id, d.projectId) });
   if (!p || p.status !== "open") return { error: "Bu proje artık teklif kabul etmiyor." };
   if (p.buyerId === user.id) return { error: "Kendi projenize teklif veremezsiniz." };
@@ -279,7 +279,7 @@ export async function replyReviewAction(form: FormData) {
 export async function reportAction(_: FormState, form: FormData): Promise<FormState> {
   const user = await getCurrentUser();
   if (!user) return { error: "Şikâyet için giriş yapın." };
-  if (!rateLimit(`report:${user.id}`, 10, 60 * 60_000).ok) return { error: "Çok fazla şikâyet gönderdiniz." };
+  if (!(await rateLimit(`report:${user.id}`, 10, 60 * 60_000)).ok) return { error: "Çok fazla şikâyet gönderdiniz." };
   const targetType = z.enum(["user", "service", "message", "order", "project"]).safeParse(form.get("targetType"));
   const reason = String(form.get("reason") ?? "").trim();
   if (!targetType.success || reason.length < 3) return { error: "Şikâyet nedenini seçin." };

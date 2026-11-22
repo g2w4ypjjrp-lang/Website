@@ -38,3 +38,31 @@ export async function saveSettings(patch: Partial<PlatformSettings>) {
     .onConflictDoUpdate({ target: settings.key, set: { value: next, updatedAt: new Date() } });
   return next;
 }
+
+/* ───────────── Yerel SEO (il sayfaları) ───────────── */
+
+export type LocalSeoSettings = {
+  /** 81 il merkez sayfası (/il/…) indekslensin mi */
+  indexAllHubs: boolean;
+  /** Hizmet × il sayfası, ilde bu kategoride en az bu kadar aktif uzman varsa otomatik indekslenir */
+  minProviders: number;
+  /** Uzman sayısından bağımsız olarak hizmet × il sayfaları indekslenecek iller (varsayılan: 30 büyükşehir) */
+  priority: string[];
+  /** Tüm hizmet × il sayfalarını indeksle (kalite kapısını kapatır; önerilmez) */
+  indexAll: boolean;
+};
+
+export async function getLocalSeoSettings(): Promise<LocalSeoSettings> {
+  const { METRO_SLUGS } = await import("@/lib/tr-cities");
+  const row = await db.query.settings.findFirst({ where: eq(settings.key, "localSeo") });
+  return { indexAllHubs: true, minProviders: 1, priority: METRO_SLUGS, indexAll: false, ...((row?.value as Partial<LocalSeoSettings>) ?? {}) };
+}
+
+export async function saveLocalSeoSettings(patch: Partial<LocalSeoSettings>) {
+  const next = { ...(await getLocalSeoSettings()), ...patch };
+  await db
+    .insert(settings)
+    .values({ key: "localSeo", value: next })
+    .onConflictDoUpdate({ target: settings.key, set: { value: next, updatedAt: new Date() } });
+  return next;
+}

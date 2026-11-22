@@ -16,7 +16,7 @@ export async function startPaymentAction(form: FormData) {
   const user = await requireUser();
   const code = String(form.get("code"));
   if (form.get("consent") !== "on") redirect(`/odeme/${code}?hata=onay`);
-  if (!rateLimit(`pay:${user.id}`, 10, 10 * 60_000).ok) redirect(`/odeme/${code}?hata=limit`);
+  if (!(await rateLimit(`pay:${user.id}`, 10, 10 * 60_000)).ok) redirect(`/odeme/${code}?hata=limit`);
   const order = await db.query.orders.findFirst({ where: eq(orders.code, code) });
   if (!order || order.buyerId !== user.id) redirect("/panel/siparisler");
   if (order.status !== "awaiting_payment") redirect(`/panel/siparisler/${code}`);

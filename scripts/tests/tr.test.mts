@@ -1,0 +1,11 @@
+import { CITIES, METRO_SLUGS, citySlugFromName } from "../../src/lib/tr-cities.ts";
+import { locative, genitive, ablative, lowerFirst, titleCaseTR } from "../../src/lib/tr-grammar.ts";
+const plates = new Set(CITIES.map((c) => c.plate));
+console.log("il sayısı:", CITIES.length, "plaka benzersiz:", plates.size, "büyükşehir:", METRO_SLUGS.length);
+const missing = Array.from({ length: 81 }, (_, i) => String(i + 1).padStart(2, "0")).filter((p) => !plates.has(p));
+console.log("eksik plaka:", missing.join(",") || "yok");
+const bad = CITIES.filter((c) => citySlugFromName(c.name) !== c.slug).map((c) => c.name);
+console.log("ad→slug uyuşmayan:", bad.join(",") || "yok");
+const sample = ["İstanbul", "Ankara", "İzmir", "Muş", "Kars", "Rize", "Bolu", "Düzce", "Gaziantep", "Iğdır", "Elazığ", "Şırnak", "Tokat", "Sinop", "Hakkari", "Van", "Ağrı", "Ordu", "Kütahya", "Uşak"];
+for (const s of sample) console.log(`${s.padEnd(10)} ${locative(s).padEnd(14)} ${genitive(s).padEnd(14)} ${ablative(s)}`);
+console.log(lowerFirst("Web sitesi yaptırma"), "|", lowerFirst("SEO hizmeti"), "|", lowerFirst("QR menü"), "|", titleCaseTR("e-ticaret sitesi kurulumu"), "|", titleCaseTR("SEO hizmeti"));

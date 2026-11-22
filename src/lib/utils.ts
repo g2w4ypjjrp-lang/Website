@@ -74,4 +74,5 @@ export function randomCode(prefix: string) {
   return `${prefix}-${out}`;
 }
 
-export const fileUrl = (id: string | null | undefined) => (id ? `/api/files/${id}` : null);
+/** Yüklenen dosyanın adresi. Görsellerde `w` verilirse Cloudflare'de o genişliğe (AVIF/WebP) dönüştürülmüş varyant sunulur. */
+export const fileUrl = (id: string | null | undefined, w?: number) => (id ? `/api/files/${id}${w ? `?w=${w}` : ""}` : null);

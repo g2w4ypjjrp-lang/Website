@@ -45,7 +45,7 @@ export function Avatar({ name, src, size = 36, className, online }: { name: stri
     <span className={cn("relative inline-flex shrink-0", className)} style={{ width: size, height: size }}>
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt="" width={size} height={size} loading="lazy" decoding="async" className="h-full w-full rounded-full object-cover" />
+        <img src={src.startsWith("/api/files/") && !src.includes("?") ? `${src}?w=${size > 80 ? 320 : 160}` : src} alt="" width={size} height={size} loading="lazy" decoding="async" className="h-full w-full rounded-full object-cover" />
       ) : (
         <span className="flex h-full w-full items-center justify-center rounded-full font-display font-semibold text-white" style={{ background: color, fontSize: size * 0.38 }}>
           {initials(name)}

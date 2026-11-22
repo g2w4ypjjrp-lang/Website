@@ -57,7 +57,7 @@ const registerSchema = z.object({
 export async function registerAction(_: FormState, form: FormData): Promise<FormState> {
   if (form.get("website")) return { error: "İstek doğrulanamadı." }; // honeypot
   const { ip } = await clientInfo();
-  if (!rateLimit(`register:${ip}`, 5, 60 * 60_000).ok) return { error: "Çok fazla kayıt denemesi. Lütfen daha sonra tekrar deneyin." };
+  if (!(await rateLimit(`register:${ip}`, 5, 60 * 60_000)).ok) return { error: "Çok fazla kayıt denemesi. Lütfen daha sonra tekrar deneyin." };
   const parsed = registerSchema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { fieldErrors: parsed.error.flatten().fieldErrors };
   const d = parsed.data;
@@ -86,7 +86,7 @@ export async function loginAction(_: FormState, form: FormData): Promise<FormSta
   if (!parsed.success) return { fieldErrors: parsed.error.flatten().fieldErrors };
   const { ip } = await clientInfo();
   const key = `login:${ip}:${parsed.data.email}`;
-  const rl = rateLimit(key, 8, 15 * 60_000);
+  const rl = await rateLimit(key, 8, 15 * 60_000);
   if (!rl.ok) return { error: `Çok fazla başarısız deneme. ${Math.ceil((rl.retryAfter ?? 60) / 60)} dakika sonra tekrar deneyin.` };
   const u = await db.query.users.findFirst({ where: sql`lower(${users.email}) = ${parsed.data.email}` });
   // Zamanlama saldırılarına karşı kullanıcı yoksa da hash karşılaştırması yap
@@ -110,7 +110,7 @@ export async function forgotPasswordAction(_: FormState, form: FormData): Promis
   const parsed = email.safeParse(form.get("email"));
   if (!parsed.success) return { fieldErrors: { email: ["Geçerli bir e-posta adresi girin."] } };
   const { ip } = await clientInfo();
-  if (!rateLimit(`forgot:${ip}`, 5, 60 * 60_000).ok) return { error: "Çok fazla istek. Lütfen daha sonra deneyin." };
+  if (!(await rateLimit(`forgot:${ip}`, 5, 60 * 60_000)).ok) return { error: "Çok fazla istek. Lütfen daha sonra deneyin." };
   const u = await db.query.users.findFirst({ where: sql`lower(${users.email}) = ${parsed.data}` });
   if (u && u.status === "active") {
     const token = await issueToken(u.id, "reset_password", 1);
@@ -158,7 +158,7 @@ export async function resendVerificationAction(): Promise<FormState> {
   const u = await getCurrentUser();
   if (!u) return { error: "Oturum bulunamadı." };
   if (u.emailVerifiedAt) return { ok: "E-posta adresiniz zaten doğrulanmış." };
-  if (!rateLimit(`verify-resend:${u.id}`, 3, 60 * 60_000).ok) return { error: "Kısa süre içinde çok fazla istek gönderdiniz." };
+  if (!(await rateLimit(`verify-resend:${u.id}`, 3, 60 * 60_000)).ok) return { error: "Kısa süre içinde çok fazla istek gönderdiniz." };
   await sendVerification(u.id, u.email, u.name);
   return { ok: "Doğrulama e-postası tekrar gönderildi." };
 }

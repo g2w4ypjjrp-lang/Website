@@ -69,6 +69,9 @@ export const users = pgTable(
     phone: text("phone"),
     emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
+    // Yönetici iki adımlı doğrulama (TOTP). Sır, uygulamanın kendi anahtarıyla şifrelenmiş olarak saklanır.
+    totpSecret: text("totp_secret"),
+    totpEnabledAt: timestamp("totp_enabled_at", { withTimezone: true }),
     billing: jsonb("billing").$type<{
       kind: "individual" | "corporate";
       fullName?: string;
@@ -276,6 +279,7 @@ export const projects = pgTable(
     deadline: timestamp("deadline", { withTimezone: true }),
     attachments: jsonb("attachments").$type<Attachment[]>().notNull().default([]),
     extraInfo: text("extra_info"),
+    city: text("city"), // il kodu (slug), ör. "istanbul"
     status: projectStatusEnum("status").notNull().default("open"),
     offerCount: integer("offer_count").notNull().default(0),
     createdAt: createdAt(),
@@ -718,3 +722,44 @@ export const promotions = pgTable(
   },
   (t) => [index("promotions_provider_idx").on(t.providerId)],
 );
+
+/** Sunucular ve Cloudflare izolatları arasında ortak hız sınırı sayaçları. Süresi dolanlar zamanlanmış görevle silinir. */
+export const rateLimits = pgTable("rate_limits", {
+  key: text("key").primaryKey(),
+  count: integer("count").notNull().default(0),
+  resetAt: timestamp("reset_at", { withTimezone: true }).notNull(),
+});
+
+/** Kurumsal üyelik başvuruları (satış ekibi takip eder). */
+export const leads = pgTable(
+  "leads",
+  {
+    id: id(),
+    kind: text("kind").notNull().default("kurumsal"),
+    company: text("company").notNull(),
+    contactName: text("contact_name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone"),
+    city: text("city"),
+    teamSize: text("team_size"),
+    monthlyBudget: text("monthly_budget"),
+    needs: text("needs").notNull().default(""),
+    status: text("status").notNull().default("new"), // new | contacted | won | lost
+    note: text("note"),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    createdAt: createdAt(),
+  },
+  (t) => [index("leads_status_idx").on(t.status)],
+);
+
+/** Oturum öncesi ikinci adım: şifresi doğrulanmış yöneticinin TOTP kodu beklenirken tutulan kısa ömürlü bilet. */
+export const pendingLogins = pgTable("pending_logins", {
+  id: text("id").primaryKey(), // sha256(token)
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  attempts: integer("attempts").notNull().default(0),
+  next: text("next"),
+  createdAt: createdAt(),
+});
