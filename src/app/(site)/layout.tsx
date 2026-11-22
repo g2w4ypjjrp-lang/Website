@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/site/header";
 import { SiteFooter } from "@/components/site/footer";
 import { TabBar } from "@/components/site/tab-bar";
+import { Beacon } from "@/components/site/beacon";
 import { getCurrentUser } from "@/server/auth";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -12,6 +13,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <main id="icerik">{children}</main>
       <SiteFooter />
       <TabBar loggedIn={!!user} />
+      <Beacon />
     </>
   );
 }

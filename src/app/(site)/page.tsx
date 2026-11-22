@@ -2,6 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getCategoryTree, homeReviews, homeServiceRails, latestPosts, listProviders } from "@/server/queries";
 import { getSettings } from "@/server/settings";
+import { db } from "@/db";
+import { banners } from "@/db/schema";
+import { and, eq, or, isNull, gt } from "drizzle-orm";
 import { SearchBox } from "@/components/site/header-search";
 import { ServiceGrid, ProviderRow } from "@/components/cards";
 import { ButtonLink } from "@/components/ui/button";
@@ -36,6 +39,7 @@ export default async function HomePage() {
     latestPosts(3),
     getSettings(),
   ]);
+  const banner = await db.query.banners.findFirst({ where: and(eq(banners.placement, "home_top"), eq(banners.isActive, true), or(isNull(banners.endsAt), gt(banners.endsAt, new Date()))) });
   const commission = (settings.commissionBps / 100).toLocaleString("tr-TR");
   const showcase = rails.bestselling.length >= 4 ? rails.bestselling : rails.newest;
 
@@ -43,6 +47,14 @@ export default async function HomePage() {
     <>
       <JsonLd data={[ld.organization(), ld.website()]} />
 
+      {banner && (
+        <div className="border-b border-line bg-ink text-white">
+          <div className="container-x flex flex-wrap items-center justify-between gap-3 py-2.5 text-[13.5px]">
+            <p><span className="font-medium">{banner.title}</span>{banner.body && <span className="text-white/70"> — {banner.body}</span>}{banner.isSponsored && <span className="ml-2 font-mono text-[10.5px] uppercase tracking-wider text-white/50">Sponsorlu</span>}</p>
+            {banner.href && <Link href={banner.href} className="font-medium underline decoration-accent underline-offset-4">{banner.ctaLabel ?? "İncele"}</Link>}
+          </div>
+        </div>
+      )}
       {/* ───────── Hero ───────── */}
       <section className="relative overflow-hidden border-b border-line">
         <HeroAxes />

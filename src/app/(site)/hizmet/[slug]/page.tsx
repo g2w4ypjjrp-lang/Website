@@ -82,6 +82,7 @@ export default async function ServicePage({ params, searchParams }: Props) {
       <JsonLd data={serviceLd} />
       {d.s.faqs.length > 0 && <JsonLd data={ld.faq(d.s.faqs)} />}
       <Breadcrumbs items={crumbs} />
+      {hata === "bakim" && <p className="mt-4 rounded-md bg-warn-soft px-3 py-2 text-[14px] text-warn">Platform kısa süreli bakımda; yeni sipariş alınamıyor. Lütfen biraz sonra tekrar deneyin.</p>}
       {hata === "kendi" && <p className="mt-4 rounded-md bg-warn-soft px-3 py-2 text-[14px] text-warn">Kendi hizmetinize sipariş veremezsiniz.</p>}
       {d.s.status !== "active" && <p className="mt-4 rounded-md bg-warn-soft px-3 py-2 text-[14px] text-warn">Önizleme: bu hizmet “{d.s.status === "pending" ? "onay bekliyor" : d.s.status}” durumunda ve herkese görünmüyor.</p>}
 

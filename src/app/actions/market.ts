@@ -14,6 +14,7 @@ import { audit } from "@/server/audit";
 import { rateLimit } from "@/server/rate-limit";
 import { saveUpload } from "@/server/storage";
 import { randomCode, slugify } from "@/lib/utils";
+import { getSettings } from "@/server/settings";
 import type { FormState } from "./auth";
 
 /* ───────────── Sipariş oluşturma (hazır paket) ───────────── */
@@ -33,6 +34,9 @@ export async function createOrderAction(form: FormData) {
   const selected = svc.extras.filter((e) => extraIds.includes(e.id));
   const extrasKurus = selected.reduce((a, e) => a + e.priceKurus, 0);
   const total = pkg.priceKurus + extrasKurus;
+  const settings = await getSettings();
+  if (settings.maintenanceMode) redirect(`/hizmet/${svc.slug}?hata=bakim`);
+  if (total < settings.minOrderKurus) redirect(`/hizmet/${svc.slug}?hata=asgari`);
   const days = Math.max(1, pkg.deliveryDays + selected.reduce((a, e) => a + e.days, 0));
   const { bps } = await resolveCommissionBps(svc.providerId, svc.categoryId);
   const split = splitAmount(total, bps);
