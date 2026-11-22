@@ -62,6 +62,7 @@ function cardQuery() {
 export type ServiceFilters = {
   q?: string;
   categoryIds?: string[];
+  providerId?: string;
   minPrice?: number; // TL
   maxPrice?: number;
   maxDays?: number;
@@ -87,6 +88,7 @@ export async function listServices(f: ServiceFilters) {
   const doc = sql`search_norm(${services.title} || ' ' || ${services.summary} || ' ' || arr_text(${services.tags}))`;
   if (q) where.push(or(sql`${doc} ilike '%' || search_norm(${q}) || '%'`, sql`word_similarity(search_norm(${q}), ${doc}) > 0.45`));
   if (f.categoryIds?.length) where.push(inArray(services.categoryId, f.categoryIds));
+  if (f.providerId) where.push(eq(services.providerId, f.providerId));
   if (f.minPrice != null) where.push(gte(services.startingPriceKurus, f.minPrice * 100));
   if (f.maxPrice != null) where.push(lte(services.startingPriceKurus, f.maxPrice * 100));
   if (f.maxDays != null) where.push(lte(services.minDeliveryDays, f.maxDays));

@@ -58,10 +58,10 @@ export default async function HomePage() {
           </p>
           <div className="mt-9 max-w-[680px]">
             <SearchBox size="lg" />
-            <div className="mt-4 flex flex-wrap items-center gap-x-1 gap-y-2">
-              <span className="mr-2 text-[13px] text-muted">Sık arananlar:</span>
+            <div className="-mx-4 mt-4 flex items-center gap-x-1 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:gap-y-2 sm:px-0">
+              <span className="mr-2 shrink-0 text-[13px] text-muted">Sık arananlar:</span>
               {QUICK.map(([label, href]) => (
-                <Link key={href} href={href} className="rounded-sm border border-line bg-surface/70 px-2.5 py-1 text-[13.5px] text-ink-2 transition-colors hover:border-ink/40 hover:text-ink">
+                <Link key={href} href={href} className="shrink-0 rounded-sm border border-line bg-surface/70 px-2.5 py-1 text-[13.5px] text-ink-2 transition-colors hover:border-ink/40 hover:text-ink">
                   {label}
                 </Link>
               ))}
