@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { IconChevronDown, IconMenu, IconX, IconArrowRight } from "@/components/icons";
 import { Avatar } from "@/components/ui/primitives";
 import { logoutAction } from "@/app/actions/auth";
@@ -131,7 +132,7 @@ export function MobileMenu({ categories, loggedIn }: { categories: Cat[]; logged
       <button type="button" onClick={() => setOpen(true)} className="flex h-9 w-9 items-center justify-center rounded-md text-ink hover:bg-paper-2 lg:hidden" aria-label="Menüyü aç">
         <IconMenu size={20} />
       </button>
-      {open && (
+      {open && createPortal(
         <div className="fixed inset-0 z-50 flex flex-col bg-paper lg:hidden" role="dialog" aria-modal="true" aria-label="Menü">
           <div className="flex h-[60px] items-center justify-between border-b border-line px-4">
             <span className="font-display text-[19px] font-bold tracking-[-0.04em]">Menü</span>
@@ -178,7 +179,8 @@ export function MobileMenu({ categories, loggedIn }: { categories: Cat[]; logged
               <Link href="/kayit" className="flex h-12 items-center justify-center rounded-md bg-ink font-medium text-white">Kaydol</Link>
             </div>
           )}
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
