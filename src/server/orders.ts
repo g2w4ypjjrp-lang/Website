@@ -1,7 +1,7 @@
 import "server-only";
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { conversations, orderEvents, orders, payouts, providerProfiles, services } from "@/db/schema";
+import { conversations, offers, orderEvents, orders, payouts, projects, providerProfiles, services } from "@/db/schema";
 import type { OrderStatus } from "@/lib/order-status";
 import { ORDER_STATUS } from "@/lib/order-status";
 import { audit } from "./audit";
@@ -173,6 +173,13 @@ export async function markOrderPaid(orderId: string) {
     { orderId, type: "paid", fromStatus: "awaiting_payment", toStatus: "payment_received", note: "Ödeme güvenli havuz hesabına alındı." },
     { orderId, type: "created", fromStatus: "payment_received", toStatus: "created" },
   ]);
+  // Tekliften gelen siparişte: teklif kabul, proje kapanır, diğer teklifler reddedilir
+  if (order.offerId && order.projectId) {
+    await db.update(offers).set({ status: "accepted" }).where(eq(offers.id, order.offerId));
+    await db.update(offers).set({ status: "rejected" }).where(and(eq(offers.projectId, order.projectId), eq(offers.status, "pending")));
+    await db.update(projects).set({ status: "in_progress", updatedAt: new Date() }).where(eq(projects.id, order.projectId));
+    await notify(order.providerId, "offer_accepted", "Teklifin kabul edildi", { body: order.title, link: `/panel/siparisler/${order.code}`, email: false });
+  }
   // Siparişe bağlı sohbet
   const existing = await db.query.conversations.findFirst({ where: eq(conversations.orderId, orderId) });
   if (!existing) {

@@ -63,6 +63,7 @@ export type ServiceFilters = {
   q?: string;
   categoryIds?: string[];
   providerId?: string;
+  ids?: string[];
   minPrice?: number; // TL
   maxPrice?: number;
   maxDays?: number;
@@ -89,6 +90,7 @@ export async function listServices(f: ServiceFilters) {
   if (q) where.push(or(sql`${doc} ilike '%' || search_norm(${q}) || '%'`, sql`word_similarity(search_norm(${q}), ${doc}) > 0.45`));
   if (f.categoryIds?.length) where.push(inArray(services.categoryId, f.categoryIds));
   if (f.providerId) where.push(eq(services.providerId, f.providerId));
+  if (f.ids) where.push(f.ids.length ? inArray(services.id, f.ids) : sql`false`);
   if (f.minPrice != null) where.push(gte(services.startingPriceKurus, f.minPrice * 100));
   if (f.maxPrice != null) where.push(lte(services.startingPriceKurus, f.maxPrice * 100));
   if (f.maxDays != null) where.push(lte(services.minDeliveryDays, f.maxDays));
@@ -160,12 +162,13 @@ export const providerCardSelect = {
   createdAt: users.createdAt,
 };
 
-export async function listProviders(opts: { q?: string; categoryId?: string; verifiedOnly?: boolean; accountType?: "individual" | "agency" | "company"; city?: string; sort?: string; limit?: number; page?: number }) {
+export async function listProviders(opts: { ids?: string[]; q?: string; categoryId?: string; verifiedOnly?: boolean; accountType?: "individual" | "agency" | "company"; city?: string; sort?: string; limit?: number; page?: number }) {
   const where: (SQL | undefined)[] = [eq(users.status, "active"), eq(users.role, "provider"), eq(providerProfiles.noindex, false)];
   if (opts.q) {
     const doc = sql`search_norm(${providerProfiles.displayName} || ' ' || ${providerProfiles.headline} || ' ' || arr_text(${providerProfiles.skills}))`;
     where.push(or(sql`${doc} ilike '%' || search_norm(${opts.q}) || '%'`, sql`word_similarity(search_norm(${opts.q}), ${doc}) > 0.45`));
   }
+  if (opts.ids) where.push(opts.ids.length ? inArray(providerProfiles.userId, opts.ids) : sql`false`);
   if (opts.verifiedOnly) where.push(sql`${providerProfiles.verifiedAt} is not null`);
   if (opts.accountType) where.push(eq(users.accountType, opts.accountType));
   if (opts.city) where.push(sql`search_norm(${providerProfiles.city}) = search_norm(${opts.city})`);
