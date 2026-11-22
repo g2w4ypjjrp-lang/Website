@@ -100,7 +100,17 @@ export function ServiceCover({ rootSlug, coverId, title, className, priority }: 
     );
   const m = MOTIFS[rootSlug] ?? MOTIFS["web-ve-yazilim"]!;
   return (
-    <svg viewBox="0 0 200 140" className={cn("aspect-[10/7] w-full", className)} role="img" aria-label={title} style={{ background: m.bg }}>
+    <svg viewBox="0 0 200 140" className={cn("cover-grid aspect-[10/7] w-full", className)} role="img" aria-label={title} style={{ backgroundColor: m.bg }}>
+      {m.draw(m.fg)}
+    </svg>
+  );
+}
+
+/** Kategori motifinin küçük, kırpılmış hâli: dizinlerde ve menülerde kategori işareti olarak. */
+export function CategoryGlyph({ slug, size = 56, className }: { slug: string; size?: number; className?: string }) {
+  const m = MOTIFS[slug] ?? MOTIFS["web-ve-yazilim"]!;
+  return (
+    <svg viewBox="20 10 160 120" width={size} height={size * 0.75} className={cn("shrink-0 rounded-md", className)} style={{ background: m.bg }} aria-hidden>
       {m.draw(m.fg)}
     </svg>
   );
@@ -109,30 +119,34 @@ export function ServiceCover({ rootSlug, coverId, title, className, priority }: 
 export function ServiceCard({ s, className }: { s: ServiceCardData; className?: string }) {
   const featured = s.featuredUntil && new Date(s.featuredUntil) > new Date();
   return (
-    <article className={cn("group relative flex flex-col", className)}>
-      <div className="relative overflow-hidden rounded-md border border-line-2">
-        <ServiceCover rootSlug={s.rootSlug} coverId={s.coverId} title={s.title} className="transition-transform duration-500 ease-out group-hover:scale-[1.025]" />
+    <article className={cn("group relative flex flex-col rounded-lg border border-line bg-surface p-2 transition-[box-shadow,transform,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-ink/15 hover:shadow-lift", className)}>
+      <div className="relative overflow-hidden rounded-md">
+        <ServiceCover rootSlug={s.rootSlug} coverId={s.coverId} title={s.title} className="transition-transform duration-700 ease-out group-hover:scale-[1.04]" />
+        <span className="absolute bottom-2 left-2 rounded-sm bg-surface/90 px-1.5 py-0.5 font-mono text-[10.5px] uppercase tracking-[0.06em] text-ink-2 backdrop-blur-sm">{s.categoryName}</span>
         {(s.sponsored || featured) && (
-          <span className="absolute left-2 top-2 rounded-sm bg-surface/95 px-1.5 py-0.5 text-[11px] font-medium text-ink-2">{s.sponsored ? "Sponsorlu" : "Öne çıkan"}</span>
+          <span className="absolute right-2 top-2 rounded-sm bg-ink px-1.5 py-0.5 text-[11px] font-medium text-white">{s.sponsored ? "Sponsorlu" : "Öne çıkan"}</span>
         )}
       </div>
-      <div className="mt-3 flex items-center gap-2">
-        <Avatar name={s.providerName} src={fileUrl(s.providerAvatarId)} size={22} online={isOnline(s.providerLastSeen)} />
-        <span className="truncate text-[13px] font-medium text-ink-2">{s.providerName}</span>
-        {s.providerVerified && <IconShield size={13} className="shrink-0 text-trust" aria-label="Doğrulanmış" />}
-        <span className="ml-auto shrink-0 text-[11.5px] text-faint">{LEVEL_LABEL[s.providerLevel]}</span>
-      </div>
-      <h3 className="mt-1.5 line-clamp-2 text-[15px] font-medium leading-snug text-ink">
-        <Link href={`/hizmet/${s.slug}`} className="after:absolute after:inset-0 group-hover:underline group-hover:decoration-line group-hover:underline-offset-4">
-          {s.title}
-        </Link>
-      </h3>
-      <div className="mt-1.5"><Rating value={s.ratingAvg} count={s.ratingCount} /></div>
-      <div className="mt-auto flex items-baseline justify-between gap-2 border-t border-line-2 pt-2.5 mt-3">
-        <span className="flex items-center gap-1 text-[12.5px] text-muted"><IconClock size={13} /> {s.minDeliveryDays} günden başlayan</span>
-        <span className="text-[12.5px] text-muted">
-          <span className="num text-[15.5px] font-medium text-ink">{formatTRY(s.startingPriceKurus)}</span>’den
-        </span>
+      <div className="flex flex-1 flex-col px-2 pb-1.5 pt-3">
+        <div className="flex items-center gap-2">
+          <Avatar name={s.providerName} src={fileUrl(s.providerAvatarId)} size={22} online={isOnline(s.providerLastSeen)} />
+          <span className="truncate text-[13px] font-medium text-ink-2">{s.providerName}</span>
+          {s.providerVerified && <IconShield size={13} className="shrink-0 text-trust" aria-label="Doğrulanmış" />}
+          <span className="ml-auto shrink-0 text-[11.5px] text-faint">{LEVEL_LABEL[s.providerLevel]}</span>
+        </div>
+        <h3 className="mt-2 line-clamp-2 text-[15px] font-medium leading-snug text-ink">
+          <Link href={`/hizmet/${s.slug}`} className="after:absolute after:inset-0 after:rounded-lg">
+            {s.title}
+          </Link>
+        </h3>
+        <div className="mt-1.5"><Rating value={s.ratingAvg} count={s.ratingCount} /></div>
+        <div className="mt-auto flex items-end justify-between gap-2 pt-4">
+          <span className="flex items-center gap-1 text-[12.5px] text-muted"><IconClock size={13} /> {s.minDeliveryDays} gün</span>
+          <span className="text-right leading-none">
+            <span className="block text-[11px] text-muted">başlangıç</span>
+            <span className="num text-[17px] font-medium text-ink">{formatTRY(s.startingPriceKurus)}</span>
+          </span>
+        </div>
       </div>
     </article>
   );
@@ -140,7 +154,7 @@ export function ServiceCard({ s, className }: { s: ServiceCardData; className?: 
 
 export function ServiceGrid({ items, className }: { items: ServiceCardData[]; className?: string }) {
   return (
-    <div className={cn("grid grid-cols-1 gap-x-5 gap-y-8 min-[480px]:grid-cols-2 lg:grid-cols-4", className)}>
+    <div className={cn("grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:grid-cols-4 lg:gap-5", className)}>
       {items.map((s) => (
         <ServiceCard key={s.id} s={s} />
       ))}

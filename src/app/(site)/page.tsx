@@ -6,7 +6,8 @@ import { db } from "@/db";
 import { banners } from "@/db/schema";
 import { and, eq, or, isNull, gt } from "drizzle-orm";
 import { SearchBox } from "@/components/site/header-search";
-import { ServiceGrid, ProviderRow } from "@/components/cards";
+import { ServiceGrid, ProviderRow, CategoryGlyph } from "@/components/cards";
+import { HeroShowcase } from "@/components/home/hero-showcase";
 import { ButtonLink } from "@/components/ui/button";
 import { IconArrowRight, IconArrowUpRight, IconStar } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
@@ -58,41 +59,51 @@ export default async function HomePage() {
       )}
       {/* ───────── Hero ───────── */}
       <section className="relative overflow-hidden border-b border-line">
-        <HeroAxes />
-        <div className="container-x relative pb-16 pt-14 sm:pb-24 sm:pt-24">
-          <p className="eyebrow mb-5 flex items-center gap-2">
-            <span className="h-2 w-2 bg-accent" /> Türkiye’nin dijital hizmet pazaryeri
-          </p>
-          <h1 className="max-w-[16ch] text-[40px] font-semibold leading-[1.02] tracking-[-0.035em] sm:text-[64px] lg:text-[76px]">
-            Dijital projeni hayata geçirecek doğru uzmanı bul.
-          </h1>
-          <p className="mt-6 max-w-[52ch] text-[17px] text-ink-2 sm:text-[19px]">
-            Web sitesi, mobil uygulama, tasarım, yazılım ve dijital pazarlama hizmetlerini tek platformda keşfet.
-          </p>
-          <div className="mt-9 max-w-[680px]">
-            <SearchBox size="lg" />
-            <div className="-mx-4 mt-4 flex items-center gap-x-1 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:gap-y-2 sm:px-0">
-              <span className="mr-2 shrink-0 text-[13px] text-muted">Sık arananlar:</span>
-              {QUICK.map(([label, href]) => (
-                <Link key={href} href={href} className="shrink-0 rounded-sm border border-line bg-surface/70 px-2.5 py-1 text-[13.5px] text-ink-2 transition-colors hover:border-ink/40 hover:text-ink">
-                  {label}
-                </Link>
-              ))}
+        <HeroBackdrop />
+        <div className="container-x relative grid grid-cols-1 items-center gap-12 pb-14 pt-10 sm:pb-20 sm:pt-20 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10 lg:pb-24">
+          <div className="min-w-0">
+            <p className="eyebrow mb-5 flex items-center gap-2">
+              <span className="h-2 w-2 bg-accent" /> Türkiye’nin dijital hizmet pazaryeri
+            </p>
+            <h1 className="max-w-[17ch] text-[40px] font-semibold leading-[1.04] tracking-[-0.038em] sm:text-[56px] xl:text-[64px]">
+              Dijital projeni hayata geçirecek{" "}
+              <span className="relative whitespace-nowrap">
+                doğru uzmanı
+                <svg aria-hidden viewBox="0 0 300 18" preserveAspectRatio="none" className="absolute -bottom-[0.08em] left-0 h-[0.2em] w-full text-accent">
+                  <path d="M3 13C60 5 140 3 297 8" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" className="hero-underline" />
+                </svg>
+              </span>{" "}
+              bul.
+            </h1>
+            <p className="mt-7 max-w-[50ch] text-[17px] text-ink-2 sm:text-[19px]">
+              Web sitesi, mobil uygulama, tasarım, yazılım ve dijital pazarlama hizmetlerini tek platformda keşfet.
+            </p>
+            <div className="mt-9 max-w-[640px]">
+              <SearchBox size="lg" />
+              <div className="-mx-4 mt-4 flex items-center gap-1.5 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:gap-y-2 sm:px-0">
+                <span className="mr-1 shrink-0 text-[13px] text-muted">Sık arananlar</span>
+                {QUICK.map(([label, href]) => (
+                  <Link key={href} href={href} className="shrink-0 rounded-full border border-line bg-surface px-3 py-1 text-[13.5px] text-ink-2 transition-colors hover:border-ink hover:bg-ink hover:text-white">
+                    {label}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
-          <dl className="mt-14 grid max-w-[760px] grid-cols-1 gap-6 border-t border-line pt-6 text-[14px] sm:grid-cols-3">
-            <div>
-              <dt className="font-medium text-ink">Onaylayana kadar korunan ödeme</dt>
-              <dd className="mt-1 text-muted">Para, teslimatı kabul edene kadar uzmana geçmez.</dd>
-            </div>
-            <div>
-              <dt className="font-medium text-ink">Yalnızca gerçek değerlendirme</dt>
-              <dd className="mt-1 text-muted">Yorum yazabilmek için siparişin tamamlanmış olması gerekir.</dd>
-            </div>
-            <div>
-              <dt className="font-medium text-ink">Hazır paket ya da teklif</dt>
-              <dd className="mt-1 text-muted">Paket satın al veya projeni yaz, teklifleri karşılaştır.</dd>
-            </div>
+          <HeroShowcase items={[...rails.featured, ...rails.bestselling, ...rails.newest].filter((x, i, a) => a.findIndex((y) => y.id === x.id) === i).slice(0, 3)} />
+        </div>
+        <div className="relative border-t border-line bg-surface/60">
+          <dl className="container-x grid grid-cols-1 divide-line text-[14px] sm:grid-cols-3 sm:divide-x">
+            {[
+              ["01", "Onaylayana kadar korunan ödeme", "Para, teslimatı kabul edene kadar uzmana geçmez."],
+              ["02", "Yalnızca gerçek değerlendirme", "Yorum yazabilmek için siparişin tamamlanmış olması gerekir."],
+              ["03", "Hazır paket ya da teklif", "Paket satın al veya projeni yaz, teklifleri karşılaştır."],
+            ].map(([n, t, d]) => (
+              <div key={n} className="py-5 sm:px-6 sm:first:pl-0">
+                <dt className="font-medium text-ink"><span className="num mr-3 inline-block w-[22px] text-[12px] text-accent">{n}</span>{t}</dt>
+                <dd className="mt-1 pl-[34px] text-muted">{d}</dd>
+              </div>
+            ))}
           </dl>
         </div>
       </section>
@@ -111,13 +122,16 @@ export default async function HomePage() {
           <ol className="border-t border-ink">
             {tree.map((c, i) => (
               <li key={c.id} className="group border-b border-line">
-                <Link href={`/kategori/${c.slug}`} className="grid grid-cols-[44px_1fr_auto] items-baseline gap-x-4 py-5 sm:grid-cols-[56px_minmax(0,260px)_1fr_auto]">
-                  <span className="num text-[13px] text-faint transition-colors group-hover:text-accent">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="font-display text-[21px] font-semibold tracking-[-0.02em] sm:text-[24px]">{c.name}</span>
-                  <span className="col-start-2 mt-1 text-[14px] text-muted sm:col-start-3 sm:mt-0">{c.shortDescription}</span>
-                  <IconArrowUpRight size={18} className="col-start-3 row-start-1 text-faint transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink sm:col-start-4" />
+                <Link href={`/kategori/${c.slug}`} className="grid grid-cols-[56px_1fr_auto] items-center gap-x-4 py-5 sm:grid-cols-[72px_minmax(0,250px)_1fr_auto]">
+                  <CategoryGlyph slug={c.slug} size={64} className="h-12 w-14 transition-transform duration-500 ease-out group-hover:-rotate-2 group-hover:scale-105 sm:h-[54px] sm:w-[72px]" />
+                  <span>
+                    <span className="block font-display text-[20px] font-semibold tracking-[-0.02em] sm:text-[23px]">{c.name}</span>
+                    <span className="num block text-[11.5px] text-faint">{String(i + 1).padStart(2, "0")} · {c.children.length} alt kategori</span>
+                  </span>
+                  <span className="col-start-2 text-[14px] text-muted sm:col-start-3">{c.shortDescription}</span>
+                  <IconArrowUpRight size={18} className="col-start-3 row-start-1 text-faint transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent sm:col-start-4" />
                 </Link>
-                <div className="-mt-2 hidden flex-wrap gap-x-4 gap-y-1 pb-5 pl-[72px] sm:flex">
+                <div className="-mt-2 hidden flex-wrap gap-x-4 gap-y-1 pb-5 pl-[88px] sm:flex">
                   {c.children.slice(0, 6).map((s) => (
                     <Link key={s.id} href={`/kategori/${s.slug}`} className="text-[13.5px] text-ink-2 underline decoration-line underline-offset-4 hover:decoration-accent">
                       {s.name}
@@ -149,7 +163,7 @@ export default async function HomePage() {
       )}
 
       {/* ───────── Öne çıkan hizmetler (ücretli tanıtım; etiketli) ───────── */}
-      {rails.featured.length > 0 && (
+      {rails.featured.length >= 4 && (
         <section className="container-x py-16">
           <div className="mb-6 flex items-end justify-between gap-6">
             <div><p className="eyebrow mb-2">Öne çıkanlar</p><h2 className="text-[24px] font-semibold">Uzmanların öne çıkardığı hizmetler</h2></div>
@@ -175,6 +189,7 @@ export default async function HomePage() {
             </div>
             <ol className="relative grid gap-0 sm:grid-cols-4">
               <span className="absolute left-[11px] top-3 h-[calc(100%-24px)] w-px bg-white/20 sm:left-0 sm:top-[11px] sm:h-px sm:w-full" aria-hidden />
+              <span className="escrow-token absolute top-0 z-10 h-[23px] w-[23px] items-center justify-center bg-accent font-mono text-[12px] text-white shadow-[0_0_0_4px_var(--color-ink)]" aria-hidden title="Ödemen">₺</span>
               {[
                 ["Seç ya da tarif et", "Hazır paketi seç veya projeni yazıp teklif topla."],
                 ["Güvenle öde", "Ödeme havuz hesabında bekler, uzman işe başlar."],
@@ -182,7 +197,7 @@ export default async function HomePage() {
                 ["Onayla", "Onayladığında ödeme uzmana aktarılır, değerlendirmeni yazarsın."],
               ].map(([t, d], i) => (
                 <li key={t} className="relative pb-8 pl-10 sm:pb-0 sm:pl-0 sm:pr-6 sm:pt-10">
-                  <span className={`absolute left-0 top-0 flex h-[23px] w-[23px] items-center justify-center text-[11px] font-mono ${i === 3 ? "bg-accent" : "border border-white/40 bg-ink"}`}>{i + 1}</span>
+                  <span className={`absolute left-0 top-0 flex h-[23px] w-[23px] items-center justify-center font-mono text-[11px] ${i === 3 ? "border border-accent bg-ink text-accent sm:border-white/40 sm:text-white" : "border border-white/40 bg-ink"}`}>{i + 1}</span>
                   <p className="font-display text-[18px] font-semibold">{t}</p>
                   <p className="mt-2 text-[14px] text-white/60">{d}</p>
                 </li>
@@ -322,14 +337,11 @@ export default async function HomePage() {
   );
 }
 
-/** Marka motifinin büyük ölçekli hali: sayfayı kesen iki eksen ve kesişimde kiremit kare. */
-function HeroAxes() {
+/** Hero zemini: noktalı ızgara (kâğıt dokusu) ve marka ekseni; içerikten uzak durur. */
+function HeroBackdrop() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
-      <div className="absolute inset-y-0 right-[22%] hidden w-px bg-line lg:block" />
-      <div className="absolute inset-x-0 top-[64%] hidden h-px bg-line lg:block" />
-      <div className="absolute right-[22%] top-[64%] hidden h-14 w-14 -translate-y-1/2 translate-x-1/2 bg-accent lg:block" />
-      <div className="absolute right-[calc(22%-140px)] top-[calc(64%-140px)] hidden h-[280px] w-[280px] rounded-full border border-line lg:block" />
+      <div className="absolute inset-0 opacity-[0.55] [background-image:radial-gradient(var(--color-line)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:linear-gradient(to_bottom,black,transparent_85%)]" />
     </div>
   );
 }
