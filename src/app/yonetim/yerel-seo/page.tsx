@@ -61,7 +61,7 @@ export default async function LocalSeoAdmin() {
         </AdminForm>
 
         <aside>
-          <Table head={["İl", "Uzman", "Merkez", { label: "Hizmet sayfası", right: true }]}>
+          <Table compact head={["İl", "Uzman", "Merkez", { label: "Hizmet sayfası", right: true }]}>
             {rows.sort((a, b) => b.providers - a.providers || a.c.name.localeCompare(b.c.name, "tr")).map((r) => (
               <tr key={r.c.slug}>
                 <td className="px-3 py-2"><Link href={`/il/${r.c.slug}`} target="_blank" className="hover:underline">{r.c.name}</Link></td>

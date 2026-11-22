@@ -10,10 +10,11 @@ export function AHead({ title, sub, action }: { title: string; sub?: React.React
   );
 }
 
-export function Table({ head, children, className }: { head: (string | { label: string; right?: boolean })[]; children: React.ReactNode; className?: string }) {
+/** `compact`: dar sütunlara yerleşen kısa tablolar için alt genişlik sınırı yok. */
+export function Table({ head, children, className, compact }: { head: (string | { label: string; right?: boolean })[]; children: React.ReactNode; className?: string; compact?: boolean }) {
   return (
     <div className={cn("overflow-x-auto rounded-lg border border-line bg-surface", className)}>
-      <table className="w-full min-w-[720px] text-[13.5px]">
+      <table className={cn("w-full text-[13.5px]", !compact && "min-w-[720px]")}>
         <thead className="border-b border-line bg-paper/50 text-left text-[12px] text-muted">
           <tr>{head.map((h, i) => { const x = typeof h === "string" ? { label: h } : h; return <th key={i} className={cn("px-3 py-2 font-medium", x.right && "text-right")}>{x.label}</th>; })}</tr>
         </thead>
