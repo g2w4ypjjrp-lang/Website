@@ -28,6 +28,10 @@ export default async function EditLanding({ params }: { params: Promise<{ id: st
           <F label="SEO başlığı (title)" hint="50–60 karakter idealdir; marka eki otomatik eklenir."><input name="seoTitle" defaultValue={l?.seoTitle} maxLength={70} className="field !py-2" /></F>
           <F label="Meta açıklama" hint="140–158 karakter."><input name="seoDescription" defaultValue={l?.seoDescription} maxLength={170} className="field !py-2" /></F>
         </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <F label="Canonical URL" hint="Boşsa sayfanın kendi adresi."><input name="canonicalUrl" defaultValue={l?.canonicalUrl ?? ""} className="field !py-2 font-mono text-[12.5px]" /></F>
+          <F label="Open Graph görseli" hint="1200×630 önerilir; yoksa varsayılan paylaşım görseli.">{l?.ogImageId && <img src={`/api/files/${l.ogImageId}`} alt="" className="mb-2 h-16 rounded border border-line object-cover" />}<input type="file" name="ogImage" accept="image/*" className="block text-[12.5px]" /></F>
+        </div>
         <F label="Giriş paragrafı"><textarea name="intro" defaultValue={l?.intro} rows={2} className="field !min-h-[70px]" /></F>
         <F label="Gövde (markdown)" hint="## ile başlayan bölümler içindekiler tablosunda listelenir. Yayın için en az 250 kelime."><textarea name="body" defaultValue={l?.body} rows={18} className="field font-mono text-[13px]" /></F>
         <F label="SSS" hint="Her satır: Soru | Cevap"><textarea name="faqs" defaultValue={l?.faqs.map((f) => `${f.q} | ${f.a}`).join("\n")} rows={5} className="field text-[13.5px]" /></F>

@@ -11,16 +11,19 @@ type MetaInput = {
   publishedTime?: string;
   /** Başlık zaten marka içeriyorsa şablonu atla */
   absoluteTitle?: boolean;
+  /** Yönetim panelinden girilen canonical; boşsa sayfanın kendi adresi */
+  canonical?: string | null;
 };
 
 /** Her sayfa için tutarlı title/description/canonical/OG/Twitter üretimi. */
 export function buildMetadata(m: MetaInput): Metadata {
   const url = absoluteUrl(m.path);
+  const canonical = m.canonical ? (m.canonical.startsWith("http") ? m.canonical : absoluteUrl(m.canonical)) : url;
   const image = m.image ? (m.image.startsWith("http") ? m.image : absoluteUrl(m.image)) : absoluteUrl("/og-default.png");
   return {
     title: m.absoluteTitle ? { absolute: m.title } : m.title,
     description: m.description,
-    alternates: { canonical: url },
+    alternates: { canonical },
     robots: m.noindex ? { index: false, follow: true } : { index: true, follow: true, "max-image-preview": "large" },
     openGraph: {
       type: m.type ?? "website",

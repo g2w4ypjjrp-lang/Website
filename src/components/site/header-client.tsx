@@ -7,6 +7,7 @@ import { IconChevronDown, IconMenu, IconX, IconArrowRight } from "@/components/i
 import { Avatar } from "@/components/ui/primitives";
 import { logoutAction } from "@/app/actions/auth";
 import { cn } from "@/lib/utils";
+import { useMe } from "./use-me";
 
 type Cat = { slug: string; name: string; shortDescription: string; children: { slug: string; name: string }[] };
 
@@ -119,7 +120,9 @@ export function UserMenu({ user }: { user: { name: string; email: string; role: 
   );
 }
 
-export function MobileMenu({ categories, loggedIn }: { categories: Cat[]; loggedIn: boolean }) {
+export function MobileMenu({ categories }: { categories: Cat[] }) {
+  const me = useMe();
+  const loggedIn = !!me?.user;
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const pathname = usePathname();

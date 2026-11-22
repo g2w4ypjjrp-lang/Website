@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getCategoryTree, homeReviews, homeServiceRails, latestPosts, listProviders } from "@/server/queries";
+import { getCategoryTree, homeReviews, homeServiceRails, homeStories, latestPosts, listProviders } from "@/server/queries";
 import { getSettings } from "@/server/settings";
 import { db } from "@/db";
 import { banners } from "@/db/schema";
@@ -31,13 +31,14 @@ const QUICK = [
 ] as const;
 
 export default async function HomePage() {
-  const [tree, rails, providers, reviews, posts, settings] = await Promise.all([
+  const [tree, rails, providers, reviews, posts, settings, stories] = await Promise.all([
     getCategoryTree(),
     homeServiceRails(),
     listProviders({ verifiedOnly: true, limit: 6 }),
     homeReviews(),
     latestPosts(3),
     getSettings(),
+    homeStories(),
   ]);
   const banner = await db.query.banners.findFirst({ where: and(eq(banners.placement, "home_top"), eq(banners.isActive, true), or(isNull(banners.endsAt), gt(banners.endsAt, new Date()))) });
   const commission = (settings.commissionBps / 100).toLocaleString("tr-TR");
@@ -147,6 +148,17 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* ───────── Öne çıkan hizmetler (ücretli tanıtım; etiketli) ───────── */}
+      {rails.featured.length > 0 && (
+        <section className="container-x py-16">
+          <div className="mb-6 flex items-end justify-between gap-6">
+            <div><p className="eyebrow mb-2">Öne çıkanlar</p><h2 className="text-[24px] font-semibold">Uzmanların öne çıkardığı hizmetler</h2></div>
+            <p className="hidden max-w-xs text-right text-[12.5px] text-muted sm:block">Bu alan ücretli tanıtım içerir. Sıralama puan veya satışa göre değildir.</p>
+          </div>
+          <ServiceGrid items={rails.featured} />
+        </section>
+      )}
+
       {/* ───────── Nasıl çalışır: para akışı ───────── */}
       <section className="bg-ink text-white">
         <div className="container-x py-16 sm:py-24">
@@ -215,6 +227,29 @@ export default async function HomePage() {
                 <ProviderRow key={p.slug} p={p} compact />
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* ───────── Başarı hikâyeleri (yalnızca tamamlanmış gerçek siparişlerden, editör seçimi) ───────── */}
+      {stories.length > 0 && (
+        <section className="container-x pb-16 sm:pb-24">
+          <p className="eyebrow mb-3">Başarı hikâyeleri</p>
+          <h2 className="mb-8 max-w-xl text-[28px] font-semibold">Eksen üzerinden tamamlanan işler</h2>
+          <div className={`grid gap-px overflow-hidden rounded-lg border border-line bg-line ${stories.length === 1 ? "max-w-2xl" : stories.length === 2 ? "lg:grid-cols-2" : "lg:grid-cols-3"}`}>
+            {stories.map((st) => {
+              const days = st.startedAt && st.completedAt ? Math.max(1, Math.round((+st.completedAt - +st.startedAt) / 864e5)) : st.deliveryDays;
+              return (
+                <article key={st.r.id} className="flex flex-col bg-surface p-7">
+                  <p className="num text-[12px] text-accent-strong">{days} günde tamamlandı · {st.r.rating}/5</p>
+                  <h3 className="mt-3 text-[19px] font-semibold">{st.r.storyTitle ?? st.orderTitle}</h3>
+                  <blockquote className="mt-4 flex-1 text-[15px] leading-relaxed text-ink-2">“{st.r.comment}”</blockquote>
+                  <p className="mt-5 border-t border-line-2 pt-4 text-[13px] text-muted">
+                    {st.buyerName.split(" ")[0]} {st.buyerName.split(" ")[1]?.[0] ? `${st.buyerName.split(" ")[1]![0]}.` : ""} · uzman <Link href={`/uzman/${st.providerSlug}`} className="text-ink underline underline-offset-2">{st.providerName}</Link>
+                  </p>
+                </article>
+              );
+            })}
           </div>
         </section>
       )}

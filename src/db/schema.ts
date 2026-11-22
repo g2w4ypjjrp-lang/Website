@@ -177,6 +177,8 @@ export const categories = pgTable(
     shortDescription: text("short_description").notNull().default(""),
     intro: text("intro").notNull().default(""), // SEO içerik (markdown)
     icon: text("icon"),
+    imageId: uuid("image_id"),
+    canonicalUrl: text("canonical_url"),
     sortOrder: integer("sort_order").notNull().default(0),
     isActive: boolean("is_active").notNull().default(true),
     commissionBps: integer("commission_bps"),
@@ -512,6 +514,9 @@ export const reviews = pgTable(
     comment: text("comment").notNull(),
     providerReply: text("provider_reply"),
     isHidden: boolean("is_hidden").notNull().default(false),
+    // Yönetici tarafından "başarı hikâyesi" olarak seçilen gerçek değerlendirmeler
+    isFeatured: boolean("is_featured").notNull().default(false),
+    storyTitle: text("story_title"),
     createdAt: createdAt(),
   },
   (t) => [index("reviews_provider_idx").on(t.providerId), index("reviews_service_idx").on(t.serviceId)],
@@ -617,6 +622,7 @@ export const landingPages = pgTable("landing_pages", {
   seoTitle: text("seo_title").notNull(),
   seoDescription: text("seo_description").notNull(),
   ogImageId: uuid("og_image_id"),
+  canonicalUrl: text("canonical_url"),
   isPublished: boolean("is_published").notNull().default(false),
   noindex: boolean("noindex").notNull().default(false),
   createdAt: createdAt(),
@@ -687,4 +693,28 @@ export const dailyStats = pgTable(
     value: integer("value").notNull().default(0),
   },
   (t) => [primaryKey({ columns: [t.day, t.metric, t.dimension] })],
+);
+
+/** Uzmanın satın aldığı tanıtım ürünleri: öne çıkarma (hizmet bazlı) ve premium üyelik. */
+export const promotionTypeEnum = pgEnum("promotion_type", ["featured", "premium"]);
+export const promotions = pgTable(
+  "promotions",
+  {
+    id: id(),
+    code: text("code").notNull().unique(),
+    providerId: uuid("provider_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    serviceId: uuid("service_id").references(() => services.id, { onDelete: "set null" }),
+    type: promotionTypeEnum("type").notNull(),
+    days: integer("days").notNull(),
+    amountKurus: integer("amount_kurus").notNull(),
+    status: paymentStatusEnum("status").notNull().default("pending"),
+    provider: text("provider"),
+    providerRef: text("provider_ref"),
+    conversationId: text("conversation_id"),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [index("promotions_provider_idx").on(t.providerId)],
 );

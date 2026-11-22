@@ -64,6 +64,7 @@ export type ServiceFilters = {
   categoryIds?: string[];
   providerId?: string;
   ids?: string[];
+  tag?: string;
   minPrice?: number; // TL
   maxPrice?: number;
   maxDays?: number;
@@ -90,6 +91,7 @@ export async function listServices(f: ServiceFilters) {
   if (q) where.push(or(sql`${doc} ilike '%' || search_norm(${q}) || '%'`, sql`word_similarity(search_norm(${q}), ${doc}) > 0.45`));
   if (f.categoryIds?.length) where.push(inArray(services.categoryId, f.categoryIds));
   if (f.providerId) where.push(eq(services.providerId, f.providerId));
+  if (f.tag) where.push(sql`exists (select 1 from unnest(${services.tags}) t where search_norm(t) = search_norm(${f.tag}))`);
   if (f.ids) where.push(f.ids.length ? inArray(services.id, f.ids) : sql`false`);
   if (f.minPrice != null) where.push(gte(services.startingPriceKurus, f.minPrice * 100));
   if (f.maxPrice != null) where.push(lte(services.startingPriceKurus, f.maxPrice * 100));
@@ -152,6 +154,7 @@ export const providerCardSelect = {
   city: providerProfiles.city,
   level: providerProfiles.level,
   verifiedAt: providerProfiles.verifiedAt,
+  premiumUntil: providerProfiles.premiumUntil,
   ratingAvg: providerProfiles.ratingAvg,
   ratingCount: providerProfiles.ratingCount,
   completedOrders: providerProfiles.completedOrders,
@@ -181,7 +184,7 @@ export async function listProviders(opts: { ids?: string[]; q?: string; category
       ? [desc(users.createdAt)]
       : opts.sort === "rating"
         ? [desc(providerProfiles.ratingAvg), desc(providerProfiles.ratingCount)]
-        : [sql`(${providerProfiles.verifiedAt} is null)`, desc(providerProfiles.completedOrders), desc(providerProfiles.ratingAvg), desc(users.createdAt)];
+        : [sql`(${providerProfiles.verifiedAt} is null)`, sql`(coalesce(${providerProfiles.premiumUntil}, now()) <= now())`, desc(providerProfiles.completedOrders), desc(providerProfiles.ratingAvg), desc(users.createdAt)];
   const cond = and(...where);
   const [items, [{ total }]] = await Promise.all([
     db
@@ -279,3 +282,17 @@ export function isOnline(lastSeen: Date | null | undefined) {
 }
 
 export { isNull };
+
+/** Başarı hikâyeleri: yönetici tarafından seçilmiş, tamamlanmış siparişlere ait gerçek değerlendirmeler. */
+export async function homeStories() {
+  const { orders } = await import("@/db/schema");
+  return db
+    .select({ r: reviews, buyerName: users.name, providerName: providerProfiles.displayName, providerSlug: providerProfiles.slug, orderTitle: orders.title, deliveryDays: orders.deliveryDays, startedAt: orders.startedAt, completedAt: orders.completedAt })
+    .from(reviews)
+    .innerJoin(users, eq(users.id, reviews.buyerId))
+    .innerJoin(providerProfiles, eq(providerProfiles.userId, reviews.providerId))
+    .innerJoin(orders, eq(orders.id, reviews.orderId))
+    .where(and(eq(reviews.isFeatured, true), eq(reviews.isHidden, false)))
+    .orderBy(desc(reviews.createdAt))
+    .limit(3);
+}

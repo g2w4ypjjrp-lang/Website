@@ -14,6 +14,12 @@ import { buildMetadata, ld } from "@/lib/seo";
 import { renderMarkdown, extractHeadings } from "@/lib/markdown";
 import { formatTRY, slugify } from "@/lib/utils";
 
+export const revalidate = 600;
+/** Boş liste: sayfalar ilk istekte üretilir ve ISR ile önbelleğe alınır. */
+export function generateStaticParams() {
+  return [];
+}
+
 type Props = { params: Promise<{ landing: string }> };
 
 async function load(slug: string) {
@@ -23,7 +29,7 @@ async function load(slug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const l = await load((await params).landing);
   if (!l) return {};
-  return buildMetadata({ title: l.seoTitle, description: l.seoDescription, path: `/${l.slug}`, noindex: l.noindex, image: l.ogImageId ? `/api/files/${l.ogImageId}` : null });
+  return buildMetadata({ title: l.seoTitle, description: l.seoDescription, path: `/${l.slug}`, noindex: l.noindex, image: l.ogImageId ? `/api/files/${l.ogImageId}` : null, canonical: l.canonicalUrl });
 }
 
 /**

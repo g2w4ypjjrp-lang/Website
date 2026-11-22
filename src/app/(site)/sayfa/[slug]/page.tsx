@@ -8,6 +8,12 @@ import { buildMetadata } from "@/lib/seo";
 import { renderMarkdown } from "@/lib/markdown";
 import { formatDate } from "@/lib/utils";
 
+export const revalidate = 600;
+/** Boş liste: sayfalar ilk istekte üretilir ve ISR ile önbelleğe alınır. */
+export function generateStaticParams() {
+  return [];
+}
+
 type Props = { params: Promise<{ slug: string }> };
 const load = (slug: string) => db.query.staticPages.findFirst({ where: eq(staticPages.slug, slug) });
 

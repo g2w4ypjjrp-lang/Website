@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { blogPosts, categories } from "@/db/schema";
 import { savePostAction, deletePostAction } from "@/app/actions/admin";
 import { AHead } from "@/components/admin/ui";
+import { renderMarkdown } from "@/lib/markdown";
 import { AdminForm, F } from "@/components/admin/admin-form";
 
 export const metadata = { title: "Yazı düzenle" };
@@ -19,7 +20,14 @@ export default async function EditPost({ params }: { params: Promise<{ id: strin
   const roots = await db.select({ id: categories.id, name: categories.name }).from(categories).where(isNull(categories.parentId)).orderBy(asc(categories.sortOrder));
   return (
     <>
-      <AHead title={p?.title ?? "Yeni yazı"} sub={p ? <Link href={`/blog/${p.slug}`} target="_blank" className="underline">Önizle ↗</Link> : "Markdown ile yazın; ## başlıklar içindekiler tablosunu oluşturur."} action={p && <form action={deletePostAction}><input type="hidden" name="id" value={p.id} /><button className="text-[13px] text-bad underline">Sil</button></form>} />
+      <AHead title={p?.title ?? "Yeni yazı"} sub={p?.status === "published" ? <Link href={`/blog/${p.slug}`} target="_blank" className="underline">Yayındaki sayfa ↗</Link> : "Markdown ile yazın; ## başlıklar içindekiler tablosunu oluşturur."} action={p && <form action={deletePostAction}><input type="hidden" name="id" value={p.id} /><button className="text-[13px] text-bad underline">Sil</button></form>} />
+      {p && (
+        <details className="mb-6 rounded-lg border border-line bg-surface p-4">
+          <summary className="cursor-pointer text-[13.5px] font-medium">Kaydedilmiş hâlin önizlemesi</summary>
+          <h2 className="mt-4 text-[28px] font-semibold">{p.title}</h2>
+          <div className="prose-ek mt-4 max-w-[68ch]" dangerouslySetInnerHTML={{ __html: renderMarkdown(p.content) }} />
+        </details>
+      )}
       <AdminForm action={savePostAction} className="grid gap-6 lg:grid-cols-[1fr_300px]">
         {p && <input type="hidden" name="id" value={p.id} />}
         <div className="space-y-4">

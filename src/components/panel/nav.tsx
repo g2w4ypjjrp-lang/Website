@@ -11,7 +11,7 @@ export function PanelNav({ role, unreadMsg, unreadNotif }: { role: "customer" | 
     role === "provider"
       ? [
           { items: [{ href: "/panel", label: "Genel bakış" }, { href: "/panel/siparisler", label: "Siparişler" }, { href: "/panel/mesajlar", label: "Mesajlar", badge: unreadMsg }, { href: "/panel/bildirimler", label: "Bildirimler", badge: unreadNotif }] },
-          { title: "Satış", items: [{ href: "/panel/hizmetler", label: "Hizmetlerim" }, { href: "/panel/teklifler", label: "Tekliflerim" }, { href: "/panel/kazanc", label: "Kazanç ve ödemeler" }, { href: "/panel/degerlendirmeler", label: "Değerlendirmeler" }] },
+          { title: "Satış", items: [{ href: "/panel/hizmetler", label: "Hizmetlerim" }, { href: "/panel/teklifler", label: "Tekliflerim" }, { href: "/panel/kazanc", label: "Kazanç ve ödemeler" }, { href: "/panel/tanitim", label: "Tanıtım ve premium" }, { href: "/panel/degerlendirmeler", label: "Değerlendirmeler" }] },
           { title: "Profil", items: [{ href: "/panel/profil", label: "Uzman profili" }, { href: "/panel/portfolyo", label: "Portföy" }, { href: "/panel/ayarlar", label: "Hesap ayarları" }] },
         ]
       : [

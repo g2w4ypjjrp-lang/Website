@@ -33,6 +33,7 @@ export function ServiceFilters({ sp, categories, action, showCategory = true }: 
       <AutoSubmit />
       {one(sp.q) && <input type="hidden" name="q" value={one(sp.q)} />}
       {one(sp.siralama) && <input type="hidden" name="siralama" value={one(sp.siralama)} />}
+      {one(sp.etiket) && <input type="hidden" name="etiket" value={one(sp.etiket)} />}
       {showCategory && categories && categories.length > 0 && (
         <fieldset>
           <legend className="mb-2 font-medium">Kategori</legend>
@@ -147,6 +148,7 @@ export function filtersFromSP(sp: SP) {
   const tier = one(sp.paket);
   return {
     q: one(sp.q)?.slice(0, 100),
+    tag: one(sp.etiket)?.slice(0, 60) || undefined,
     minPrice: num(sp.min),
     maxPrice: num(sp.max),
     maxDays: num(sp.teslim),
@@ -161,5 +163,5 @@ export function filtersFromSP(sp: SP) {
 }
 
 export function activeFilterCount(sp: SP) {
-  return ["min", "max", "teslim", "puan", "seviye", "paket", "sehir", "cevrimici", "kategori"].filter((k) => one(sp[k])).length;
+  return ["min", "max", "teslim", "puan", "seviye", "paket", "sehir", "cevrimici", "kategori", "etiket"].filter((k) => one(sp[k])).length;
 }

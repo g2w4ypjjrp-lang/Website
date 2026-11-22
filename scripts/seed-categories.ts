@@ -1,10 +1,11 @@
 type Sub = [slug: string, name: string];
-export type CatSeed = { slug: string; name: string; short: string; intro: string; commissionBps?: number; subs: Sub[]; faqs: { q: string; a: string }[] };
+export type CatSeed = { slug: string; name: string; short: string; intro: string; commissionBps?: number; filters?: { key: string; label: string; options: string[] }[]; subs: Sub[]; faqs: { q: string; a: string }[] };
 
 export const CATEGORIES: CatSeed[] = [
   {
     slug: "web-ve-yazilim",
     name: "Web ve yazılım",
+    filters: [{ key: "altyapi", label: "Altyapı", options: ["WordPress", "Shopify", "WooCommerce", "Next.js"] }],
     short: "Kurumsal siteden SaaS ürününe kadar web tabanlı her iş.",
     intro:
       "Bir web projesinin maliyetini en çok belirleyen şey sayfa sayısı değil, **içerik ve entegrasyon ihtiyacıdır**. Tanıtım sitesi için hazır bir altyapı yeterliyken; stok, ödeme ya da muhasebe entegrasyonu gereken işlerde özel geliştirme gerekir.\n\nTeklif istemeden önce sitenin kimin için olduğunu, hangi sayfaların şart olduğunu ve yayından sonra içeriği kimin güncelleyeceğini netleştirin. Bu üç cevap, uzmanların size gerçekçi süre ve fiyat vermesini sağlar.",

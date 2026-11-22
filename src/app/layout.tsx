@@ -9,6 +9,7 @@ import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "./globals.css";
 import { site } from "@/lib/site";
+import { SWRegister } from "@/components/sw-register";
 import plexLatin from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2";
 import plexLatinExt from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-ext-400-normal.woff2";
 import displayLatin from "@fontsource/schibsted-grotesk/files/schibsted-grotesk-latin-600-normal.woff2";
@@ -44,7 +45,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <link key={f} rel="preload" href={f} as="font" type="font/woff2" crossOrigin="anonymous" />
         ))}
       </head>
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        {children}
+        <SWRegister />
+      </body>
     </html>
   );
 }

@@ -16,6 +16,8 @@ import {
   payouts,
   providerProfiles,
   redirects,
+  reviews,
+  notifications,
   services,
   staticPages,
   tickets,
@@ -276,7 +278,18 @@ export async function saveCategoryAction(_: FormState, form: FormData): Promise<
     isActive: bool(form, "isActive"),
     noindex: bool(form, "noindex"),
     faqs: parseFaqs(str(form, "faqs")),
+    canonicalUrl: str(form, "canonicalUrl") || null,
+    filters: str(form, "filters")
+      .split("\n")
+      .map((l) => l.split("|").map((x) => x.trim()))
+      .filter((x) => x[0] && x[1])
+      .map(([label, opts]) => ({ key: slugify(label!), label: label!, options: opts!.split(",").map((o) => o.trim()).filter(Boolean).slice(0, 20) })),
     updatedAt: new Date(),
+    ...(await (async () => {
+      const img = form.get("image");
+      if (img instanceof File && img.size > 0) return { imageId: (await saveUpload(img, { ownerId: admin.id, kind: "image", isPublic: true })).id };
+      return {};
+    })()),
   };
   if (id) {
     const old = await db.query.categories.findFirst({ where: eq(categories.id, id) });
@@ -302,13 +315,16 @@ export async function saveLandingAction(_: FormState, form: FormData): Promise<F
   const publish = bool(form, "isPublished");
   // İnce içerik koruması: yayınlanacak sayfanın gövdesi en az 250 kelime olmalı
   if (publish && body.split(/\s+/).filter(Boolean).length < 250) return { error: "Yayınlamak için içerik en az 250 kelime olmalı. Kopya veya ince içerikli sayfalar sıralamaya zarar verir." };
-  const values = { ...required, body, categoryId: str(form, "categoryId") || null, faqs: parseFaqs(str(form, "faqs")), isPublished: publish, noindex: bool(form, "noindex"), updatedAt: new Date() };
+  const og = form.get("ogImage");
+  const ogImageId = og instanceof File && og.size > 0 ? (await saveUpload(og, { ownerId: admin.id, kind: "image", isPublic: true })).id : undefined;
+  const values = { ...required, body, categoryId: str(form, "categoryId") || null, faqs: parseFaqs(str(form, "faqs")), isPublished: publish, noindex: bool(form, "noindex"), canonicalUrl: str(form, "canonicalUrl") || null, updatedAt: new Date(), ...(ogImageId ? { ogImageId } : {}) };
   const clash = await db.query.landingPages.findFirst({ where: eq(landingPages.slug, slug) });
   if (clash && clash.id !== id) return { error: "Bu adres başka bir sayfada kullanılıyor." };
   if (id) await db.update(landingPages).set(values).where(eq(landingPages.id, id));
   else await db.insert(landingPages).values(values);
   await audit(admin.id, "admin.landing.save", "landing", slug, { publish });
   revalidatePath(`/${slug}`);
+  revalidatePath("/haritalar/sitemap/0.xml");
   if (!id) redirect("/yonetim/seo?kaydedildi=1");
   return { ok: "Sayfa kaydedildi." };
 }
@@ -371,6 +387,8 @@ export async function savePostAction(_: FormState, form: FormData): Promise<Form
   else postId = (await db.insert(blogPosts).values({ ...values, authorId: admin.id }).returning())[0]!.id;
   await audit(admin.id, "admin.post.save", "post", postId, { status });
   revalidatePath("/blog");
+  revalidatePath(`/blog/${slug}`);
+  revalidatePath("/");
   if (!id) redirect(`/yonetim/blog/${postId}?kaydedildi=1`);
   return { ok: "Yazı kaydedildi." };
 }
@@ -414,4 +432,79 @@ export async function bannerAction(form: FormData) {
   await audit(admin.id, `admin.banner.${op || "create"}`, "banner", str(form, "id") || null);
   revalidatePath("/yonetim/icerik");
   revalidatePath("/");
+}
+
+/* ───────────── Değerlendirme moderasyonu ve başarı hikâyeleri ───────────── */
+
+export async function adminReviewAction(form: FormData) {
+  const admin = await requireAdmin();
+  const id = z.string().uuid().parse(form.get("id"));
+  const op = str(form, "op");
+  const r = await db.query.reviews.findFirst({ where: eq(reviews.id, id) });
+  if (!r) return;
+  if (op === "hide" || op === "show") {
+    await db.update(reviews).set({ isHidden: op === "hide", isFeatured: op === "hide" ? false : r.isFeatured }).where(eq(reviews.id, id));
+    // Ortalama puanları yeniden hesapla
+    await db.execute(sql`update provider_profiles set rating_avg = coalesce((select round(avg(rating) * 100) from reviews where provider_id = ${r.providerId} and not is_hidden), 0), rating_count = (select count(*) from reviews where provider_id = ${r.providerId} and not is_hidden) where user_id = ${r.providerId}`);
+    if (r.serviceId) await db.execute(sql`update services set rating_avg = coalesce((select round(avg(rating) * 100) from reviews where service_id = ${r.serviceId} and not is_hidden), 0), rating_count = (select count(*) from reviews where service_id = ${r.serviceId} and not is_hidden) where id = ${r.serviceId}`);
+  }
+  if (op === "feature") await db.update(reviews).set({ isFeatured: true, storyTitle: str(form, "storyTitle").slice(0, 120) || null }).where(eq(reviews.id, id));
+  if (op === "unfeature") await db.update(reviews).set({ isFeatured: false }).where(eq(reviews.id, id));
+  await audit(admin.id, `admin.review.${op}`, "review", id);
+  revalidatePath("/yonetim/degerlendirmeler");
+  revalidatePath("/");
+}
+
+/* ───────────── Sistem duyurusu ───────────── */
+
+export async function broadcastAction(_: FormState, form: FormData): Promise<FormState> {
+  const admin = await requireAdmin();
+  const title = str(form, "title");
+  const body = str(form, "body");
+  const audience = str(form, "audience"); // all | customer | provider
+  if (title.length < 5) return { error: "Başlık en az 5 karakter olmalı." };
+  const rows = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.status, "active"), audience === "customer" || audience === "provider" ? eq(users.role, audience) : sql`${users.role} <> 'admin'`));
+  const link = str(form, "link") || null;
+  for (let i = 0; i < rows.length; i += 500)
+    await db.insert(notifications).values(rows.slice(i, i + 500).map((u) => ({ userId: u.id, type: "system", title, body, link })));
+  if (bool(form, "email")) for (const u of rows) await notify(u.id, "system", title, { body, link: link ?? undefined, email: true }).catch(() => {});
+  await audit(admin.id, "admin.broadcast", "notification", null, { title, audience, count: rows.length });
+  return { ok: `Duyuru ${rows.length} kullanıcıya gönderildi.` };
+}
+
+/* ───────────── Rol ve profil SEO ───────────── */
+
+export async function adminRoleAction(form: FormData) {
+  const admin = await requireAdmin();
+  const id = z.string().uuid().parse(form.get("id"));
+  const role = z.enum(["customer", "provider"]).parse(form.get("role"));
+  const u = await db.query.users.findFirst({ where: eq(users.id, id) });
+  if (!u || u.role === "admin") return;
+  await db.update(users).set({ role }).where(eq(users.id, id));
+  if (role === "provider" && !(await db.query.providerProfiles.findFirst({ where: eq(providerProfiles.userId, id) }))) {
+    let slug = slugify(u.name, 40) || "uzman";
+    if (await db.query.providerProfiles.findFirst({ where: eq(providerProfiles.slug, slug) })) slug = `${slug}-${id.slice(0, 4)}`;
+    await db.insert(providerProfiles).values({ userId: id, slug, displayName: u.name });
+  }
+  await destroyAllSessions(id);
+  await audit(admin.id, "admin.user.role", "user", id, { from: u.role, to: role });
+  revalidatePath("/yonetim/kullanicilar");
+}
+
+export async function adminProviderSeoAction(form: FormData) {
+  const admin = await requireAdmin();
+  const id = z.string().uuid().parse(form.get("id"));
+  const p = await db.query.providerProfiles.findFirst({ where: eq(providerProfiles.userId, id) });
+  if (!p) return;
+  const slug = slugify(str(form, "slug"), 40) || p.slug;
+  if (slug !== p.slug) {
+    if (await db.query.providerProfiles.findFirst({ where: eq(providerProfiles.slug, slug) })) return;
+    await db.insert(redirects).values({ fromPath: `/uzman/${p.slug}`, toPath: `/uzman/${slug}` }).onConflictDoNothing();
+  }
+  await db.update(providerProfiles).set({ slug, seoTitle: str(form, "seoTitle") || null, seoDescription: str(form, "seoDescription") || null, noindex: bool(form, "noindex") }).where(eq(providerProfiles.userId, id));
+  await audit(admin.id, "admin.provider.seo", "user", id);
+  revalidatePath("/yonetim/kullanicilar");
 }

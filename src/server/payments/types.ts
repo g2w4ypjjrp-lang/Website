@@ -5,6 +5,8 @@ export type CheckoutInput = {
   totalKurus: number;
   providerEarningKurus: number;
   subMerchantKey: string | null;
+  /** Platformun kendi geliri (öne çıkarma, premium üyelik): alt üye işyerine pay aktarılmaz. */
+  platformOnly?: boolean;
   itemTitle: string;
   categoryName: string;
   buyer: { id: string; name: string; email: string; ip: string; city?: string; address?: string; identityNumber?: string };

@@ -5,6 +5,8 @@ import { ButtonLink } from "@/components/ui/button";
 import { buildMetadata } from "@/lib/seo";
 import { formatTRY } from "@/lib/utils";
 
+export const revalidate = 600;
+
 export const metadata: Metadata = buildMetadata({ title: "Uzman olarak katıl: freelancer ve ajanslar için", description: "Hizmetlerini paket olarak sat, projelere teklif ver. Ücretsiz üyelik, şeffaf komisyon, güvenli ödeme.", path: "/uzman-ol" });
 
 export default async function BecomePage() {

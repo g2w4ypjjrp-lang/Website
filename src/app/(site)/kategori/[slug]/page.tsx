@@ -27,6 +27,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     description: c.seoDescription ?? c.shortDescription,
     path: `/kategori/${c.slug}${page > 1 ? `?sayfa=${page}` : ""}`,
     noindex: c.noindex || hasFilters(sp),
+    canonical: c.canonicalUrl,
+    image: c.imageId ? `/api/files/${c.imageId}` : null,
   });
 }
 
@@ -67,9 +69,12 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     <div className="container-x pt-6">
       <Breadcrumbs items={crumbs} />
       <header className="mt-6 grid gap-6 border-b border-line pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
-        <div>
+        <div className="flex items-start gap-5">
+          {c.imageId && <img src={`/api/files/${c.imageId}`} alt="" width={88} height={88} className="hidden h-[88px] w-[88px] shrink-0 rounded-md border border-line object-cover sm:block" />}
+          <div>
           <h1 className="text-[34px] font-semibold sm:text-[44px]">{c.h1 ?? c.name}</h1>
           <p className="mt-3 max-w-2xl text-[16.5px] text-ink-2">{c.shortDescription}</p>
+          </div>
         </div>
         <div className="flex flex-wrap gap-x-8 gap-y-2 text-[13.5px] text-muted">
           <span><span className="num text-[18px] text-ink">{formatNumber(result.total)}</span> aktif hizmet</span>
@@ -80,6 +85,20 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           )}
         </div>
       </header>
+
+      {c.filters.length > 0 && (
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-b border-line py-4 text-[13.5px]">
+          {c.filters.map((f) => (
+            <div key={f.key} className="flex flex-wrap items-center gap-1.5">
+              <span className="mr-1 text-muted">{f.label}:</span>
+              {f.options.map((o) => {
+                const on = sp.etiket === o;
+                return <Link key={o} href={on ? base : `${base}?etiket=${encodeURIComponent(o)}`} aria-pressed={on} className={on ? "rounded-sm bg-ink px-2 py-0.5 text-white" : "rounded-sm border border-line bg-surface px-2 py-0.5 hover:border-ink/40"}>{o}</Link>;
+              })}
+            </div>
+          ))}
+        </div>
+      )}
 
       {c.children.length > 0 && (
         <nav aria-label="Alt kategoriler" className="-mx-4 overflow-x-auto px-4 py-4 [scrollbar-width:none]">

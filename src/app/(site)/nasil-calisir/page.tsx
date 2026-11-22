@@ -5,6 +5,8 @@ import { ButtonLink } from "@/components/ui/button";
 import { JsonLd } from "@/components/json-ld";
 import { buildMetadata, ld } from "@/lib/seo";
 
+export const revalidate = 600;
+
 export const metadata: Metadata = buildMetadata({ title: "Nasıl çalışır? Güvenli ödeme ve sipariş süreci", description: "Eksen’de sipariş, güvenli ödeme, teslimat, revizyon, iade ve uyuşmazlık süreçleri adım adım.", path: "/nasil-calisir" });
 
 export default async function HowPage() {

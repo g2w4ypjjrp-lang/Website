@@ -3,10 +3,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IconHome, IconSearch, IconPlus, IconChat, IconUser } from "@/components/icons";
 import { cn } from "@/lib/utils";
+import { useMe } from "./use-me";
 
 /** Mobilde uygulama hissi veren alt gezinme çubuğu. Masaüstünde gizlenir. */
-export function TabBar({ loggedIn }: { loggedIn: boolean }) {
+export function TabBar() {
   const p = usePathname();
+  const loggedIn = !!useMe()?.user;
   const items = [
     { href: "/", label: "Keşfet", icon: IconHome, match: (x: string) => x === "/" },
     { href: "/ara", label: "Ara", icon: IconSearch, match: (x: string) => x.startsWith("/ara") || x.startsWith("/kategori") },

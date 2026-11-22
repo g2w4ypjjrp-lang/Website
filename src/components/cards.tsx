@@ -162,6 +162,7 @@ type ProviderCardData = {
   avatarId: string | null;
   lastSeenAt: Date | null;
   accountType: "individual" | "agency" | "company";
+  premiumUntil?: Date | null;
 };
 
 export function ProviderRow({ p, compact }: { p: ProviderCardData; compact?: boolean }) {
@@ -175,6 +176,7 @@ export function ProviderRow({ p, compact }: { p: ProviderCardData; compact?: boo
           </h3>
           {p.verifiedAt && <IconShield size={14} className="text-trust" aria-label="Doğrulanmış" />}
           {p.accountType !== "individual" && <Badge>{p.accountType === "agency" ? "Ajans" : "Şirket"}</Badge>}
+          {p.premiumUntil && new Date(p.premiumUntil) > new Date() && <Badge tone="ink">Premium</Badge>}
         </div>
         <p className="mt-0.5 truncate text-[14px] text-ink-2">{p.headline || "Profilini hazırlıyor"}</p>
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-muted">

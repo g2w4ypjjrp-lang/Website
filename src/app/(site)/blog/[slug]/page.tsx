@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { and, eq, lte } from "drizzle-orm";
 import { db } from "@/db";
 import { blogPosts, categories } from "@/db/schema";
-import { getCurrentUser } from "@/server/auth";
 import { latestPosts, listServices } from "@/server/queries";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ServiceCard } from "@/components/cards";
@@ -15,10 +14,16 @@ import { absoluteUrl, site } from "@/lib/site";
 import { renderMarkdown, extractHeadings } from "@/lib/markdown";
 import { formatDate, slugify, fileUrl } from "@/lib/utils";
 
+export const revalidate = 600;
+/** Boş liste: sayfalar ilk istekte üretilir ve ISR ile önbelleğe alınır. */
+export function generateStaticParams() {
+  return [];
+}
+
 type Props = { params: Promise<{ slug: string }> };
 
-async function load(slug: string, preview = false) {
-  return db.query.blogPosts.findFirst({ where: preview ? eq(blogPosts.slug, slug) : and(eq(blogPosts.slug, slug), eq(blogPosts.status, "published"), lte(blogPosts.publishedAt, new Date())) });
+async function load(slug: string) {
+  return db.query.blogPosts.findFirst({ where: and(eq(blogPosts.slug, slug), eq(blogPosts.status, "published"), lte(blogPosts.publishedAt, new Date())) });
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -29,8 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
-  const user = await getCurrentUser();
-  const p = await load(slug, user?.role === "admin");
+  const p = await load(slug);
   if (!p) notFound();
   const [cat, more] = await Promise.all([p.relatedCategoryId ? db.query.categories.findFirst({ where: eq(categories.id, p.relatedCategoryId) }) : null, latestPosts(3, p.id)]);
   const svc = cat ? (await listServices({ categoryIds: [cat.id], perPage: 3 })).items : [];
@@ -54,7 +58,6 @@ export default async function PostPage({ params }: Props) {
         }}
       />
       <Breadcrumbs items={[{ name: "Rehberler", path: "/blog" }, { name: p.title, path }]} />
-      {p.status !== "published" && <p className="mt-4 rounded-md bg-warn-soft px-3 py-2 text-[14px] text-warn">Önizleme — bu yazı yayında değil.</p>}
       <header className="mx-auto mt-10 max-w-[760px]">
         <p className="eyebrow">{p.category} · {p.readingMinutes} dk okuma</p>
         <h1 className="mt-4 text-[34px] font-semibold leading-[1.08] sm:text-[48px]">{p.title}</h1>

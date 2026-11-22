@@ -30,7 +30,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
           {children}
         </main>
       </div>
-      <TabBar loggedIn />
+      <TabBar />
     </>
   );
 }

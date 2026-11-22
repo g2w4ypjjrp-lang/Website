@@ -12,9 +12,9 @@ export function AdminNav({ name, pending, open }: { name: string; pending: numbe
   const [mobile, setMobile] = useState(false);
   const groups: [string, [string, string, number?][]][] = [
     ["Genel", [["/yonetim", "Özet ve analitik"], ["/yonetim/talepler", "İade ve şikâyetler", open]]],
-    ["Pazaryeri", [["/yonetim/kullanicilar", "Kullanıcılar"], ["/yonetim/hizmetler", "Hizmetler", pending], ["/yonetim/siparisler", "Siparişler"], ["/yonetim/finans", "Finans"]]],
+    ["Pazaryeri", [["/yonetim/kullanicilar", "Kullanıcılar"], ["/yonetim/hizmetler", "Hizmetler", pending], ["/yonetim/siparisler", "Siparişler"], ["/yonetim/degerlendirmeler", "Değerlendirmeler"], ["/yonetim/finans", "Finans"]]],
     ["İçerik", [["/yonetim/kategoriler", "Kategoriler"], ["/yonetim/seo", "SEO"], ["/yonetim/blog", "Blog"], ["/yonetim/icerik", "Sayfalar ve bannerlar"]]],
-    ["Sistem", [["/yonetim/ayarlar", "Ayarlar"], ["/yonetim/loglar", "Denetim kayıtları"]]],
+    ["Sistem", [["/yonetim/ayarlar", "Ayarlar"], ["/yonetim/duyuru", "Sistem duyurusu"], ["/yonetim/loglar", "Denetim kayıtları"]]],
   ];
   const active = (h: string) => (h === "/yonetim" ? p === h : p.startsWith(h));
   const nav = (

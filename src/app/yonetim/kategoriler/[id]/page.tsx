@@ -34,6 +34,11 @@ export default async function EditCategory({ params, searchParams }: { params: P
           <F label="SEO başlığı"><input name="seoTitle" defaultValue={c?.seoTitle ?? ""} maxLength={70} className="field !py-2" /></F>
           <F label="Meta açıklama"><input name="seoDescription" defaultValue={c?.seoDescription ?? ""} maxLength={160} className="field !py-2" /></F>
         </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <F label="Kategori görseli" hint="Kategori sayfasının başlığında ve paylaşım kartında kullanılır.">{c?.imageId && <img src={`/api/files/${c.imageId}`} alt="" className="mb-2 h-20 rounded border border-line object-cover" />}<input type="file" name="image" accept="image/*" className="block text-[12.5px]" /></F>
+          <F label="Canonical URL" hint="Boşsa sayfanın kendi adresi. Yalnızca içerik başka bir sayfanın kopyasıysa doldurun."><input name="canonicalUrl" defaultValue={c?.canonicalUrl ?? ""} placeholder="/kategori/…" className="field !py-2 font-mono text-[12.5px]" /></F>
+        </div>
+        <F label="Özel filtreler" hint="Her satır: Filtre adı | seçenek1, seçenek2. Seçenekler hizmet etiketleriyle eşleşir. Ör: Altyapı | WordPress, Shopify, Next.js"><textarea name="filters" defaultValue={c?.filters.map((f) => `${f.label} | ${f.options.join(", ")}`).join("\n")} rows={3} className="field font-mono text-[13px]" /></F>
         <F label="SSS" hint="Her satır: Soru | Cevap. FAQ schema yalnızca bu içerik sayfada görünür olduğu için üretilir."><textarea name="faqs" defaultValue={c?.faqs.map((f) => `${f.q} | ${f.a}`).join("\n")} rows={5} className="field text-[13.5px]" /></F>
       </AdminForm>
     </>

@@ -34,7 +34,7 @@ type IyziResp = { status: "success" | "failure"; errorMessage?: string; [k: stri
 export const iyzicoProvider: PaymentProvider = {
   name: "iyzico",
   async createCheckout(i) {
-    if (!i.subMerchantKey) throw new Error("Uzmanın iyzico alt üye işyeri kaydı tamamlanmamış.");
+    if (!i.platformOnly && !i.subMerchantKey) throw new Error("Uzmanın iyzico alt üye işyeri kaydı tamamlanmamış.");
     const [first, ...rest] = i.buyer.name.split(" ");
     const r = await call<IyziResp & { token: string; paymentPageUrl: string }>("/payment/iyzipos/checkoutform/initialize/auth/ecom", {
       locale: "tr",
@@ -65,8 +65,7 @@ export const iyzicoProvider: PaymentProvider = {
           category1: i.categoryName,
           itemType: "VIRTUAL",
           price: tl(i.totalKurus),
-          subMerchantKey: i.subMerchantKey,
-          subMerchantPrice: tl(i.providerEarningKurus),
+          ...(i.platformOnly ? {} : { subMerchantKey: i.subMerchantKey, subMerchantPrice: tl(i.providerEarningKurus) }),
         },
       ],
     });

@@ -49,6 +49,7 @@ async function main() {
       sortOrder: i,
       faqs: c.faqs,
       commissionBps: c.commissionBps,
+      filters: c.filters ?? [],
       seoTitle: `${c.name} hizmetleri`,
       seoDescription: `${c.short} Doğrulanmış uzmanların paketlerini karşılaştırın, güvenli ödemeyle sipariş verin.`,
     });

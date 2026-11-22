@@ -82,6 +82,7 @@ export default async function ProviderPage({ params }: Props) {
             <div className="mt-3 flex flex-wrap items-center gap-2">
               {d.p.verifiedAt && <VerifiedMark label="Doğrulanmış hesap" />}
               <Badge>{LEVEL_LABEL[d.p.level]}</Badge>
+              {d.p.premiumUntil && d.p.premiumUntil > new Date() && <Badge tone="ink">Premium</Badge>}
               {d.u.accountType !== "individual" && <Badge>{d.u.accountType === "agency" ? "Ajans" : "Şirket"}</Badge>}
             </div>
             <dl className="mt-6 divide-y divide-line-2 border-y border-line text-[14px]">

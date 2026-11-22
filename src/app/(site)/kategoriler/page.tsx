@@ -4,6 +4,8 @@ import { getCategoryTree } from "@/server/queries";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { buildMetadata } from "@/lib/seo";
 
+export const revalidate = 600;
+
 export const metadata: Metadata = buildMetadata({ title: "Tüm hizmet kategorileri", description: "Web, mobil, tasarım, dijital pazarlama, video ve yapay zekâ alanlarındaki tüm dijital hizmet kategorileri.", path: "/kategoriler" });
 
 export default async function CategoriesPage() {

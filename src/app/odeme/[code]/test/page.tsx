@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { orders } from "@/db/schema";
+import { orders, promotions } from "@/db/schema";
 import { requireUser } from "@/server/auth";
 import { formatTRY } from "@/lib/utils";
 
@@ -13,8 +13,10 @@ export default async function SandboxPay({ params, searchParams }: { params: Pro
   if ((process.env.PAYMENT_PROVIDER ?? "sandbox") !== "sandbox") notFound();
   const [{ code }, { token }] = await Promise.all([params, searchParams]);
   const user = await requireUser();
-  const order = await db.query.orders.findFirst({ where: eq(orders.code, code) });
-  if (!order || order.buyerId !== user.id || !token) notFound();
+  const o = await db.query.orders.findFirst({ where: eq(orders.code, code) });
+  const promo = o ? null : await db.query.promotions.findFirst({ where: eq(promotions.code, code) });
+  const order = o ? { owner: o.buyerId, totalKurus: o.totalKurus } : promo ? { owner: promo.providerId, totalKurus: promo.amountKurus } : null;
+  if (!order || order.owner !== user.id || !token) notFound();
   return (
     <div className="mx-auto max-w-md rounded-lg border border-dashed border-warn/50 bg-surface p-8">
       <p className="eyebrow !text-warn">Test ortamı · gerçek para çekilmez</p>

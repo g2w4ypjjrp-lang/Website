@@ -2,7 +2,7 @@ import Link from "next/link";
 import { and, desc, eq, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { providerProfiles, users } from "@/db/schema";
-import { adminUserAction } from "@/app/actions/admin";
+import { adminUserAction, adminRoleAction, adminProviderSeoAction } from "@/app/actions/admin";
 import { AHead, Table, Tabs } from "@/components/admin/ui";
 import { Badge } from "@/components/ui/primitives";
 import { formatDate } from "@/lib/utils";
@@ -54,6 +54,20 @@ export default async function AdminUsers({ searchParams }: { searchParams: Promi
                   )}
                   {u.status === "active" ? <Op id={u.id} op="suspend" label="Askıya al" danger /> : u.status === "suspended" ? <Op id={u.id} op="activate" label="Aktifleştir" /> : null}
                   {u.status !== "deleted" && <Op id={u.id} op="delete" label="Sil (anonimleştir)" danger />}
+                  <form action={adminRoleAction} className="flex items-center gap-1"><input type="hidden" name="id" value={u.id} /><select name="role" defaultValue={u.role} className="rounded border border-line bg-surface px-1 text-[12px]"><option value="customer">Müşteri</option><option value="provider">Uzman</option></select><button className="underline">Rolü değiştir</button></form>
+                  {p && (
+                    <details className="w-full">
+                      <summary className="cursor-pointer underline">Profil SEO</summary>
+                      <form action={adminProviderSeoAction} className="mt-2 grid gap-1.5">
+                        <input type="hidden" name="id" value={u.id} />
+                        <input name="slug" defaultValue={p.slug} className="field !py-1 font-mono text-[12px]" aria-label="Adres" />
+                        <input name="seoTitle" defaultValue={p.seoTitle ?? ""} placeholder="SEO başlığı" maxLength={70} className="field !py-1 text-[12px]" />
+                        <input name="seoDescription" defaultValue={p.seoDescription ?? ""} placeholder="Meta açıklama" maxLength={160} className="field !py-1 text-[12px]" />
+                        <label className="flex items-center gap-1.5"><input type="checkbox" name="noindex" defaultChecked={p.noindex} /> noindex</label>
+                        <button className="justify-self-start rounded bg-ink px-2 py-0.5 text-white">Kaydet</button>
+                      </form>
+                    </details>
+                  )}
                 </div>
               )}
             </td>
