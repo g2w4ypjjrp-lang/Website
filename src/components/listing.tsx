@@ -95,7 +95,7 @@ export function SortSelect({ sp, action }: { sp: SP; action: string }) {
       {Object.entries(sp)
         .filter(([k]) => k !== "siralama" && k !== "sayfa")
         .map(([k, v]) => (one(v) ? <input key={k} type="hidden" name={k} value={one(v)} /> : null))}
-      <label htmlFor="siralama" className="hidden text-muted sm:block">Sırala</label>
+      <label htmlFor="siralama" className="sr-only text-muted sm:not-sr-only">Sırala</label>
       <select id="siralama" name="siralama" defaultValue={one(sp.siralama) ?? "onerilen"} className="field !w-auto !py-1.5 text-[14px]">
         {SORTS.map(([v, l]) => (
           <option key={v} value={v}>{l}</option>

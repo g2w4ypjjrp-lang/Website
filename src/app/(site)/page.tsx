@@ -227,7 +227,7 @@ export default async function HomePage() {
             <div className="grid gap-8 md:grid-cols-3">
               {reviews.map(({ r, buyerName, providerName, providerSlug }) => (
                 <figure key={r.id} className="border-l-2 border-accent pl-5">
-                  <div className="flex gap-0.5 text-accent" aria-label={`${r.rating} yıldız`}>
+                  <div className="flex gap-0.5 text-accent" role="img" aria-label={`${r.rating} yıldız`}>
                     {Array.from({ length: r.rating }).map((_, i) => <IconStar key={i} filled size={13} />)}
                   </div>
                   <blockquote className="mt-3 text-[15.5px] leading-relaxed text-ink">“{r.comment}”</blockquote>

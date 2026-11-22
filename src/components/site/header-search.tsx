@@ -90,6 +90,7 @@ export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun
             } else if (e.key === "Escape") setOpen(false);
           }}
           placeholder={placeholder}
+          role="combobox"
           aria-label="Hizmet, uzman veya kategori ara"
           aria-autocomplete="list"
           aria-expanded={open && items.length > 0}

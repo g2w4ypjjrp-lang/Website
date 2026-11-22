@@ -108,7 +108,10 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             </MobileFilters>
           </div>
           {result.items.length ? (
+            <>
+            <h2 className="sr-only">Hizmetler</h2>
             <ServiceGrid items={result.items} className="lg:grid-cols-3" />
+            </>
           ) : (
             <EmptyState
               title="Bu kriterlere uyan hizmet yok"

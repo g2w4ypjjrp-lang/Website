@@ -135,15 +135,15 @@ export default async function ServicePage({ params, searchParams }: Props) {
                 <table className="w-full min-w-[520px] text-[14px]">
                   <thead>
                     <tr className="border-b border-line text-left">
-                      <th className="p-3 font-medium text-muted" />
+                      <th className="p-3 font-medium text-muted"><span className="sr-only">Özellik</span></th>
                       {d.packages.map((p) => <th key={p.tier} className="p-3 font-semibold">{TIER_LABEL[p.tier]}<span className="block text-[12.5px] font-normal text-muted">{p.name}</span></th>)}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-line-2">
-                    <tr><td className="p-3 text-muted">Fiyat</td>{d.packages.map((p) => <td key={p.tier} className="num p-3">{formatTRY(p.priceKurus)}</td>)}</tr>
-                    <tr><td className="p-3 text-muted">Teslim</td>{d.packages.map((p) => <td key={p.tier} className="p-3">{p.deliveryDays} gün</td>)}</tr>
-                    <tr><td className="p-3 text-muted">Revizyon</td>{d.packages.map((p) => <td key={p.tier} className="p-3">{p.revisions}</td>)}</tr>
-                    <tr className="align-top"><td className="p-3 text-muted">Kapsam</td>{d.packages.map((p) => <td key={p.tier} className="p-3 text-ink-2">{p.features.join(" · ")}</td>)}</tr>
+                    <tr><th scope="row" className="p-3 text-left font-normal text-muted">Fiyat</th>{d.packages.map((p) => <td key={p.tier} className="num p-3">{formatTRY(p.priceKurus)}</td>)}</tr>
+                    <tr><th scope="row" className="p-3 text-left font-normal text-muted">Teslim</th>{d.packages.map((p) => <td key={p.tier} className="p-3">{p.deliveryDays} gün</td>)}</tr>
+                    <tr><th scope="row" className="p-3 text-left font-normal text-muted">Revizyon</th>{d.packages.map((p) => <td key={p.tier} className="p-3">{p.revisions}</td>)}</tr>
+                    <tr className="align-top"><th scope="row" className="p-3 text-left font-normal text-muted">Kapsam</th>{d.packages.map((p) => <td key={p.tier} className="p-3 text-ink-2">{p.features.join(" · ")}</td>)}</tr>
                   </tbody>
                 </table>
               </div>

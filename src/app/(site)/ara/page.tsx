@@ -112,7 +112,10 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               action={<ButtonLink href="/proje-olustur" variant="accent">Proje oluştur</ButtonLink>}
             />
           ) : services ? (
+            <>
+            <h2 className="sr-only">Hizmetler</h2>
             <ServiceGrid items={services.items} className="lg:grid-cols-3" />
+            </>
           ) : providers ? (
             <div className="divide-y divide-line border-y border-line">{providers.items.map((p) => <ProviderRow key={p.slug} p={p} />)}</div>
           ) : projects ? (

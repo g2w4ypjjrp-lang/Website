@@ -95,12 +95,14 @@ export default async function LandingPage({ params }: Props) {
               </div>
             </div>
             {showStats && (
+              <div>
               <dl className="grid grid-cols-3 border-t border-ink pt-4 text-[13px] lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
                 <div><dt className="text-muted">Aktif ilan</dt><dd className="num mt-1 text-[22px]">{stats!.n}</dd></div>
                 <div><dt className="text-muted">Başlangıç fiyatı (medyan)</dt><dd className="num mt-1 text-[22px]">{formatTRY(stats!.med)}</dd></div>
                 <div><dt className="text-muted">Tipik teslim</dt><dd className="num mt-1 text-[22px]">{stats!.days} gün</dd></div>
-                <p className="col-span-3 mt-3 text-[12px] text-faint">Platformdaki yayında olan ilanlardan anlık hesaplanır.</p>
               </dl>
+              <p className="mt-3 text-[12px] text-muted lg:pl-8">Platformdaki yayında olan ilanlardan anlık hesaplanır.</p>
+              </div>
             )}
           </div>
         </div>

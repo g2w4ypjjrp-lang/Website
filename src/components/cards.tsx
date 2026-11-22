@@ -18,7 +18,7 @@ const MOTIFS: Record<string, { bg: string; fg: string; draw: (fg: string) => Rea
         <rect x="36" y="50" width="60" height="8" fill={c} opacity=".85" />
         <rect x="36" y="64" width="90" height="4" fill={c} opacity=".35" />
         <rect x="36" y="72" width="76" height="4" fill={c} opacity=".35" />
-        <rect x="132" y="50" width="32" height="56" fill="#d6452a" />
+        <rect x="132" y="50" width="32" height="56" fill="#c63e22" />
       </>
     ),
   },
@@ -28,7 +28,7 @@ const MOTIFS: Record<string, { bg: string; fg: string; draw: (fg: string) => Rea
     draw: (c) => (
       <>
         <rect x="78" y="14" width="44" height="112" rx="8" fill="none" stroke={c} strokeWidth="2" />
-        <rect x="86" y="30" width="28" height="28" fill="#d6452a" />
+        <rect x="86" y="30" width="28" height="28" fill="#c63e22" />
         <rect x="86" y="64" width="28" height="4" fill={c} opacity=".4" />
         <rect x="86" y="72" width="20" height="4" fill={c} opacity=".4" />
         <path d="M94 116h12" stroke={c} strokeWidth="2" />
@@ -42,7 +42,7 @@ const MOTIFS: Record<string, { bg: string; fg: string; draw: (fg: string) => Rea
     draw: (c) => (
       <>
         <circle cx="86" cy="72" r="38" fill="none" stroke={c} strokeWidth="2" />
-        <rect x="96" y="44" width="56" height="56" fill="#d6452a" opacity=".9" />
+        <rect x="96" y="44" width="56" height="56" fill="#c63e22" opacity=".9" />
         <path d="M20 118h160" stroke={c} strokeWidth="2" />
         <path d="M86 20v104M30 72h130" stroke={c} strokeWidth="1" strokeDasharray="2 4" />
       </>
@@ -55,7 +55,7 @@ const MOTIFS: Record<string, { bg: string; fg: string; draw: (fg: string) => Rea
       <>
         <path d="M26 118h148" stroke={c} strokeWidth="2" />
         {[0, 1, 2, 3, 4].map((i) => (
-          <rect key={i} x={36 + i * 28} y={110 - (i + 1) * 15} width="16" height={(i + 1) * 15} fill={i === 4 ? "#d6452a" : c} opacity={i === 4 ? 1 : 0.25 + i * 0.12} />
+          <rect key={i} x={36 + i * 28} y={110 - (i + 1) * 15} width="16" height={(i + 1) * 15} fill={i === 4 ? "#c63e22" : c} opacity={i === 4 ? 1 : 0.25 + i * 0.12} />
         ))}
         <path d="M44 90 72 74l28 8 28-26 30-18" fill="none" stroke={c} strokeWidth="2" />
       </>
@@ -67,7 +67,7 @@ const MOTIFS: Record<string, { bg: string; fg: string; draw: (fg: string) => Rea
     draw: (c) => (
       <>
         {[0, 1, 2].map((i) => (
-          <rect key={i} x={28 + i * 50} y="36" width="44" height="68" rx="3" fill={i === 1 ? "#d6452a" : "none"} stroke={c} strokeWidth="2" />
+          <rect key={i} x={28 + i * 50} y="36" width="44" height="68" rx="3" fill={i === 1 ? "#c63e22" : "none"} stroke={c} strokeWidth="2" />
         ))}
         <path d="M95 60v20l16-10-16-10Z" fill="#fff" />
         <path d="M28 120h144" stroke={c} strokeWidth="2" strokeDasharray="10 6" />
@@ -85,7 +85,7 @@ const MOTIFS: Record<string, { bg: string; fg: string; draw: (fg: string) => Rea
         {[[50, 40], [100, 30], [150, 46], [64, 100], [136, 104]].map(([x, y], i) => (
           <circle key={`c${i}`} cx={x} cy={y} r="6" fill="#fff" stroke={c} strokeWidth="2" />
         ))}
-        <rect x="88" y="60" width="24" height="24" fill="#d6452a" />
+        <rect x="88" y="60" width="24" height="24" fill="#c63e22" />
       </>
     ),
   },
