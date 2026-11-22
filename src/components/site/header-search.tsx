@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { IconSearch } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
-type Suggestion = { type: "category" | "service" | "provider" | "landing"; label: string; href: string; meta?: string };
+type Suggestion = { type: "category" | "service" | "provider" | "landing" | "city"; label: string; href: string; meta?: string };
 
-const TYPE_LABEL = { category: "Kategori", service: "Hizmet", provider: "Uzman", landing: "Rehber" };
+const TYPE_LABEL = { category: "Kategori", service: "Hizmet", provider: "Uzman", landing: "Rehber", city: "İl" };
 
 export function useSuggestions(q: string) {
   const [items, setItems] = useState<Suggestion[]>([]);

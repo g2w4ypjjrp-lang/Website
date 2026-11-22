@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/primitives";
 import { AutoSubmit } from "@/components/auto-submit";
 import { buildMetadata } from "@/lib/seo";
 import { formatNumber } from "@/lib/utils";
+import { CitySelect } from "@/components/city-select";
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<SP> }): Promise<Metadata> {
   const sp = await searchParams;
@@ -43,7 +44,7 @@ export default async function ProvidersPage({ searchParams }: { searchParams: Pr
         <input name="q" defaultValue={one(sp.q)} placeholder="Yetenek veya isim" className="field !w-56 !py-2" />
         <select name="kategori" defaultValue={cat?.slug ?? ""} className="field !w-auto !py-2"><option value="">Tüm alanlar</option>{tree.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}</select>
         <select name="tur" defaultValue={type ?? ""} className="field !w-auto !py-2"><option value="">Tüm hesaplar</option><option value="bireysel">Freelancer</option><option value="ajans">Ajans</option><option value="sirket">Şirket</option></select>
-        <input name="sehir" defaultValue={one(sp.sehir)} placeholder="Şehir" className="field !w-36 !py-2" />
+        <CitySelect name="sehir" defaultValue={one(sp.sehir)} placeholder="Tüm iller" className="field !w-40 !py-2" />
         <select name="siralama" defaultValue={one(sp.siralama) ?? ""} className="field !w-auto !py-2"><option value="">Önerilen</option><option value="rating">En yüksek puan</option><option value="newest">En yeni</option></select>
         <label className="flex items-center gap-2 py-2"><input type="checkbox" name="dogrulanmis" value="1" defaultChecked={one(sp.dogrulanmis) === "1"} className="h-4 w-4 accent-[var(--color-ink)]" /> Yalnızca doğrulanmış</label>
         <button className="h-9 rounded-md bg-ink px-4 text-white">Filtrele</button>

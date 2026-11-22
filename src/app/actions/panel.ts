@@ -13,6 +13,7 @@ import { saveUpload } from "@/server/storage";
 import { audit } from "@/server/audit";
 import { notify } from "@/server/notify";
 import { slugify } from "@/lib/utils";
+import { citySlugFromName, getCity } from "@/lib/tr-cities";
 import type { FormState } from "./auth";
 
 /* ───────────── Sipariş işlemleri ───────────── */
@@ -240,7 +241,8 @@ export async function saveProfileAction(_: FormState, form: FormData): Promise<F
       displayName: d.displayName,
       headline: d.headline,
       bio: d.bio,
-      city: d.city || null,
+      // İl adı 81 ilden birine normalize edilir (il sayfalarındaki uzman sayıları için)
+      city: getCity(citySlugFromName(d.city))?.name ?? null,
       website: d.website || null,
       skills: d.skills.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 15),
       languages: d.languages.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 6),
@@ -294,7 +296,7 @@ export async function saveAccountAction(_: FormState, form: FormData): Promise<F
     taxOffice: String(form.get("taxOffice") ?? "").slice(0, 80) || undefined,
     taxNumber: String(form.get("taxNumber") ?? "").replace(/\D/g, "").slice(0, 11) || undefined,
     address: String(form.get("address") ?? "").slice(0, 300) || undefined,
-    city: String(form.get("city") ?? "").slice(0, 40) || undefined,
+    city: getCity(citySlugFromName(String(form.get("city") ?? "")))?.name ?? undefined,
   };
   const prefs = { emailOrders: form.get("emailOrders") === "on", emailMessages: form.get("emailMessages") === "on", emailMarketing: form.get("emailMarketing") === "on" };
   const avatar = form.get("avatar");

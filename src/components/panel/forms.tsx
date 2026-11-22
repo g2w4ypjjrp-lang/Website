@@ -4,6 +4,7 @@ import { saveProfileAction, addPortfolioAction, saveAccountAction, deleteAccount
 import { changePasswordAction, type FormState } from "@/app/actions/auth";
 import { SubmitButton } from "@/components/ui/button";
 import { Field, Notice } from "@/components/ui/primitives";
+import { CitySelect } from "@/components/city-select";
 
 type Profile = { displayName: string; headline: string; bio: string; city: string | null; website: string | null; skills: string[]; languages: string[]; iban: string | null };
 
@@ -23,7 +24,7 @@ export function ProfileForm({ p }: { p: Profile }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Yetenekler" htmlFor="skills" hint="Virgülle ayır."><input id="skills" name="skills" defaultValue={p.skills.join(", ")} className="field" /></Field>
         <Field label="Diller" htmlFor="languages"><input id="languages" name="languages" defaultValue={p.languages.join(", ")} className="field" /></Field>
-        <Field label="Şehir" htmlFor="city" optional><input id="city" name="city" defaultValue={p.city ?? ""} className="field" /></Field>
+        <Field label="İl" htmlFor="city" optional hint="İl sayfalarında yerel uzman olarak listelenirsiniz."><CitySelect name="city" defaultValue={p.city} /></Field>
         <Field label="Web sitesi" htmlFor="website" optional error={fe.website}><input id="website" name="website" defaultValue={p.website ?? ""} placeholder="https://" className="field" /></Field>
       </div>
       <div id="odeme" className="scroll-mt-24 rounded-lg border border-line bg-paper/60 p-4">
@@ -84,7 +85,7 @@ export function AccountForm({ a }: { a: Account }) {
           <Field label="Firma unvanı" htmlFor="company" optional><input id="company" name="company" defaultValue={b.company} className="field" /></Field>
           <Field label="Vergi dairesi" htmlFor="taxOffice" optional><input id="taxOffice" name="taxOffice" defaultValue={b.taxOffice} className="field" /></Field>
           <Field label="Adres" htmlFor="address" optional className="sm:col-span-2"><input id="address" name="address" defaultValue={b.address} className="field" /></Field>
-          <Field label="İl" htmlFor="city" optional><input id="city" name="city" defaultValue={b.city} className="field" /></Field>
+          <Field label="İl" htmlFor="city" optional><CitySelect name="city" defaultValue={b.city} /></Field>
         </div>
       </section>
       <section className="space-y-3">

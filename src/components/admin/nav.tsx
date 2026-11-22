@@ -13,7 +13,7 @@ export function AdminNav({ name, pending, open }: { name: string; pending: numbe
   const groups: [string, [string, string, number?][]][] = [
     ["Genel", [["/yonetim", "Özet ve analitik"], ["/yonetim/talepler", "İade ve şikâyetler", open]]],
     ["Pazaryeri", [["/yonetim/kullanicilar", "Kullanıcılar"], ["/yonetim/hizmetler", "Hizmetler", pending], ["/yonetim/siparisler", "Siparişler"], ["/yonetim/degerlendirmeler", "Değerlendirmeler"], ["/yonetim/finans", "Finans"]]],
-    ["İçerik", [["/yonetim/kategoriler", "Kategoriler"], ["/yonetim/seo", "SEO"], ["/yonetim/blog", "Blog"], ["/yonetim/icerik", "Sayfalar ve bannerlar"]]],
+    ["İçerik", [["/yonetim/kategoriler", "Kategoriler"], ["/yonetim/seo", "SEO"], ["/yonetim/yerel-seo", "Yerel SEO · 81 il"], ["/yonetim/blog", "Blog"], ["/yonetim/icerik", "Sayfalar ve bannerlar"]]],
     ["Sistem", [["/yonetim/ayarlar", "Ayarlar"], ["/yonetim/duyuru", "Sistem duyurusu"], ["/yonetim/loglar", "Denetim kayıtları"]]],
   ];
   const active = (h: string) => (h === "/yonetim" ? p === h : p.startsWith(h));

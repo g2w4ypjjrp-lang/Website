@@ -508,3 +508,20 @@ export async function adminProviderSeoAction(form: FormData) {
   await audit(admin.id, "admin.provider.seo", "user", id);
   revalidatePath("/yonetim/kullanicilar");
 }
+
+/* ───────────── Yerel SEO (81 il) ───────────── */
+
+export async function saveLocalSeoAction(_: FormState, form: FormData): Promise<FormState> {
+  const admin = await requireAdmin();
+  const { saveLocalSeoSettings } = await import("@/server/settings");
+  const { getCity } = await import("@/lib/tr-cities");
+  const min = Math.max(1, Math.min(50, Number(str(form, "minProviders")) || 1));
+  const priority = form.getAll("priority").map(String).filter((s) => !!getCity(s));
+  const next = await saveLocalSeoSettings({ indexAllHubs: bool(form, "indexAllHubs"), indexAll: bool(form, "indexAll"), minProviders: min, priority });
+  await audit(admin.id, "admin.localseo.update", "settings", "localSeo", next as unknown as Record<string, unknown>);
+  // Tüm il sayfalarını ve site haritasını yeniden üret
+  revalidatePath("/il", "layout");
+  revalidatePath("/[landing]/[il]", "page");
+  revalidatePath("/haritalar/sitemap/[__metadata_id__]", "page");
+  return { ok: `Kaydedildi. ${priority.length} öncelikli il; diğer illerde en az ${min} yerel uzman olduğunda sayfalar otomatik indekslenir.` };
+}

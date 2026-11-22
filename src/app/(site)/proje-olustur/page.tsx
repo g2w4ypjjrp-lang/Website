@@ -8,8 +8,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({ title: "Proje oluştur, teklif al", description: "İhtiyacınızı anlatın, dijital hizmet uzmanlarından ücretsiz teklif alın. Teklifleri fiyat, süre ve portföye göre karşılaştırın.", path: "/proje-olustur" });
 
-export default async function CreateProjectPage({ searchParams }: { searchParams: Promise<{ kategori?: string }> }) {
-  const { kategori } = await searchParams;
+export default async function CreateProjectPage({ searchParams }: { searchParams: Promise<{ kategori?: string; il?: string }> }) {
+  const { kategori, il } = await searchParams;
   const [user, tree] = await Promise.all([getCurrentUser(), getCategoryTree()]);
   const pre = tree.flatMap((c) => [c, ...c.children]).find((c) => c.slug === kategori);
   return (
@@ -44,7 +44,7 @@ export default async function CreateProjectPage({ searchParams }: { searchParams
           ) : user.role !== "customer" ? (
             <Notice tone="info">Proje oluşturma müşteri hesaplarına açıktır. Uzman hesabınızla açık projelere teklif verebilirsiniz.</Notice>
           ) : (
-            <ProjectForm categories={tree.map((c) => ({ id: c.id, name: c.name, children: c.children.map((s) => ({ id: s.id, name: s.name })) }))} defaultCategoryId={pre?.id} />
+            <ProjectForm categories={tree.map((c) => ({ id: c.id, name: c.name, children: c.children.map((s) => ({ id: s.id, name: s.name })) }))} defaultCategoryId={pre?.id} defaultCity={il} />
           )}
         </div>
       </div>

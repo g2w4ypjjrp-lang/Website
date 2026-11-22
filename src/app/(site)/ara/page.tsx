@@ -11,6 +11,7 @@ import { EmptyState } from "@/components/ui/primitives";
 import { ButtonLink } from "@/components/ui/button";
 import { formatNumber, cn } from "@/lib/utils";
 import { ProjectList } from "@/components/project-list";
+import { CitySelect } from "@/components/city-select";
 
 export const metadata: Metadata = { title: "Arama", robots: { index: false, follow: true } };
 
@@ -86,7 +87,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               </label>
               {tab !== "projeler" && (
                 <label className="block font-medium">Konum
-                  <input name="sehir" defaultValue={one(sp.sehir)} placeholder="Şehir" className="field mt-2 !py-2 text-[14px]" />
+                  <CitySelect name="sehir" defaultValue={one(sp.sehir)} placeholder="Tüm iller" className="field mt-2 !py-2 text-[14px]" />
                 </label>
               )}
               <button className="h-9 w-full rounded-md bg-ink text-white">Uygula</button>

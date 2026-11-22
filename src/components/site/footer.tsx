@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCategoryTree } from "@/server/queries";
 import { Logo } from "@/components/logo";
 import { IconLock, IconShield } from "@/components/icons";
+import { CITIES } from "@/lib/tr-cities";
 
 export async function SiteFooter() {
   const tree = await getCategoryTree();
@@ -53,6 +54,19 @@ export async function SiteFooter() {
           ]}
         />
       </div>
+      <nav aria-label="İllere göre dijital hizmetler" className="border-t border-line">
+        <div className="container-x py-6">
+          <p className="mb-2 text-[13px] font-semibold text-ink">İllere göre</p>
+          <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[13px]">
+            {CITIES.filter((c) => c.metro)
+              .sort((a, b) => a.name.localeCompare(b.name, "tr"))
+              .map((c) => (
+                <li key={c.slug}><Link href={`/il/${c.slug}`} className="text-ink-2 hover:text-ink">{c.name}</Link></li>
+              ))}
+            <li><Link href="/il" className="font-medium text-ink underline underline-offset-2">Tüm 81 il</Link></li>
+          </ul>
+        </div>
+      </nav>
       <div className="border-t border-line">
         <div className="container-x flex flex-col gap-2 py-5 text-[12.5px] text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Eksen. Tüm hakları saklıdır.</p>

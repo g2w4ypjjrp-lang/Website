@@ -3,6 +3,7 @@ import { and, eq, lte, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { blogPosts, categories, landingPages, providerProfiles, services, staticPages, users } from "@/db/schema";
 import { absoluteUrl } from "@/lib/site";
+import { indexableLocalPaths } from "@/server/local-seo";
 
 export const revalidate = 3600;
 const PER = 5000;
@@ -14,7 +15,7 @@ const PER = 5000;
 export async function generateSitemaps() {
   const [{ s }] = await db.select({ s: sql<number>`count(*)::int` }).from(services).where(and(eq(services.status, "active"), eq(services.noindex, false)));
   const servicePages = Math.max(1, Math.ceil(s / PER));
-  return [{ id: 0 }, ...Array.from({ length: servicePages }, (_, i) => ({ id: i + 1 })), { id: 1000 }];
+  return [{ id: 0 }, ...Array.from({ length: servicePages }, (_, i) => ({ id: i + 1 })), { id: 1000 }, { id: 2000 }];
 }
 
 export default async function sitemap({ id }: { id: Promise<string> | number | string }): Promise<MetadataRoute.Sitemap> {
@@ -33,6 +34,15 @@ export default async function sitemap({ id }: { id: Promise<string> | number | s
       ...cats.map((c) => ({ url: absoluteUrl(`/kategori/${c.slug}`), lastModified: c.u, changeFrequency: "daily" as const, priority: 0.8 })),
       ...posts.map((p) => ({ url: absoluteUrl(`/blog/${p.slug}`), lastModified: p.u, changeFrequency: "monthly" as const, priority: 0.6 })),
       ...pages.map((p) => ({ url: absoluteUrl(`/sayfa/${p.slug}`), lastModified: p.u, changeFrequency: "yearly" as const, priority: 0.2 })),
+    ];
+  }
+  if (n === 2000) {
+    // Yerel SEO: il merkezleri ve kalite kapısını geçen hizmet × il sayfaları
+    const { hubs, pairs } = await indexableLocalPaths();
+    return [
+      { url: absoluteUrl("/il"), changeFrequency: "weekly" as const, priority: 0.6 },
+      ...hubs.map((p) => ({ url: absoluteUrl(p), changeFrequency: "weekly" as const, priority: 0.6 })),
+      ...pairs.map((p) => ({ url: absoluteUrl(p), changeFrequency: "weekly" as const, priority: 0.7 })),
     ];
   }
   if (n === 1000) {

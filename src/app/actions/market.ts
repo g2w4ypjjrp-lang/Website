@@ -15,6 +15,7 @@ import { rateLimit } from "@/server/rate-limit";
 import { saveUpload } from "@/server/storage";
 import { randomCode, slugify } from "@/lib/utils";
 import { getSettings } from "@/server/settings";
+import { getCity } from "@/lib/tr-cities";
 import type { FormState } from "./auth";
 
 /* ───────────── Sipariş oluşturma (hazır paket) ───────────── */
@@ -128,6 +129,7 @@ export async function createProjectAction(_: FormState, form: FormData): Promise
       budgetMaxKurus: d.budgetMax * 100,
       deadline: d.deadline ? new Date(d.deadline) : null,
       extraInfo: d.extraInfo,
+      city: getCity(String(form.get("city") ?? ""))?.slug ?? null,
     })
     .returning();
   const files = form.getAll("files").filter((f): f is File => f instanceof File && f.size > 0).slice(0, 5);

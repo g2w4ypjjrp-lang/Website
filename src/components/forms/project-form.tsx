@@ -4,10 +4,11 @@ import { createProjectAction } from "@/app/actions/market";
 import type { FormState } from "@/app/actions/auth";
 import { SubmitButton } from "@/components/ui/button";
 import { Field, Notice } from "@/components/ui/primitives";
+import { CitySelect } from "@/components/city-select";
 
 type Cat = { id: string; name: string; children: { id: string; name: string }[] };
 
-export function ProjectForm({ categories, defaultCategoryId }: { categories: Cat[]; defaultCategoryId?: string }) {
+export function ProjectForm({ categories, defaultCategoryId, defaultCity }: { categories: Cat[]; defaultCategoryId?: string; defaultCity?: string }) {
   const [state, action] = useActionState<FormState, FormData>(createProjectAction, undefined);
   const fe = state?.fieldErrors ?? {};
   return (
@@ -38,6 +39,9 @@ export function ProjectForm({ categories, defaultCategoryId }: { categories: Cat
           <input id="budgetMax" name="budgetMax" inputMode="numeric" className="field" required />
         </Field>
       </div>
+      <Field label="İşletmenizin bulunduğu il" htmlFor="city" optional hint="Aynı ildeki uzmanlar projenizi öncelikli görür; yüz yüze görüşmek isterseniz kolaylık sağlar.">
+        <CitySelect name="city" valueKind="slug" defaultValue={defaultCity} />
+      </Field>
       <Field label="İstenen teslim tarihi" htmlFor="deadline" optional>
         <input id="deadline" name="deadline" type="date" className="field" min={new Date().toISOString().slice(0, 10)} />
       </Field>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { IconChevronLeft, IconChevronRight } from "@/components/icons";
 import { AutoSubmit } from "./auto-submit";
 import { cn } from "@/lib/utils";
+import { CitySelect } from "@/components/city-select";
 
 export const SORTS = [
   ["onerilen", "En alakalı"],
@@ -59,7 +60,7 @@ export function ServiceFilters({ sp, categories, action, showCategory = true }: 
       <Radios name="paket" label="Paket" value={one(sp.paket)} options={[["", "Tümü"], ["basic", "Temel paketi olan"], ["premium", "Profesyonel paketi olan"]]} />
       <fieldset>
         <legend className="mb-2 font-medium">Konum</legend>
-        <input name="sehir" placeholder="Şehir, ör. İzmir" defaultValue={one(sp.sehir)} className="field !py-2 text-[14px]" />
+        <CitySelect name="sehir" defaultValue={one(sp.sehir)} placeholder="Tüm iller" className="field !py-2 text-[14px]" />
       </fieldset>
       <label className="flex items-center gap-2.5">
         <input type="checkbox" name="cevrimici" value="1" defaultChecked={one(sp.cevrimici) === "1"} className="h-4 w-4 accent-[var(--color-ink)]" />

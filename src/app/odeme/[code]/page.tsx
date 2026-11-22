@@ -11,6 +11,7 @@ import { Field, Notice } from "@/components/ui/primitives";
 import { IconShield } from "@/components/icons";
 import { TIER_LABEL } from "@/lib/order-status";
 import { formatTRY } from "@/lib/utils";
+import { CitySelect } from "@/components/city-select";
 
 export const metadata: Metadata = { title: "Ödeme", robots: { index: false } };
 
@@ -54,7 +55,7 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
             <Field label="Firma unvanı" htmlFor="company" optional><input id="company" name="company" defaultValue={b?.company} className="field" /></Field>
             <Field label="Vergi dairesi" htmlFor="taxOffice" optional><input id="taxOffice" name="taxOffice" defaultValue={b?.taxOffice} className="field" /></Field>
             <Field label="Adres" htmlFor="address" className="sm:col-span-2"><input id="address" name="address" defaultValue={b?.address} className="field" required /></Field>
-            <Field label="İl" htmlFor="city"><input id="city" name="city" defaultValue={b?.city} className="field" required /></Field>
+            <Field label="İl" htmlFor="city"><CitySelect name="city" defaultValue={b?.city} required /></Field>
           </div>
         </section>
         <section className="rounded-lg border border-line bg-surface p-5">

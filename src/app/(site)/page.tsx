@@ -8,6 +8,8 @@ import { and, eq, or, isNull, gt } from "drizzle-orm";
 import { SearchBox } from "@/components/site/header-search";
 import { ServiceGrid, ProviderRow, CategoryGlyph } from "@/components/cards";
 import { HeroShowcase } from "@/components/home/hero-showcase";
+import { CityJump } from "@/components/home/city-jump";
+import { CITIES } from "@/lib/tr-cities";
 import { ButtonLink } from "@/components/ui/button";
 import { IconArrowRight, IconArrowUpRight, IconStar } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
@@ -222,6 +224,23 @@ export default async function HomePage() {
             <p className="mt-3 max-w-sm text-ink-2">Bütçe aralığını ve tarihi belirt; gelen teklifleri fiyat, süre ve portföye göre yan yana karşılaştır.</p>
             <ButtonLink href="/proje-olustur" className="mt-7" variant="accent">Ücretsiz proje oluştur</ButtonLink>
           </div>
+        </div>
+      </section>
+
+      {/* ───────── İlinize göre ───────── */}
+      <section className="container-x pb-16 sm:pb-24">
+        <div className="grid items-center gap-8 rounded-lg border border-line bg-surface p-6 sm:p-10 lg:grid-cols-[1fr_auto]">
+          <div>
+            <p className="eyebrow mb-2">81 il</p>
+            <h2 className="text-[26px] font-semibold">İlinizdeki uzmanlar ve ilinize özel tavsiyeler</h2>
+            <ul className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-[14px]">
+              {CITIES.filter((c) => ["istanbul", "ankara", "izmir", "bursa", "antalya", "konya", "adana", "gaziantep", "kocaeli", "mersin", "kayseri", "eskisehir"].includes(c.slug)).map((c) => (
+                <li key={c.slug}><Link href={`/il/${c.slug}`} className="text-ink-2 underline decoration-line underline-offset-4 hover:text-ink hover:decoration-accent">{c.name}</Link></li>
+              ))}
+              <li><Link href="/il" className="font-medium">Tüm iller →</Link></li>
+            </ul>
+          </div>
+          <CityJump />
         </div>
       </section>
 

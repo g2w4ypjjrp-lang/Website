@@ -13,6 +13,8 @@ import { JsonLd } from "@/components/json-ld";
 import { buildMetadata, ld } from "@/lib/seo";
 import { renderMarkdown, extractHeadings } from "@/lib/markdown";
 import { formatTRY, slugify } from "@/lib/utils";
+import { CITIES, REGIONS, type Region } from "@/lib/tr-cities";
+import { lowerFirst } from "@/lib/tr-grammar";
 
 export const revalidate = 600;
 /** Boş liste: sayfalar ilk istekte üretilir ve ISR ile önbelleğe alınır. */
@@ -145,6 +147,31 @@ export default async function LandingPage({ params }: Props) {
             </div>
           )}
         </aside>
+      </section>
+
+      {/* ───────── İllere göre (yerel sayfalara iç bağlantılar) ───────── */}
+      <section className="container-x border-t border-line py-14">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="eyebrow mb-2">81 il</p>
+            <h2 className="text-[26px] font-semibold">İlinizde {lowerFirst(l.h1)}</h2>
+          </div>
+          <p className="max-w-md text-[14px] text-muted">Her il sayfasında o ildeki uzmanlar ve ilin ekonomisine göre hazırlanmış tavsiyeler yer alır.</p>
+        </div>
+        <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+          {(Object.keys(REGIONS) as Region[]).map((r) => (
+            <div key={r}>
+              <p className="mb-2 text-[13px] font-semibold">{REGIONS[r]}</p>
+              <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[13.5px]">
+                {CITIES.filter((c) => c.region === r)
+                  .sort((a, b) => a.name.localeCompare(b.name, "tr"))
+                  .map((c) => (
+                    <li key={c.slug}><Link href={`/${l.slug}/${c.slug}`} className="text-ink-2 hover:text-ink hover:underline">{c.name}</Link></li>
+                  ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </section>
 
       {l.faqs.length > 0 && (
