@@ -7,16 +7,16 @@ import { CITIES } from "@/lib/tr-cities";
 export async function SiteFooter() {
   const tree = await getCategoryTree();
   return (
-    <footer className="mt-24 border-t border-line bg-paper-2/60 pb-24 lg:pb-0">
-      <div className="container-x grid gap-10 py-14 md:grid-cols-[1.3fr_repeat(4,1fr)]">
+    <footer className="mt-24 bg-ink pb-24 text-white/70 lg:pb-0">
+      <div className="container-x grid gap-10 py-16 md:grid-cols-[1.3fr_repeat(4,1fr)]">
         <div className="max-w-xs">
-          <Logo />
-          <p className="mt-4 text-[14px] text-muted">
+          <Logo tone="light" />
+          <p className="mt-4 text-[14px] text-white/60">
             Türkiye’deki işletmelerin dijital işlerini doğru uzmanla buluşturan pazaryeri. Ödemeniz, siz teslimatı onaylayana kadar güvencede tutulur.
           </p>
-          <div className="mt-5 space-y-2 text-[13px] text-ink-2">
-            <p className="flex items-center gap-2"><IconShield size={15} className="text-trust" /> Onaylanana kadar korunan ödeme</p>
-            <p className="flex items-center gap-2"><IconLock size={15} className="text-trust" /> Kart bilgisi Eksen sunucularında tutulmaz</p>
+          <div className="mt-6 space-y-2.5 text-[13px] text-white/75">
+            <p className="flex items-center gap-2.5"><span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10"><IconShield size={14} className="text-[#5fc3ad]" /></span> Onaylanana kadar korunan ödeme</p>
+            <p className="flex items-center gap-2.5"><span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10"><IconLock size={14} className="text-[#5fc3ad]" /></span> Kart bilgisi Eksen sunucularında tutulmaz</p>
           </div>
         </div>
         <FooterCol title="Hizmetler" links={tree.slice(0, 6).map((c) => [`/kategori/${c.slug}`, c.name])} />
@@ -55,21 +55,21 @@ export async function SiteFooter() {
           ]}
         />
       </div>
-      <nav aria-label="İllere göre dijital hizmetler" className="border-t border-line">
-        <div className="container-x py-6">
-          <p className="mb-2 text-[13px] font-semibold text-ink">İllere göre</p>
-          <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[13px]">
+      <nav aria-label="İllere göre dijital hizmetler" className="border-t border-white/10">
+        <div className="container-x py-7">
+          <p className="mb-3 text-[13px] font-semibold text-white">İllere göre</p>
+          <ul className="flex flex-wrap gap-x-4 gap-y-1.5 text-[13px]">
             {CITIES.filter((c) => c.metro)
               .sort((a, b) => a.name.localeCompare(b.name, "tr"))
               .map((c) => (
-                <li key={c.slug}><Link href={`/il/${c.slug}`} className="text-ink-2 hover:text-ink">{c.name}</Link></li>
+                <li key={c.slug}><Link href={`/il/${c.slug}`} className="text-white/60 transition-colors hover:text-white">{c.name}</Link></li>
               ))}
-            <li><Link href="/il" className="font-medium text-ink underline underline-offset-2">Tüm 81 il</Link></li>
+            <li><Link href="/il" className="font-medium text-white underline decoration-accent underline-offset-4">Tüm 81 il</Link></li>
           </ul>
         </div>
       </nav>
-      <div className="border-t border-line">
-        <div className="container-x flex flex-col gap-2 py-5 text-[12.5px] text-muted sm:flex-row sm:items-center sm:justify-between">
+      <div className="border-t border-white/10">
+        <div className="container-x flex flex-col gap-2 py-6 text-[12.5px] text-white/50 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Eksen. Tüm hakları saklıdır.</p>
           <p>Fiyatlara KDV dahildir. Ödemeler lisanslı ödeme kuruluşu aracılığıyla alınır.</p>
         </div>
@@ -81,11 +81,11 @@ export async function SiteFooter() {
 function FooterCol({ title, links }: { title: string; links: [string, string][] }) {
   return (
     <div>
-      <p className="mb-3 text-[13px] font-semibold text-ink">{title}</p>
-      <ul className="space-y-2">
+      <p className="mb-4 text-[13px] font-semibold text-white">{title}</p>
+      <ul className="space-y-2.5">
         {links.map(([href, label]) => (
           <li key={href}>
-            <Link href={href} className="text-[14px] text-ink-2 hover:text-ink">{label}</Link>
+            <Link href={href} className="text-[14px] text-white/60 transition-colors hover:text-white">{label}</Link>
           </li>
         ))}
       </ul>

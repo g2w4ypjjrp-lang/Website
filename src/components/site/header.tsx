@@ -10,13 +10,13 @@ export async function SiteHeader() {
   const tree = await getCategoryTree();
   const cats = tree.map((c) => ({ slug: c.slug, name: c.name, shortDescription: c.shortDescription, children: c.children.slice(0, 7).map((s) => ({ slug: s.slug, name: s.name })) }));
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-paper/92 backdrop-blur-md supports-[backdrop-filter]:bg-paper/80">
-      <div className="container-x flex h-[60px] items-center gap-4 md:gap-6">
+    <header className="sticky top-0 z-40 border-b border-line/80 bg-surface/95 backdrop-blur-md supports-[backdrop-filter]:bg-surface/80">
+      <div className="container-x flex h-16 items-center gap-4 md:gap-6">
         <Logo />
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Ana menü">
           <CategoryMenu categories={cats} />
-          <Link href="/projeler" className="rounded-md px-3 py-2 text-[14.5px] text-ink-2 hover:bg-paper-2 hover:text-ink">Proje ilanları</Link>
-          <Link href="/uzmanlar" className="rounded-md px-3 py-2 text-[14.5px] text-ink-2 hover:bg-paper-2 hover:text-ink">Uzmanlar</Link>
+          <Link href="/projeler" className="rounded-lg px-3 py-2 text-[14.5px] font-medium text-ink-2 transition-colors hover:bg-paper-2 hover:text-ink">Proje ilanları</Link>
+          <Link href="/uzmanlar" className="rounded-lg px-3 py-2 text-[14.5px] font-medium text-ink-2 transition-colors hover:bg-paper-2 hover:text-ink">Uzmanlar</Link>
         </nav>
         <div className="flex-1"><HeaderSearch /></div>
         <div className="flex items-center gap-1.5">

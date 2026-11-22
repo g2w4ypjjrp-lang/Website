@@ -16,16 +16,16 @@ export function HeroShowcase({ items }: { items: ServiceCardData[] }) {
     <div className="relative mx-auto w-full min-w-0 max-w-[460px] lg:mx-0" aria-label="Örnek hizmet ve güvenli ödeme akışı">
       {/* arkadaki kartlar: derinlik */}
       {rest.slice(0, 2).map((r, i) => (
-        <div key={r.id} aria-hidden className="absolute inset-x-4 top-4 hidden overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-lift sm:block" style={{ transform: i === 0 ? "translate(-34px, 10px) rotate(-5deg)" : "translate(34px, 22px) rotate(4deg)", zIndex: 0 }}>
-          <ServiceCover rootSlug={r.rootSlug} coverId={r.coverId} title="" className="rounded-lg" />
+        <div key={r.id} aria-hidden className="absolute inset-x-4 top-4 hidden overflow-hidden rounded-[22px] border border-line bg-surface p-2 shadow-lift sm:block" style={{ transform: i === 0 ? "translate(-34px, 10px) rotate(-5deg)" : "translate(34px, 22px) rotate(4deg)", zIndex: 0 }}>
+          <ServiceCover rootSlug={r.rootSlug} coverId={r.coverId} title="" className="rounded-[14px]" />
           <div className="h-24" />
         </div>
       ))}
 
-      <article className="relative z-10 overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-pop">
-        <div className="relative overflow-hidden rounded-lg">
+      <article className="relative z-10 overflow-hidden rounded-[22px] border border-line bg-surface p-2 shadow-pop">
+        <div className="relative overflow-hidden rounded-[14px]">
           <ServiceCover rootSlug={main.rootSlug} coverId={main.coverId} title={main.title} priority />
-          <span className="absolute left-3 top-3 rounded-sm bg-surface/90 px-1.5 py-0.5 font-mono text-[10.5px] uppercase tracking-[0.06em] text-ink-2">{main.categoryName}</span>
+          <span className="absolute left-3 top-3 rounded-full bg-surface/95 px-2.5 py-1 text-[11.5px] font-medium leading-none text-ink-2 shadow-xs">{main.categoryName}</span>
         </div>
         <div className="px-4 pb-4 pt-4">
           <div className="flex items-center gap-2 text-[13px]">
@@ -38,13 +38,13 @@ export function HeroShowcase({ items }: { items: ServiceCardData[] }) {
           </Link>
           <div className="mt-4 flex items-end justify-between border-t border-line-2 pt-4">
             <span className="text-[12.5px] text-muted">{main.minDeliveryDays} günden başlayan teslim</span>
-            <span className="num text-[22px] font-medium">{formatTRY(main.startingPriceKurus)}</span>
+            <span className="price text-[24px]">{formatTRY(main.startingPriceKurus)}</span>
           </div>
         </div>
       </article>
 
       {/* güvenli ödeme akışı: kartın kenarına taşan fiş */}
-      <div className="relative z-20 -mt-6 ml-auto mr-0 w-[290px] max-w-[88%] sm:mr-[-12px] rounded-lg border border-ink bg-ink p-4 text-white shadow-pop sm:mr-[-28px]">
+      <div className="relative z-20 -mt-6 ml-auto mr-0 w-[290px] max-w-[88%] rounded-2xl border border-ink bg-ink p-4 text-white shadow-pop sm:mr-[-28px]">
         <p className="flex items-center gap-2 text-[13px] font-medium"><IconLock size={14} className="text-accent" /> Ödemen güvencede</p>
         <ol className="mt-3 grid grid-cols-4 gap-1.5" aria-label="Sipariş adımları">
           {["Öde", "Çalışma", "Teslim", "Onay"].map((s, i) => (

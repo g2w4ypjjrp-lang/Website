@@ -75,7 +75,7 @@ async function ProviderHome({ userId, name, welcome }: { userId: string; name: s
           </ul>
         </section>
       )}
-      <section className="grid grid-cols-2 gap-x-6 gap-y-6 border-y border-line py-6 md:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="Toplam satış" value={formatTRY(agg!.totalSales)} sub="Tamamlanan siparişler" />
         <Stat label="Bu ayki kazanç" value={formatTRY(agg!.monthEarning)} sub="Komisyon sonrası" />
         <Stat label="Bekleyen sipariş" value={formatNumber(agg!.pending)} />

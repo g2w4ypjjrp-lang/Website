@@ -26,13 +26,13 @@ export function PanelNav({ role, unreadMsg, unreadNotif }: { role: "customer" | 
         <div className="sticky top-[84px] space-y-6">
           {groups.map((g, i) => (
             <div key={i}>
-              {g.title && <p className="eyebrow mb-2 px-3">{g.title}</p>}
+              {g.title && <p className="mb-2 px-3 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-faint">{g.title}</p>}
               <ul className="space-y-0.5">
                 {g.items.map((it) => (
                   <li key={it.href}>
-                    <Link href={it.href} aria-current={isActive(it.href) ? "page" : undefined} className={cn("flex items-center justify-between rounded-md px-3 py-2 text-[14.5px]", isActive(it.href) ? "bg-surface font-medium text-ink shadow-[inset_2px_0_0_var(--color-accent)]" : "text-ink-2 hover:bg-paper-2")}>
+                    <Link href={it.href} aria-current={isActive(it.href) ? "page" : undefined} className={cn("flex items-center justify-between rounded-lg px-3 py-2 text-[14.5px] transition-colors", isActive(it.href) ? "border border-line bg-surface font-medium text-ink shadow-xs" : "border border-transparent text-ink-2 hover:bg-paper-2 hover:text-ink")}>
                       {it.label}
-                      {!!it.badge && <span className="num rounded-sm bg-accent px-1.5 text-[11px] text-white">{it.badge}</span>}
+                      {!!it.badge && <span className="num rounded-full bg-accent px-1.5 text-[11px] font-medium text-white">{it.badge}</span>}
                     </Link>
                   </li>
                 ))}
@@ -47,7 +47,7 @@ export function PanelNav({ role, unreadMsg, unreadNotif }: { role: "customer" | 
             <li key={it.href}>
               <Link href={it.href} className={cn("-mb-px flex items-center gap-1.5 border-b-2 py-3", isActive(it.href) ? "border-ink font-medium" : "border-transparent text-muted")}>
                 {it.label}
-                {!!it.badge && <span className="num rounded-sm bg-accent px-1 text-[10px] text-white">{it.badge}</span>}
+                {!!it.badge && <span className="num rounded-full bg-accent px-1.5 text-[10px] font-medium text-white">{it.badge}</span>}
               </Link>
             </li>
           ))}

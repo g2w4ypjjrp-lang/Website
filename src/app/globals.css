@@ -2,45 +2,49 @@
 
 /*
  * Eksen tasarım sistemi
- * Kâğıt zemin + mürekkep metin + kiremit vurgu + derin yeşil güven rengi.
- * Köşeler küçük (4–10px), gölgeler yalnızca yükselen yüzeylerde.
+ * Temiz nötr zemin + beyaz yüzeyler + mürekkep metin; kiremit vurgu ve derin yeşil güven rengi markayı taşır.
+ * Yumuşak köşeler (6–20px), kartlarda hafif gölge, yalnızca yükselen yüzeylerde belirgin gölge.
  */
 @theme {
-  --font-display: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  --color-paper: #f6f4ef;
-  --color-paper-2: #efece4;
+  --color-paper: #f8f8f6;
+  --color-paper-2: #f0f0ec;
   --color-surface: #ffffff;
-  --color-ink: #14161a;
-  --color-ink-2: #3a3f47;
-  --color-muted: #5c6068;
-  --color-faint: #6b6f77;
-  --color-line: #e2ded3;
-  --color-line-2: #ece9e0;
+  --color-ink: #111318;
+  --color-ink-2: #383c44;
+  --color-muted: #5b5f68;
+  --color-faint: #6a6e77;
+  --color-line: #e5e5e0;
+  --color-line-2: #eeeeea;
 
   --color-accent: #c63e22;
   --color-accent-strong: #a8321b;
-  --color-accent-soft: #fbe8e1;
+  --color-accent-soft: #fcebe5;
 
   --color-trust: #0e5a4e;
-  --color-trust-soft: #e0eee9;
+  --color-trust-soft: #e3f0eb;
 
   --color-warn: #9a6512;
   --color-warn-soft: #f9efd9;
   --color-bad: #b42318;
   --color-bad-soft: #fcebe9;
   --color-info: #274a7a;
-  --color-info-soft: #e5ecf6;
+  --color-info-soft: #e7eef8;
 
-  --radius-xs: 3px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 24px;
 
-  --shadow-lift: 0 1px 0 rgb(20 22 26 / 0.04), 0 8px 24px -12px rgb(20 22 26 / 0.18);
-  --shadow-pop: 0 1px 0 rgb(20 22 26 / 0.05), 0 18px 48px -20px rgb(20 22 26 / 0.35);
+  --shadow-xs: 0 1px 2px rgb(17 19 24 / 0.05);
+  --shadow-card: 0 1px 2px rgb(17 19 24 / 0.04), 0 2px 8px -2px rgb(17 19 24 / 0.06);
+  --shadow-lift: 0 2px 4px -2px rgb(17 19 24 / 0.06), 0 14px 32px -12px rgb(17 19 24 / 0.2);
+  --shadow-pop: 0 2px 6px -2px rgb(17 19 24 / 0.08), 0 24px 56px -20px rgb(17 19 24 / 0.35);
 
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 
@@ -67,7 +71,8 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-size: 15px;
-    line-height: 1.55;
+    line-height: 1.6;
+    font-optical-sizing: auto;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
@@ -89,7 +94,7 @@
 @layer components {
   .container-x {
     width: 100%;
-    max-width: 1240px;
+    max-width: 1280px;
     margin-inline: auto;
     padding-inline: 16px;
   }
@@ -97,29 +102,43 @@
     .container-x { padding-inline: 32px; }
   }
 
+  /* Bölüm etiketi: küçük, kalın, vurgu renginde (büyük harf ve daktilo yazı yok) */
   .eyebrow {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    line-height: 1.3;
+    color: var(--color-accent-strong);
   }
 
-  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  /* Rakamlar: hizalı (tabular) ama gövde yazı tipinde; fiyatlar fiş gibi değil, arayüzün parçası gibi görünür */
+  .num { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  /* Fiyat: IBM Plex Sans (₺ işareti doğru çizilir), orantılı rakam (tek fiyatta noktalar sıkışık durur) */
+  .price { font-family: var(--font-sans); font-weight: 600; letter-spacing: -0.02em; }
+
+  /* Kart yüzeyi: ince çerçeve + hafif gölge; etkileşimli kartlarda yükselme */
+  .card { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-xl); box-shadow: var(--shadow-card); }
+  .card-hover { transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), border-color 0.25s; }
+  .card-hover:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); border-color: rgb(17 19 24 / 0.14); }
+
+  /* Hap biçimli etiket/çip */
+  .chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; border: 1px solid var(--color-line); background: var(--color-surface); padding: 5px 12px; font-size: 13.5px; color: var(--color-ink-2); transition: border-color 0.15s, background 0.15s, color 0.15s; }
+  .chip:hover { border-color: var(--color-ink); color: var(--color-ink); }
 
   .field {
     width: 100%;
     background: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-md);
-    padding: 10px 12px;
+    padding: 10px 13px;
     font-size: 15px;
     color: var(--color-ink);
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   .field::placeholder { color: var(--color-faint); }
-  .field:hover { border-color: #cfcabd; }
-  .field:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 0 0 3px rgb(20 22 26 / 0.08); }
+  .field:hover { border-color: #cfcfc8; }
+  .field:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 0 0 4px rgb(17 19 24 / 0.07); }
   .field[aria-invalid="true"] { border-color: var(--color-bad); }
   textarea.field { min-height: 120px; resize: vertical; line-height: 1.55; }
   select.field {
@@ -131,7 +150,7 @@
   }
 
   .skeleton {
-    background: linear-gradient(90deg, var(--color-paper-2) 25%, #f7f5f0 50%, var(--color-paper-2) 75%);
+    background: linear-gradient(90deg, var(--color-paper-2) 25%, #f7f7f4 50%, var(--color-paper-2) 75%);
     background-size: 200% 100%;
     animation: var(--animate-shimmer);
     border-radius: var(--radius-sm);

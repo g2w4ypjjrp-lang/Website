@@ -209,7 +209,7 @@ export default async function ServiceCityPage({ params }: Props) {
             <h2 className="text-[26px] font-semibold">{locative(city.name)}ki işletmeler için öneriler</h2>
             <ul className="mt-5 flex flex-wrap gap-1.5">
               {city.sectors.map((s) => (
-                <li key={s} className="rounded-sm border border-line bg-surface px-2 py-1 text-[12.5px] text-ink-2">{SECTORS[s]}</li>
+                <li key={s} className="rounded-full border border-line bg-surface px-3 py-1 text-[12.5px] text-ink-2">{SECTORS[s]}</li>
               ))}
             </ul>
             <p className="mt-4 text-[13px] text-muted">Tavsiyeler ilin öne çıkan ekonomik yapısına göre seçildi.</p>

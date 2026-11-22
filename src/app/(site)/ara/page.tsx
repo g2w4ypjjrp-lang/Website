@@ -69,9 +69,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <div className="mt-4 flex flex-wrap items-center gap-2 text-[13.5px]">
           <span className="text-muted">{qCity.name} için:</span>
           {cityLandings.map((l) => (
-            <Link key={l.slug} href={`/${l.slug}/${qCity.slug}`} className="rounded-sm border border-ink/20 bg-surface px-2.5 py-1 font-medium hover:border-ink/50">{qCity.name} {lowerFirst(l.h1)}</Link>
+            <Link key={l.slug} href={`/${l.slug}/${qCity.slug}`} className="rounded-full border border-ink/20 bg-surface px-3 py-1 font-medium hover:border-ink/50">{qCity.name} {lowerFirst(l.h1)}</Link>
           ))}
-          <Link href={`/il/${qCity.slug}`} className="rounded-sm border border-line bg-surface px-2.5 py-1 hover:border-ink/40">{locative(qCity.name)} tüm dijital hizmetler</Link>
+          <Link href={`/il/${qCity.slug}`} className="rounded-full border border-line bg-surface px-3 py-1 hover:border-ink/40">{locative(qCity.name)} tüm dijital hizmetler</Link>
           {tab === "hizmetler" && !f.city && <span className="text-muted">· {locative(qCity.name)}ki uzmanların hizmetleri önce gösteriliyor</span>}
         </div>
       )}
@@ -79,7 +79,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <div className="mt-4 flex flex-wrap items-center gap-2 text-[13.5px]">
           <span className="text-muted">Kategoriler:</span>
           {matchedCats.map((c) => (
-            <Link key={c.slug} href={`/kategori/${c.slug}`} className="rounded-sm border border-line bg-surface px-2.5 py-1 hover:border-ink/40">{c.name}</Link>
+            <Link key={c.slug} href={`/kategori/${c.slug}`} className="rounded-full border border-line bg-surface px-3 py-1 hover:border-ink/40">{c.name}</Link>
           ))}
         </div>
       )}

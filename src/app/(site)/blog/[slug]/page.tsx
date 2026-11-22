@@ -84,7 +84,7 @@ export default async function PostPage({ params }: Props) {
           )}
         </aside>
       </div>
-      {p.tags.length > 0 && <ul className="mx-auto mt-10 flex max-w-[680px] flex-wrap gap-1.5">{p.tags.map((t) => <li key={t} className="rounded-sm border border-line px-2 py-0.5 text-[12.5px] text-muted">#{t}</li>)}</ul>}
+      {p.tags.length > 0 && <ul className="mx-auto mt-10 flex max-w-[680px] flex-wrap gap-1.5">{p.tags.map((t) => <li key={t} className="rounded-full border border-line px-2.5 py-0.5 text-[12.5px] text-muted">#{t}</li>)}</ul>}
       {svc.length > 0 && (
         <section className="mt-16 border-t border-line pt-10">
           <h2 className="mb-6 text-[22px] font-semibold">İlgili hizmetler</h2>

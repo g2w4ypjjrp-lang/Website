@@ -31,7 +31,7 @@ const tones = {
 };
 export function Badge({ tone = "neutral", children, className, dot }: { tone?: keyof typeof tones; children: ReactNode; className?: string; dot?: boolean }) {
   return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-sm px-1.5 py-0.5 text-[12px] font-medium leading-4", tones[tone], className)}>
+    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[12px] font-medium leading-4", tones[tone], className)}>
       {dot && <span className="h-1.5 w-1.5 rounded-full bg-current" />}
       {children}
     </span>
@@ -109,10 +109,10 @@ export function SectionHead({ eyebrow, title, action, className }: { eyebrow?: s
 
 export function Stat({ label, value, sub, className }: { label: string; value: ReactNode; sub?: ReactNode; className?: string }) {
   return (
-    <div className={cn("min-w-0", className)}>
-      <p className="text-[12.5px] text-muted">{label}</p>
-      <p className="num mt-1 truncate text-[22px] font-medium text-ink">{value}</p>
-      {sub && <p className="mt-0.5 text-[12.5px] text-muted">{sub}</p>}
+    <div className={cn("min-w-0 rounded-[14px] border border-line bg-surface p-4 shadow-xs sm:p-5", className)}>
+      <p className="text-[12.5px] font-medium text-muted">{label}</p>
+      <p className="num mt-1.5 truncate text-[24px] font-semibold tracking-[-0.02em] text-ink">{value}</p>
+      {sub && <p className="mt-0.5 text-[12px] text-faint">{sub}</p>}
     </div>
   );
 }

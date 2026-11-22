@@ -123,7 +123,7 @@ export default async function ServicePage({ params, searchParams }: Props) {
             <div className="prose-ek mt-4" dangerouslySetInnerHTML={{ __html: renderMarkdown(d.s.description) }} />
             {d.s.tags.length > 0 && (
               <ul className="mt-6 flex flex-wrap gap-1.5">
-                {d.s.tags.map((t) => <li key={t}><Link href={`/ara?q=${encodeURIComponent(t)}`} className="rounded-sm border border-line px-2 py-0.5 text-[12.5px] text-ink-2 hover:border-ink/40">{t}</Link></li>)}
+                {d.s.tags.map((t) => <li key={t}><Link href={`/ara?q=${encodeURIComponent(t)}`} className="rounded-full border border-line bg-surface px-3 py-1 text-[12.5px] text-ink-2 hover:border-ink/40">{t}</Link></li>)}
               </ul>
             )}
           </section>

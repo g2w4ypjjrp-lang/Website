@@ -19,7 +19,7 @@ export function InboxList({ items, activeId }: { items: Awaited<ReturnType<typeo
               {c.orderCode && <span className="num block truncate text-[11.5px] text-accent-strong">{c.orderCode} · {c.orderTitle}</span>}
               <span className="flex items-center justify-between gap-2">
                 <span className={cn("truncate text-[13px]", c.unread ? "text-ink" : "text-muted")}>{c.preview ?? "Yeni sohbet"}</span>
-                {c.unread > 0 && <span className="num shrink-0 rounded-sm bg-accent px-1.5 text-[11px] text-white">{c.unread}</span>}
+                {c.unread > 0 && <span className="num shrink-0 rounded-full bg-accent px-1.5 text-[11px] font-medium text-white">{c.unread}</span>}
               </span>
             </span>
           </Link>

@@ -27,7 +27,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // LCP metni için kritik yazı tipleri önceden yüklenir (Türkçe ğ, ş, ı karakterleri latin-ext alt kümesinde)
-  const fonts = ["ibm-plex-sans-latin-400-normal", "ibm-plex-sans-latin-ext-400-normal", "schibsted-grotesk-latin-600-normal", "schibsted-grotesk-latin-ext-600-normal"].map((f) => `/fonts/${f}.woff2`);
+  const fonts = ["inter-latin-var", "inter-latin-ext-var"].map((f) => `/fonts/${f}.woff2`);
   return (
     <html lang="tr">
       <head>

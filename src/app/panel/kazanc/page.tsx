@@ -33,7 +33,7 @@ export default async function Earnings() {
   return (
     <>
       <PageHead title="Kazanç ve ödemeler" sub="Hakedişler sipariş onayından sonra bekleme süresinin ardından IBAN’ına aktarılır." />
-      <section className="grid grid-cols-2 gap-6 border-y border-line py-6 md:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="Toplam net kazanç" value={formatTRY(sum!.net)} sub={`Brüt ${formatTRY(sum!.gross)}`} />
         <Stat label="Ödenen hizmet bedeli" value={formatTRY(sum!.fee)} />
         <Stat label="Hakediş bekleyen" value={formatTRY(held)} sub={`Ödemeye hazır: ${formatTRY(avail)}`} />

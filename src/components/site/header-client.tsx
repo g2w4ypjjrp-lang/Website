@@ -34,29 +34,29 @@ export function CategoryMenu({ categories }: { categories: Cat[] }) {
         onClick={() => setOpen((o) => !o)}
         onMouseEnter={() => setOpen(true)}
         aria-expanded={open}
-        className="flex items-center gap-1 rounded-md px-3 py-2 text-[14.5px] text-ink-2 hover:bg-paper-2 hover:text-ink"
+        className="flex items-center gap-1 rounded-lg px-3 py-2 text-[14.5px] font-medium text-ink-2 transition-colors hover:bg-paper-2 hover:text-ink"
       >
         Hizmetler <IconChevronDown size={14} className={cn("transition-transform", open && "rotate-180")} />
       </button>
       {open && cur && (
         <div className="absolute left-0 top-full pt-2">
-          <div className="grid w-[680px] grid-cols-[220px_1fr] overflow-hidden rounded-lg border border-line bg-surface shadow-pop animate-rise">
-            <ul className="border-r border-line-2 bg-paper/50 py-2">
+          <div className="grid w-[700px] grid-cols-[230px_1fr] overflow-hidden rounded-2xl border border-line bg-surface shadow-pop animate-rise">
+            <ul className="border-r border-line-2 bg-paper p-2">
               {categories.map((c, i) => (
                 <li key={c.slug}>
                   <Link
                     href={`/kategori/${c.slug}`}
                     onMouseEnter={() => setActive(i)}
-                    className={cn("flex items-center justify-between px-4 py-2 text-[14px]", i === active ? "bg-surface font-medium text-ink" : "text-ink-2")}
+                    className={cn("flex items-center justify-between rounded-lg px-3 py-2 text-[14px] transition-colors", i === active ? "bg-surface font-medium text-ink shadow-xs" : "text-ink-2")}
                   >
                     {c.name}
-                    {i === active && <span className="h-1.5 w-1.5 bg-accent" />}
+                    {i === active && <IconArrowRight size={14} className="text-accent" />}
                   </Link>
                 </li>
               ))}
             </ul>
-            <div className="p-5">
-              <p className="font-display text-[17px] font-semibold">{cur.name}</p>
+            <div className="p-6">
+              <p className="font-display text-[18px] font-semibold">{cur.name}</p>
               <p className="mt-1 text-[13.5px] text-muted">{cur.shortDescription}</p>
               <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1">
                 {cur.children.map((s) => (

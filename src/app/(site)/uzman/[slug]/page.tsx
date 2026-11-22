@@ -75,9 +75,11 @@ export default async function ProviderPage({ params }: Props) {
       <Breadcrumbs items={[{ name: "Uzmanlar", path: "/uzmanlar" }, { name: d.p.displayName, path }]} />
       <div className="mt-8 grid gap-10 lg:grid-cols-[320px_1fr] lg:gap-14">
         <aside>
-          <div className="lg:sticky lg:top-[84px]">
-            <Avatar name={d.p.displayName} src={fileUrl(d.u.avatarId)} size={96} online={isOnline(d.u.lastSeenAt)} />
-            <h1 className="mt-4 text-[28px] font-semibold">{d.p.displayName}</h1>
+          <div className="card overflow-hidden lg:sticky lg:top-[88px]">
+            <div aria-hidden className="h-20 bg-ink [background-image:linear-gradient(rgb(255_255_255/0.06)_1px,transparent_1px),linear-gradient(90deg,rgb(255_255_255/0.06)_1px,transparent_1px)] [background-size:24px_24px]" />
+            <div className="px-6 pb-6">
+            <Avatar name={d.p.displayName} src={fileUrl(d.u.avatarId)} size={88} online={isOnline(d.u.lastSeenAt)} className="-mt-11 rounded-full ring-4 ring-surface" />
+            <h1 className="mt-4 text-[26px] font-semibold">{d.p.displayName}</h1>
             <p className="mt-1 text-[15.5px] text-ink-2">{d.p.headline}</p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               {d.p.verifiedAt && <VerifiedMark label="Doğrulanmış hesap" />}
@@ -85,7 +87,7 @@ export default async function ProviderPage({ params }: Props) {
               {d.p.premiumUntil && d.p.premiumUntil > new Date() && <Badge tone="ink">Premium</Badge>}
               {d.u.accountType !== "individual" && <Badge>{d.u.accountType === "agency" ? "Ajans" : "Şirket"}</Badge>}
             </div>
-            <dl className="mt-6 divide-y divide-line-2 border-y border-line text-[14px]">
+            <dl className="mt-6 divide-y divide-line-2 rounded-xl border border-line-2 bg-paper px-4 text-[14px]">
               <Row k="Puan" v={<Rating value={d.p.ratingAvg} count={d.p.ratingCount} />} />
               <Row k="Tamamlanan iş" v={<span className="num">{d.p.completedOrders}</span>} />
               <Row k="Başarı oranı" v={success != null ? <span className="num">%{success}</span> : "—"} />
@@ -114,6 +116,7 @@ export default async function ProviderPage({ params }: Props) {
             )}
             {isMe && <Link href="/panel/profil" className="mt-6 inline-block text-[14px] underline underline-offset-4">Profili düzenle</Link>}
             {!isMe && user && <div className="mt-4"><ReportButton targetType="user" targetId={d.p.userId} /></div>}
+            </div>
           </div>
         </aside>
         <div className="min-w-0">
@@ -124,7 +127,7 @@ export default async function ProviderPage({ params }: Props) {
             </section>
           )}
           {d.p.skills.length > 0 && (
-            <ul className="mt-6 flex flex-wrap gap-1.5">{d.p.skills.map((s) => <li key={s} className="rounded-sm border border-line bg-surface px-2 py-1 text-[13px]">{s}</li>)}</ul>
+            <ul className="mt-6 flex flex-wrap gap-1.5">{d.p.skills.map((s) => <li key={s} className="rounded-full border border-line bg-surface px-3 py-1 text-[13px] text-ink-2">{s}</li>)}</ul>
           )}
           <section className="mt-12">
             <h2 className="mb-5 text-[22px] font-semibold">Hizmetler</h2>

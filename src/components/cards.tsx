@@ -119,32 +119,33 @@ export function CategoryGlyph({ slug, size = 56, className }: { slug: string; si
 export function ServiceCard({ s, className }: { s: ServiceCardData; className?: string }) {
   const featured = s.featuredUntil && new Date(s.featuredUntil) > new Date();
   return (
-    <article className={cn("group relative flex flex-col rounded-lg border border-line bg-surface p-2 transition-[box-shadow,transform,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-ink/15 hover:shadow-lift", className)}>
-      <div className="relative overflow-hidden rounded-md">
-        <ServiceCover rootSlug={s.rootSlug} coverId={s.coverId} title={s.title} className="transition-transform duration-700 ease-out group-hover:scale-[1.04]" />
-        <span className="absolute bottom-2 left-2 rounded-sm bg-surface/90 px-1.5 py-0.5 font-mono text-[10.5px] uppercase tracking-[0.06em] text-ink-2 backdrop-blur-sm">{s.categoryName}</span>
+    <article className={cn("card card-hover group relative flex flex-col p-2", className)}>
+      <div className="relative overflow-hidden rounded-[12px]">
+        <ServiceCover rootSlug={s.rootSlug} coverId={s.coverId} title={s.title} className="transition-transform duration-700 ease-out group-hover:scale-[1.035]" />
+        <span className="absolute bottom-2.5 left-2.5 rounded-full bg-surface/95 px-2.5 py-1 text-[11.5px] font-medium leading-none text-ink-2 shadow-xs">{s.categoryName}</span>
         {(s.sponsored || featured) && (
-          <span className="absolute right-2 top-2 rounded-sm bg-ink px-1.5 py-0.5 text-[11px] font-medium text-white">{s.sponsored ? "Sponsorlu" : "Öne çıkan"}</span>
+          <span className="absolute right-2.5 top-2.5 rounded-full bg-ink px-2.5 py-1 text-[11.5px] font-medium leading-none text-white">{s.sponsored ? "Sponsorlu" : "Öne çıkan"}</span>
         )}
       </div>
-      <div className="flex flex-1 flex-col px-2 pb-1.5 pt-3">
+      <div className="flex flex-1 flex-col px-2.5 pb-2 pt-3.5">
         <div className="flex items-center gap-2">
-          <Avatar name={s.providerName} src={fileUrl(s.providerAvatarId)} size={22} online={isOnline(s.providerLastSeen)} />
+          <Avatar name={s.providerName} src={fileUrl(s.providerAvatarId)} size={24} online={isOnline(s.providerLastSeen)} />
           <span className="truncate text-[13px] font-medium text-ink-2">{s.providerName}</span>
           {s.providerVerified && <IconShield size={13} className="shrink-0 text-trust" aria-label="Doğrulanmış" />}
           <span className="ml-auto shrink-0 text-[11.5px] text-faint">{LEVEL_LABEL[s.providerLevel]}</span>
         </div>
-        <h3 className="mt-2 line-clamp-2 text-[15px] font-medium leading-snug text-ink">
-          <Link href={`/hizmet/${s.slug}`} className="after:absolute after:inset-0 after:rounded-lg">
+        <h3 className="mt-2.5 line-clamp-2 text-[15.5px] font-semibold leading-snug tracking-[-0.01em] text-ink">
+          <Link href={`/hizmet/${s.slug}`} className="after:absolute after:inset-0 after:rounded-[18px]">
             {s.title}
           </Link>
         </h3>
         <div className="mt-1.5"><Rating value={s.ratingAvg} count={s.ratingCount} /></div>
-        <div className="mt-auto flex items-end justify-between gap-2 pt-4">
+        <div className="min-h-3.5 flex-1" />
+        <div className="flex items-end justify-between gap-2 border-t border-line-2 pt-3">
           <span className="flex items-center gap-1 text-[12.5px] text-muted"><IconClock size={13} /> {s.minDeliveryDays} gün</span>
           <span className="text-right leading-none">
-            <span className="block text-[11px] text-muted">başlangıç</span>
-            <span className="num text-[17px] font-medium text-ink">{formatTRY(s.startingPriceKurus)}</span>
+            <span className="mr-1.5 text-[12px] text-muted">Başlangıç</span>
+            <span className="price text-[18px] text-ink">{formatTRY(s.startingPriceKurus)}</span>
           </span>
         </div>
       </div>
@@ -152,10 +153,21 @@ export function ServiceCard({ s, className }: { s: ServiceCardData; className?: 
   );
 }
 
-/** `cols={3}`: yan sütunlu sayfalar (kategori, arama, uzman profili) için daha geniş kartlar. */
-export function ServiceGrid({ items, className, cols = 4 }: { items: ServiceCardData[]; className?: string; cols?: 3 | 4 }) {
+/**
+ * `cols={3}`: yan sütunlu sayfalar (kategori, arama, uzman profili) için daha geniş kartlar.
+ * `rail`: mobilde yatay kaydırılan şerit (ana sayfa vitrinleri), tablet ve üstünde ızgara.
+ */
+export function ServiceGrid({ items, className, cols = 4, rail }: { items: ServiceCardData[]; className?: string; cols?: 3 | 4; rail?: boolean }) {
   return (
-    <div className={cn("grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:gap-5", cols === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4", className)}>
+    <div
+      className={cn(
+        rail
+          ? "-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:gap-5 [&>*]:w-[78%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:w-auto"
+          : "grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:gap-5",
+        cols === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4",
+        className,
+      )}
+    >
       {items.map((s) => (
         <ServiceCard key={s.id} s={s} />
       ))}
@@ -203,9 +215,41 @@ export function ProviderRow({ p, compact }: { p: ProviderCardData; compact?: boo
       </div>
       <ul className={cn("hidden max-w-[260px] flex-wrap content-start justify-end gap-1.5", !compact && "md:flex")}>
         {p.skills.slice(0, 4).map((s) => (
-          <li key={s} className="rounded-sm border border-line px-1.5 py-0.5 text-[12px] text-ink-2">{s}</li>
+          <li key={s} className="rounded-full border border-line bg-surface px-2.5 py-0.5 text-[12px] text-ink-2">{s}</li>
         ))}
       </ul>
+    </article>
+  );
+}
+
+/** Ana sayfa ve vitrinler için uzman kartı (listelerde ProviderRow kullanılır). */
+export function ProviderCard({ p }: { p: ProviderCardData }) {
+  const premium = p.premiumUntil && new Date(p.premiumUntil) > new Date();
+  return (
+    <article className="card card-hover group relative flex flex-col p-5">
+      <div className="flex items-start gap-3.5">
+        <Avatar name={p.displayName} src={fileUrl(p.avatarId)} size={52} online={isOnline(p.lastSeenAt)} />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <h3 className="truncate text-[16px] font-semibold">
+              <Link href={`/uzman/${p.slug}`} className="after:absolute after:inset-0 after:rounded-[18px]">{p.displayName}</Link>
+            </h3>
+            {p.verifiedAt && <IconShield size={14} className="shrink-0 text-trust" aria-label="Doğrulanmış" />}
+          </div>
+          <p className="mt-0.5 line-clamp-2 text-[13.5px] leading-snug text-ink-2">{p.headline || "Profilini hazırlıyor"}</p>
+        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-1.5">
+        {premium && <Badge tone="ink">Premium</Badge>}
+        {p.accountType !== "individual" && <Badge>{p.accountType === "agency" ? "Ajans" : "Şirket"}</Badge>}
+        <Badge tone="ok">{LEVEL_LABEL[p.level]}</Badge>
+        {p.city && <Badge>{p.city}</Badge>}
+      </div>
+      <div className="min-h-4 flex-1" />
+      <div className="flex items-center justify-between gap-3 border-t border-line-2 pt-3.5 text-[13px] text-muted">
+        <Rating value={p.ratingAvg} count={p.ratingCount} />
+        {p.completedOrders > 0 && <span>{p.completedOrders} iş</span>}
+      </div>
     </article>
   );
 }

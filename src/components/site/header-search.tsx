@@ -64,8 +64,8 @@ export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun
           go(active >= 0 ? items[active]?.href : undefined);
         }}
         className={cn(
-          "flex items-center border border-line bg-surface transition-[border-color,box-shadow] focus-within:border-ink focus-within:shadow-[0_0_0_4px_rgb(20_22_26/0.06)]",
-          lg ? "h-[60px] rounded-lg pl-5 pr-2 shadow-lift" : "h-10 rounded-md pl-3 pr-1",
+          "flex items-center border transition-[border-color,box-shadow,background-color] focus-within:border-ink focus-within:bg-surface focus-within:shadow-[0_0_0_4px_rgb(17_19_24/0.07)]",
+          lg ? "h-[64px] rounded-2xl border-line bg-surface pl-5 pr-2 shadow-lift" : "h-10 rounded-full border-transparent bg-paper-2 pl-4 pr-1 hover:border-line",
         )}
       >
         <IconSearch size={lg ? 20 : 16} className="shrink-0 text-muted" />
@@ -98,13 +98,13 @@ export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun
           className={cn("min-w-0 flex-1 bg-transparent outline-none placeholder:text-faint [&::-webkit-search-cancel-button]:hidden", lg ? "px-3 text-[17px]" : "px-2 text-[14.5px]")}
         />
         {lg && (
-          <button type="submit" className="h-11 rounded-md bg-ink px-5 text-[15px] font-medium text-white hover:bg-[#2a2d33]">
+          <button type="submit" className="h-12 rounded-xl bg-accent px-6 text-[15px] font-semibold text-white shadow-xs transition-colors hover:bg-accent-strong">
             Ara
           </button>
         )}
       </form>
       {open && items.length > 0 && (
-        <ul role="listbox" className="absolute inset-x-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-lg border border-line bg-surface py-1.5 shadow-pop animate-rise">
+        <ul role="listbox" className="absolute inset-x-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-xl border border-line bg-surface py-1.5 shadow-pop animate-rise">
           {items.map((s, i) => (
             <li key={s.href} role="option" aria-selected={i === active}>
               <button
@@ -114,7 +114,7 @@ export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun
                 className={cn("flex w-full items-center justify-between gap-4 px-4 py-2 text-left text-[14.5px]", i === active && "bg-paper")}
               >
                 <span className="truncate text-ink">{s.label}</span>
-                <span className="eyebrow shrink-0 !text-[10.5px]">{TYPE_LABEL[s.type]}</span>
+                <span className="shrink-0 rounded-full bg-paper-2 px-2 py-0.5 text-[11.5px] font-medium text-muted">{TYPE_LABEL[s.type]}</span>
               </button>
             </li>
           ))}

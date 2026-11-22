@@ -21,13 +21,13 @@ export function AdminNav({ name, pending, open, leads = 0 }: { name: string; pen
     <nav className="space-y-6 text-[14px]">
       {groups.map(([g, items]) => (
         <div key={g}>
-          <p className="mb-1.5 px-3 font-mono text-[10.5px] uppercase tracking-[0.12em] text-white/40">{g}</p>
+          <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-white/40">{g}</p>
           <ul>
             {items.map(([h, l, b]) => (
               <li key={h}>
                 <Link href={h} onClick={() => setMobile(false)} className={cn("flex items-center justify-between rounded px-3 py-1.5", active(h) ? "bg-white/10 text-white" : "text-white/70 hover:text-white")}>
                   {l}
-                  {!!b && <span className="num rounded-sm bg-accent px-1.5 text-[11px] text-white">{b}</span>}
+                  {!!b && <span className="num rounded-full bg-accent px-1.5 text-[11px] font-medium text-white">{b}</span>}
                 </Link>
               </li>
             ))}

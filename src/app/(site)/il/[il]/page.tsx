@@ -107,7 +107,7 @@ export default async function CityHub({ params }: Props) {
               <h1 className="text-[36px] font-semibold leading-[1.05] sm:text-[54px]">{locative(city.name)} dijital hizmetler</h1>
               <p className="mt-5 max-w-[60ch] text-[17px] text-ink-2">{city.profile}</p>
               <ul className="mt-5 flex flex-wrap gap-1.5">
-                {city.sectors.map((s) => <li key={s} className="rounded-sm border border-line bg-surface px-2 py-1 text-[12.5px] text-ink-2">{SECTORS[s]}</li>)}
+                {city.sectors.map((s) => <li key={s} className="rounded-full border border-line bg-surface px-3 py-1 text-[12.5px] text-ink-2">{SECTORS[s]}</li>)}
               </ul>
             </div>
             <dl className="grid grid-cols-2 gap-x-6 gap-y-5 border-t border-ink pt-5 text-[13px] lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">

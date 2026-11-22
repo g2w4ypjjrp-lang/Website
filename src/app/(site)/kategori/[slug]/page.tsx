@@ -93,7 +93,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
               <span className="mr-1 text-muted">{f.label}:</span>
               {f.options.map((o) => {
                 const on = sp.etiket === o;
-                return <Link key={o} href={on ? base : `${base}?etiket=${encodeURIComponent(o)}`} aria-current={on ? "true" : undefined} className={on ? "rounded-sm bg-ink px-2 py-0.5 text-white" : "rounded-sm border border-line bg-surface px-2 py-0.5 hover:border-ink/40"}>{o}</Link>;
+                return <Link key={o} href={on ? base : `${base}?etiket=${encodeURIComponent(o)}`} aria-current={on ? "true" : undefined} className={on ? "rounded-full bg-ink px-3 py-1 text-white" : "rounded-full border border-line bg-surface px-3 py-1 hover:border-ink/40"}>{o}</Link>;
               })}
             </div>
           ))}
@@ -105,7 +105,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           <ul className="flex gap-2 whitespace-nowrap">
             {c.children.map((s) => (
               <li key={s.id}>
-                <Link href={`/kategori/${s.slug}`} className="block rounded-sm border border-line bg-surface px-3 py-1.5 text-[13.5px] text-ink-2 hover:border-ink/40 hover:text-ink">{s.name}</Link>
+                <Link href={`/kategori/${s.slug}`} className="block rounded-full border border-line bg-surface px-3.5 py-1.5 text-[13.5px] text-ink-2 shadow-xs transition-colors hover:border-ink hover:text-ink">{s.name}</Link>
               </li>
             ))}
           </ul>
