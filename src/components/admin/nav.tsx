@@ -38,12 +38,12 @@ export function AdminNav({ name, pending, open, leads = 0 }: { name: string; pen
   );
   return (
     <>
-      <div className="flex h-14 items-center justify-between bg-ink px-4 text-white lg:hidden">
+      <div className="flex h-14 items-center justify-between bg-[#111318] px-4 text-white lg:hidden">
         <span className="flex items-center gap-2 font-display font-bold"><LogoMark size={18} /> eksen <span className="font-mono text-[11px] font-normal text-white/50">YÖNETİM</span></span>
         <button onClick={() => setMobile(!mobile)} aria-label="Menü">{mobile ? <IconX size={20} /> : <IconMenu size={20} />}</button>
       </div>
-      {mobile && <div className="bg-ink px-3 pb-6 lg:hidden">{nav}</div>}
-      <aside className="sticky top-0 hidden h-dvh flex-col bg-ink px-3 py-5 text-white lg:flex">
+      {mobile && <div className="bg-[#111318] px-3 pb-6 lg:hidden">{nav}</div>}
+      <aside className="sticky top-0 hidden h-dvh flex-col bg-[#111318] px-3 py-5 text-white lg:flex">
         <Link href="/yonetim" className="mb-8 flex items-center gap-2 px-3 font-display text-[18px] font-bold tracking-[-0.04em]"><LogoMark size={20} /> eksen <span className="font-mono text-[10px] font-normal tracking-[0.12em] text-white/40">YÖNETİM</span></Link>
         <div className="flex-1 overflow-y-auto">{nav}</div>
         <div className="mt-6 border-t border-white/10 px-3 pt-4 text-[13px] text-white/60">

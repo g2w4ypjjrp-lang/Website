@@ -29,7 +29,7 @@ export default async function sitemap({ id }: { id: Promise<string> | number | s
     ]);
     return [
       { url: absoluteUrl("/"), changeFrequency: "daily", priority: 1 },
-      ...["/kategoriler", "/uzmanlar", "/projeler", "/blog", "/nasil-calisir", "/uzman-ol", "/kurumsal", "/yardim", "/iletisim", "/proje-olustur"].map((p) => ({ url: absoluteUrl(p), changeFrequency: "weekly" as const, priority: 0.6 })),
+      ...["/kategoriler", "/uzmanlar", "/projeler", "/blog", "/nasil-calisir", "/uzman-ol", "/kurumsal", "/yardim", "/iletisim", "/fiyatlar", "/proje-olustur"].map((p) => ({ url: absoluteUrl(p), changeFrequency: "weekly" as const, priority: 0.6 })),
       ...lands.map((l) => ({ url: absoluteUrl(`/${l.slug}`), lastModified: l.u, changeFrequency: "weekly" as const, priority: 0.9 })),
       ...cats.map((c) => ({ url: absoluteUrl(`/kategori/${c.slug}`), lastModified: c.u, changeFrequency: "daily" as const, priority: 0.8 })),
       ...posts.map((p) => ({ url: absoluteUrl(`/blog/${p.slug}`), lastModified: p.u, changeFrequency: "monthly" as const, priority: 0.6 })),

@@ -5,16 +5,22 @@ import { IconBell, IconChat } from "@/components/icons";
 import { UserMenu } from "./header-client";
 import { useMe } from "./use-me";
 
-export function HeaderAuth() {
+export function HeaderAuth({ variant = "default" }: { variant?: "default" | "neo" | "sunrise" }) {
   const me = useMe();
   // Yüklenirken sabit genişlikte boş alan: düzen kaymaz
   if (me === undefined) return <div className="hidden h-9 w-[200px] sm:block" aria-hidden />;
   if (!me.user)
     return (
       <>
-        <Link href="/uzman-ol" className="hidden px-2 text-[14.5px] text-ink-2 hover:text-ink xl:block">Uzman olarak katıl</Link>
-        <Link href="/giris" className="hidden rounded-md px-3 py-2 text-[14.5px] font-medium text-ink hover:bg-paper-2 sm:block">Giriş yap</Link>
-        <ButtonLink href="/kayit" size="sm" className="hidden sm:inline-flex">Ücretsiz kayıt</ButtonLink>
+        {variant === "default" && <Link href="/uzman-ol" className="hidden px-2 text-[14.5px] text-ink-2 hover:text-ink xl:block">Uzman olarak katıl</Link>}
+        <Link href="/giris" className="hidden rounded-md px-3 py-2 text-[14.5px] font-medium text-ink hover:bg-paper-2 sm:block">{variant === "sunrise" ? "Giriş Yap" : "Giriş yap"}</Link>
+        {variant === "neo" ? (
+          <ButtonLink href="/proje-olustur" size="sm" variant="accent" className="hidden sm:inline-flex">+ Proje oluştur</ButtonLink>
+        ) : variant === "sunrise" ? (
+          <ButtonLink href="/kayit" size="sm" variant="accent" className="hidden !h-10 !px-5 sm:inline-flex">Ücretsiz Kayıt Ol</ButtonLink>
+        ) : (
+          <ButtonLink href="/kayit" size="sm" className="hidden sm:inline-flex">Ücretsiz kayıt</ButtonLink>
+        )}
       </>
     );
   const unread = me.unread ?? 0;
@@ -26,6 +32,7 @@ export function HeaderAuth() {
         {unread > 0 && <span className="num absolute right-1 top-1 min-w-[16px] rounded-full bg-accent px-1 text-center text-[10px] leading-4 text-white">{unread > 9 ? "9+" : unread}</span>}
       </Link>
       <UserMenu user={me.user} />
+      {variant === "neo" && <ButtonLink href="/proje-olustur" size="sm" variant="accent" className="ml-1 hidden lg:inline-flex">+ Proje oluştur</ButtonLink>}
     </>
   );
 }

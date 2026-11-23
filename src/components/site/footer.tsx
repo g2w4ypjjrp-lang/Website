@@ -20,9 +20,10 @@ const SOCIAL: [keyof SocialLinks, string, (p: { size?: number }) => React.ReactN
  */
 export async function SiteFooter() {
   const [tree, { theme, social }] = await Promise.all([getCategoryTree(), getThemeSettings()]);
-  const dark = theme === "premium";
+  const dark = theme === "premium" || theme === "neo";
   const t = {
-    wrap: dark ? "bg-ink text-white/70" : "border-t border-line bg-paper-2/70 text-ink-2",
+    // Koyu temada "ink" dolgusu mor olduğu için alt bilgi sabit koyu lacivert
+    wrap: theme === "neo" ? "border-t border-line bg-[#080a1c] text-white/70" : dark ? "bg-ink text-white/70" : "border-t border-line bg-paper-2/70 text-ink-2",
     text: dark ? "text-white/60" : "text-muted",
     head: dark ? "text-white" : "text-ink",
     link: dark ? "text-white/60 hover:text-white" : "text-ink-2 hover:text-ink",
@@ -62,6 +63,7 @@ export async function SiteFooter() {
             ["/projeler", "Proje ilanları"],
             ["/ara?tur=ajanslar", "Ajanslar"],
             ["/kurumsal", "Kurumsal üyelik"],
+            ["/fiyatlar", "Ücretler ve fiyatlar"],
           ]}
         />
         <FooterCol

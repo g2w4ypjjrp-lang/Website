@@ -8,7 +8,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <main className="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center py-10">{children}</main>
         <p className="text-[12.5px] text-muted">Ödemeler lisanslı ödeme kuruluşu üzerinden alınır. Kart bilgileriniz Eksen’de saklanmaz.</p>
       </div>
-      <aside className="relative hidden overflow-hidden bg-ink text-white lg:block" aria-hidden>
+      <aside className="auth-aside relative hidden overflow-hidden bg-[#0f1115] text-white lg:block" aria-hidden>
         <svg className="absolute inset-0 h-full w-full opacity-[0.09]" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="g" width="48" height="48" patternUnits="userSpaceOnUse">

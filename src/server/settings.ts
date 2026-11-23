@@ -70,11 +70,14 @@ export async function saveLocalSeoSettings(patch: Partial<LocalSeoSettings>) {
 
 /* ───────────── Tema ve görünüm ───────────── */
 
-export type ThemeId = "premium" | "light";
-export const THEMES: { id: ThemeId; name: string; summary: string }[] = [
-  { id: "premium", name: "Modern Premium", summary: "Güçlü tipografi, ortalanmış arama, ürün arayüzü hissi veren hizmet kartları, koyu alt bilgi." },
-  { id: "light", name: "Light Professional", summary: "Aydınlık ve kurumsal: ölçülü başlıklar, ince çerçeveler, geniş boşluklar, açık alt bilgi." },
+export type ThemeId = "premium" | "light" | "neo" | "sunrise";
+export const THEMES: { id: ThemeId; no: number; name: string; summary: string }[] = [
+  { id: "premium", no: 1, name: "Modern Premium", summary: "Güçlü tipografi, ortalanmış arama, ürün arayüzü hissi veren hizmet kartları, koyu alt bilgi." },
+  { id: "light", no: 2, name: "Light Professional", summary: "Aydınlık ve kurumsal: ölçülü başlıklar, ince çerçeveler, geniş boşluklar, açık alt bilgi." },
+  { id: "neo", no: 3, name: "Gece Moru", summary: "Koyu lacivert zemin, mor vurgu ve ışıltılar; cihaz görünümlü giriş, “Nasıl çalışır?” kartı, kategori sekmeleri." },
+  { id: "sunrise", no: 4, name: "Gün Işığı", summary: "Beyaz zemin, canlı turuncu vurgu, hap biçimli düğmeler; cihaz görünümlü giriş, özellik şeridi, filtreli hizmetler." },
 ];
+export const THEME_IDS = THEMES.map((t) => t.id);
 export type SocialLinks = { instagram?: string; linkedin?: string; x?: string; youtube?: string; facebook?: string };
 export type ThemeSettings = { theme: ThemeId; social: SocialLinks };
 export const DEFAULT_THEME: ThemeSettings = { theme: "premium", social: {} };
@@ -87,7 +90,7 @@ export const getThemeSettings = cache(async (): Promise<ThemeSettings> => {
   try {
     const row = await db.query.settings.findFirst({ where: eq(settings.key, "theme") });
     const v = (row?.value as Partial<ThemeSettings>) ?? {};
-    return { theme: v.theme === "light" ? "light" : "premium", social: { ...(v.social ?? {}) } };
+    return { theme: v.theme && THEME_IDS.includes(v.theme) ? v.theme : "premium", social: { ...(v.social ?? {}) } };
   } catch {
     return DEFAULT_THEME;
   }

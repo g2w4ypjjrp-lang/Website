@@ -13,6 +13,8 @@ export const metadata = { title: "Tema ve görünüm" };
 const TRAITS: Record<ThemeId, string[]> = {
   premium: ["Ortalanmış güçlü başlık ve “Uzman bul” araması", "Gerçek hizmetlerden ürün arayüzü önizlemesi", "Kategori çizimleri, güven sistemi kartları", "Koyu alt bilgi, yumuşak gölgeli kartlar"],
   light: ["Sade iki sütunlu giriş, ölçülü başlık boyutları", "İkonlu 8 kategori kartı, öne çıkan uzmanlar", "4 adımlı “Nasıl çalışır?”, “İşini güvenle yaptır.”", "Açık kurumsal alt bilgi, ince çerçeveler"],
+  neo: ["Koyu lacivert zemin, mor vurgu, ışıltılı giriş", "Dizüstü ve telefon görünümünde canlı ürün arayüzü", "Sağda “Nasıl çalışır?” kartı, gerçek verili istatistik şeridi", "İkonlu kategori sekmeleriyle filtrelenen popüler hizmetler"],
+  sunrise: ["Beyaz zemin, canlı turuncu vurgu, hap düğmeler", "Cihaz görünümlü giriş ve “Güvenli ödeme” kartı", "5 maddelik özellik şeridi, uzman sayılı kategori kartları", "Sekmelerle filtrelenen öne çıkan hizmetler"],
 };
 
 export default async function ThemePage() {
@@ -29,7 +31,7 @@ export default async function ThemePage() {
               <ThemePreview id={t.id} />
               <div className="border-t border-line p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="text-[18px] font-semibold">{t.id === "premium" ? "Tema 1" : "Tema 2"} · {t.name}</h2>
+                  <h2 className="text-[18px] font-semibold">Tema {t.no} · {t.name}</h2>
                   {active ? <Badge tone="ok" dot>Etkin</Badge> : <Badge>Kullanılmıyor</Badge>}
                 </div>
                 <p className="mt-1.5 text-[14px] text-muted">{t.summary}</p>
@@ -64,29 +66,46 @@ export default async function ThemePage() {
 
 /** Temanın kendi tasarım değişkenleriyle çizilen küçük canlı önizleme (data-theme kapsamı). */
 function ThemePreview({ id }: { id: ThemeId }) {
-  const premium = id === "premium";
+  const centered = id === "premium";
+  const device = id === "neo" || id === "sunrise";
+  const darkFooter = id === "premium" || id === "neo";
+  const title: Record<ThemeId, React.ReactNode> = {
+    premium: "İşin için doğru uzmanı bul.",
+    light: "Dijital işlerin için doğru uzmanı bul.",
+    neo: <>Dijital projenizi hayata geçirecek <span className="text-accent-bright">doğru uzmanı bulun.</span></>,
+    sunrise: <>Dijital projelerin için doğru uzman, <span className="text-accent">doğru çözüm.</span></>,
+  };
   return (
     <div data-theme={id} className="pointer-events-none select-none bg-paper text-ink" aria-hidden>
       <div className="flex items-center gap-3 border-b border-line bg-surface px-4 py-2.5 text-[11px]">
         <LogoMark size={16} /><span className="font-semibold">eksen</span>
         <span className="text-ink-2">Hizmetler</span><span className="text-ink-2">Uzmanlar</span>
         <span className="ml-auto rounded-full bg-paper-2 px-3 py-1 text-muted">Hizmet veya uzman ara</span>
-        <span className="rounded-md bg-ink px-2 py-1 font-medium text-white">Ücretsiz kayıt</span>
+        <span className={`rounded-[var(--radius-btn)] px-2.5 py-1 font-medium text-white ${id === "sunrise" || id === "neo" ? "bg-accent" : "bg-ink"}`}>{id === "neo" ? "+ Proje oluştur" : "Ücretsiz kayıt"}</span>
       </div>
-      <div className={`px-5 pb-5 pt-6 ${premium ? "bg-surface text-center" : "bg-paper"}`}>
-        <p className={`font-semibold leading-tight tracking-[-0.03em] ${premium ? "text-[24px]" : "text-[19px]"}`}>{premium ? "İşin için doğru uzmanı bul." : "Dijital işlerin için doğru uzmanı bul."}</p>
-        <div className={`mt-3 flex items-center gap-2 rounded-lg border border-line bg-surface p-1.5 pl-3 text-[11px] text-muted shadow-xs ${premium ? "mx-auto max-w-[320px]" : "max-w-[300px]"}`}>
-          <IconSearch size={12} /> Ne yaptırmak istiyorsun?
-          <span className="ml-auto rounded-md bg-accent px-2.5 py-1 font-semibold text-white">{premium ? "Uzman bul" : "Ara"}</span>
+      <div className={`grid gap-3 px-5 pb-5 pt-6 ${device ? "grid-cols-[1.3fr_1fr] items-center" : ""} ${centered ? "bg-surface text-center" : "bg-paper"}`}>
+        <div>
+          <p className={`font-semibold leading-tight tracking-[-0.03em] ${centered ? "text-[24px]" : "text-[18px]"}`}>{title[id]}</p>
+          <div className={`mt-3 flex items-center gap-2 rounded-[var(--radius-search)] border border-line bg-surface p-1.5 pl-3 text-[11px] text-muted shadow-xs ${centered ? "mx-auto max-w-[320px]" : "max-w-[300px]"}`}>
+            <IconSearch size={12} /> Ne yaptırmak istiyorsun?
+            <span className="ml-auto rounded-[var(--radius-btn)] bg-accent px-2.5 py-1 font-semibold text-white">{id === "premium" ? "Uzman bul" : "Ara"}</span>
+          </div>
+          <div className={`mt-2.5 flex flex-wrap gap-1 ${centered ? "justify-center" : ""}`}>
+            {["Web sitesi", "Logo", "SEO"].map((c) => <span key={c} className="rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] text-ink-2">{c}</span>)}
+          </div>
         </div>
-        <div className={`mt-2.5 flex flex-wrap gap-1 ${premium ? "justify-center" : ""}`}>
-          {(premium ? ["Web sitesi", "Mobil uygulama", "SEO"] : ["Web sitesi yaptır", "Logo tasarla", "SEO hizmeti al"]).map((c) => <span key={c} className="rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] text-ink-2">{c}</span>)}
-        </div>
+        {device && (
+          <div className="relative h-[92px]">
+            <div className="absolute inset-x-1 top-1 h-[68px] rounded-md border-[3px] border-[#2a2d3a] bg-surface shadow-lift"><div className="m-1 h-3 rounded-sm bg-accent-soft" /><div className="mx-1 h-1.5 w-3/4 rounded bg-ink/60" /></div>
+            <div className="absolute -bottom-0 inset-x-0 h-2 rounded-b-md bg-[#c9ccd6]" />
+            <div className="absolute -right-1 top-3 h-[76px] w-[40px] rounded-[8px] border-[3px] border-[#2a2d3a] bg-surface p-1"><div className="h-2 w-full rounded-sm bg-accent" /><div className="mt-1 h-1 w-3/4 rounded bg-ink/40" /><div className="mt-1 h-1 w-1/2 rounded bg-ink/40" /></div>
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-3 gap-2 px-5 pb-5">
         {[0, 1, 2].map((i) => (
           <div key={i} className="card p-1.5">
-            <div className={`h-12 rounded-lg ${["bg-[#e7ebe4]", "bg-[#f3e9e2]", "bg-[#e5eaf3]"][i]}`} />
+            <div className={`h-12 rounded-lg ${["bg-[#e7ebe4]", "bg-[#f3e9e2]", "bg-[#e5eaf3]"][i]} ${id === "neo" ? "opacity-30" : ""}`} />
             <div className="flex items-center gap-1 px-1 pt-1.5 text-[9.5px] font-medium"><span className="h-3 w-3 rounded-full bg-trust" />Uzman <IconShield size={9} className="text-trust" /></div>
             <div className="mx-1 mt-1 h-1.5 w-4/5 rounded bg-ink/80" />
             <div className="mx-1 mt-1 h-1.5 w-3/5 rounded bg-ink/30" />
@@ -94,8 +113,8 @@ function ThemePreview({ id }: { id: ThemeId }) {
           </div>
         ))}
       </div>
-      <div className={`flex items-center justify-between px-5 py-3 text-[10px] ${premium ? "bg-ink text-white/60" : "border-t border-line bg-paper-2 text-muted"}`}>
-        <span className="flex items-center gap-1.5"><LogoMark size={12} className={premium ? "text-white" : "text-ink"} /> Kurumsal alt bilgi</span>
+      <div className={`flex items-center justify-between px-5 py-3 text-[10px] ${darkFooter ? "bg-[#0d0f1a] text-white/60" : "border-t border-line bg-paper-2 text-muted"}`}>
+        <span className="flex items-center gap-1.5"><LogoMark size={12} className={darkFooter ? "text-white" : "text-ink"} /> Kurumsal alt bilgi</span>
         <span>Hakkımızda · Yardım · İletişim · KVKK</span>
       </div>
     </div>

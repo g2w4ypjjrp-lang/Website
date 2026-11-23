@@ -8,7 +8,7 @@ type Variant = "primary" | "accent" | "outline" | "ghost" | "danger" | "trust";
 type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-ink text-white shadow-xs hover:bg-[#262a31] active:bg-black",
+  primary: "bg-ink text-white shadow-xs hover:bg-ink-hover",
   accent: "bg-accent text-white shadow-xs hover:bg-accent-strong",
   trust: "bg-trust text-white shadow-xs hover:bg-[#0b4a40]",
   outline: "border border-line bg-surface text-ink shadow-xs hover:border-ink/30 hover:bg-paper",
@@ -23,7 +23,7 @@ const sizes: Record<Size, string> = {
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", className?: string) {
   return cn(
-    "inline-flex select-none items-center justify-center whitespace-nowrap rounded-lg font-medium transition-[background,border-color,color,transform,box-shadow] duration-150 active:translate-y-px disabled:pointer-events-none disabled:opacity-50",
+    "inline-flex select-none items-center justify-center whitespace-nowrap rounded-[var(--radius-btn)] font-medium transition-[background,border-color,color,transform,box-shadow] duration-150 active:translate-y-px disabled:pointer-events-none disabled:opacity-50",
     variants[variant],
     sizes[size],
     className,

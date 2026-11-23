@@ -135,7 +135,7 @@ export function ServiceCover({ rootSlug, coverId, title, className, priority, as
 export function CategoryGlyph({ slug, size = 56, className }: { slug: string; size?: number; className?: string }) {
   const m = MOTIFS[slug] ?? MOTIFS["web-ve-yazilim"]!;
   return (
-    <svg viewBox="20 10 160 120" width={size} height={size * 0.75} className={cn("shrink-0 rounded-md", className)} style={{ background: m.bg }} aria-hidden>
+    <svg viewBox="20 10 160 120" width={size} height={size * 0.75} className={cn("glyph shrink-0 rounded-md", className)} style={{ background: m.bg }} aria-hidden>
       {m.draw(m.fg)}
     </svg>
   );

@@ -600,8 +600,9 @@ const SOCIAL_HOSTS: Record<string, string[]> = {
 
 export async function setThemeAction(form: FormData) {
   const admin = await requireAdmin();
-  const { saveThemeSettings } = await import("@/server/settings");
-  const theme = form.get("theme") === "light" ? "light" : "premium";
+  const { saveThemeSettings, THEME_IDS } = await import("@/server/settings");
+  const raw = String(form.get("theme") ?? "");
+  const theme = (THEME_IDS as string[]).includes(raw) ? (raw as (typeof THEME_IDS)[number]) : "premium";
   await saveThemeSettings({ theme });
   await audit(admin.id, "admin.theme.changed", "settings", "theme", { theme });
   // Tema kök düzende okunduğu için tüm sayfalar yeniden üretilir

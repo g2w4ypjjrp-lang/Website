@@ -34,7 +34,7 @@ export function useSuggestions(q: string) {
   return { items, loading };
 }
 
-export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun?", autoFocus, defaultValue = "", buttonLabel = "Ara" }: { size?: "md" | "lg"; placeholder?: string; autoFocus?: boolean; defaultValue?: string; buttonLabel?: string }) {
+export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun?", autoFocus, defaultValue = "", buttonLabel = "Ara" }: { size?: "md" | "lg"; placeholder?: string; autoFocus?: boolean; defaultValue?: string; buttonLabel?: React.ReactNode }) {
   const router = useRouter();
   const [q, setQ] = useState(defaultValue);
   const [open, setOpen] = useState(false);
@@ -65,7 +65,7 @@ export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun
         }}
         className={cn(
           "flex items-center border transition-[border-color,box-shadow,background-color] focus-within:border-ink focus-within:bg-surface focus-within:shadow-[0_0_0_4px_rgb(17_19_24/0.07)]",
-          lg ? "h-[64px] rounded-2xl border-line bg-surface pl-5 pr-2 shadow-lift" : "h-10 rounded-full border-transparent bg-paper-2 pl-4 pr-1 hover:border-line",
+          lg ? "h-[64px] rounded-[var(--radius-search)] border-line bg-surface pl-5 pr-2 shadow-lift" : "h-10 rounded-full border-transparent bg-paper-2 pl-4 pr-1 hover:border-line",
         )}
       >
         <IconSearch size={lg ? 20 : 16} className="shrink-0 text-muted" />
@@ -98,7 +98,7 @@ export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun
           className={cn("min-w-0 flex-1 bg-transparent outline-none placeholder:text-faint [&::-webkit-search-cancel-button]:hidden", lg ? "px-3 text-[15.5px] sm:text-[17px]" : "px-2 text-[14.5px]")}
         />
         {lg && (
-          <button type="submit" className="h-12 shrink-0 rounded-lg bg-accent px-4 text-[15px] font-semibold text-white shadow-xs transition-colors hover:bg-accent-strong sm:px-6">
+          <button type="submit" className="flex h-12 shrink-0 items-center gap-1.5 rounded-[var(--radius-btn)] bg-accent px-4 text-[15px] font-semibold text-white shadow-xs transition-colors hover:bg-accent-strong sm:px-6">
             {buttonLabel}
           </button>
         )}
@@ -129,10 +129,24 @@ export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun
   );
 }
 
-export function HeaderSearch() {
+export function HeaderSearch({ shortcut, placeholder = "Hizmet veya uzman ara" }: { shortcut?: boolean; placeholder?: string }) {
+  const wrap = useRef<HTMLDivElement>(null);
+  // ⌘K / Ctrl+K: başlıktaki aramaya odaklan
+  useEffect(() => {
+    if (!shortcut) return;
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        wrap.current?.querySelector("input")?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [shortcut]);
   return (
-    <div className="hidden max-w-[420px] md:block">
-      <SearchBox placeholder="Hizmet veya uzman ara" />
+    <div ref={wrap} className="relative hidden max-w-[440px] md:block">
+      <SearchBox placeholder={placeholder} />
+      {shortcut && <kbd aria-hidden className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-md border border-line bg-surface px-1.5 py-0.5 font-sans text-[11px] text-muted lg:block">⌘ K</kbd>}
     </div>
   );
 }

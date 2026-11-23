@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { and, asc, desc, eq, gte, inArray, isNull, lte, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
-import { categories, providerProfiles, reviews, services, servicePackages, users, blogPosts, projects } from "@/db/schema";
+import { categories, providerProfiles, reviews, services, servicePackages, users, blogPosts, projects, orders } from "@/db/schema";
 
 export type Category = typeof categories.$inferSelect;
 
@@ -305,3 +305,32 @@ export async function homeStories() {
     .orderBy(desc(reviews.createdAt))
     .limit(3);
 }
+
+/**
+ * Ana sayfa istatistikleri — yalnızca gerçek veriler. Tema bileşenleri, değer anlamlı eşiğin altındaysa
+ * rakam yerine niteliksel bir güven maddesi gösterir (uydurma sayı yok).
+ */
+export const platformStats = cache(async () => {
+  const [[p], [o], [r]] = await Promise.all([
+    db.select({ n: sql<number>`count(*)::int` }).from(providerProfiles).innerJoin(users, eq(users.id, providerProfiles.userId)).where(and(eq(users.status, "active"), eq(users.role, "provider"))),
+    db.select({ n: sql<number>`count(*)::int` }).from(orders).where(eq(orders.status, "completed")),
+    db
+      .select({ n: sql<number>`count(*)::int`, avg: sql<number>`coalesce(avg(${reviews.rating}), 0)::float`, good: sql<number>`(count(*) filter (where ${reviews.rating} >= 4))::int` })
+      .from(reviews)
+      .where(eq(reviews.isHidden, false)),
+  ]);
+  return { providers: p.n, completed: o.n, reviews: r.n, avgRating: r.avg, satisfaction: r.n ? Math.round((r.good / r.n) * 100) : null };
+});
+
+/** Ana kategori başına yayında hizmeti olan uzman sayısı (kategori kartları için). */
+export const rootCategoryProviderCounts = cache(async () => {
+  const rows = await db.execute<{ slug: string; n: number }>(sql`
+    select coalesce(pc.slug, c.slug) as slug, count(distinct s.provider_id)::int as n
+    from services s
+    join categories c on c.id = s.category_id
+    left join categories pc on pc.id = c.parent_id
+    join users u on u.id = s.provider_id
+    where s.status = 'active' and u.status = 'active'
+    group by 1`);
+  return Object.fromEntries((rows as unknown as { slug: string; n: number }[]).map((r) => [r.slug, Number(r.n)])) as Record<string, number>;
+});

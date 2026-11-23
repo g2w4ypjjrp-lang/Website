@@ -1,12 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { and, eq, gt, isNull, or } from "drizzle-orm";
-import { getCategoryTree, homeReviews, homeServiceRails, homeStories, latestPosts, listProviders } from "@/server/queries";
+import { getCategoryTree, homeReviews, homeServiceRails, homeStories, latestPosts, listProviders, platformStats, rootCategoryProviderCounts } from "@/server/queries";
 import { getSettings, getThemeSettings } from "@/server/settings";
 import { db } from "@/db";
 import { banners } from "@/db/schema";
 import { HomePremium } from "@/components/home/home-premium";
 import { HomeLight } from "@/components/home/home-light";
+import { HomeNeo } from "@/components/home/home-neo";
+import { HomeSunrise } from "@/components/home/home-sunrise";
 import type { HomeData } from "@/components/home/types";
 import { JsonLd } from "@/components/json-ld";
 import { buildMetadata, ld } from "@/lib/seo";
@@ -21,7 +23,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function HomePage() {
-  const [tree, rails, providers, reviews, posts, settings, stories, { theme }] = await Promise.all([
+  const [tree, rails, providers, reviews, posts, settings, stories, { theme }, stats, catCounts] = await Promise.all([
     getCategoryTree(),
     homeServiceRails(),
     listProviders({ verifiedOnly: true, limit: 6 }),
@@ -30,13 +32,19 @@ export default async function HomePage() {
     getSettings(),
     homeStories(),
     getThemeSettings(),
+    platformStats(),
+    rootCategoryProviderCounts(),
   ]);
   const banner = await db.query.banners.findFirst({ where: and(eq(banners.placement, "home_top"), eq(banners.isActive, true), or(isNull(banners.endsAt), gt(banners.endsAt, new Date()))) });
   const showcase = rails.bestselling.length >= 4 ? rails.bestselling : rails.newest;
   // Başarı hikâyesi olarak gösterilen yorum, değerlendirmelerde tekrar edilmez
   const storyIds = new Set(stories.map((st) => st.r.id));
+  const pool = [...rails.featured, ...rails.bestselling, ...rails.newest].filter((x, i, a) => a.findIndex((y) => y.id === x.id) === i);
   const d: HomeData = {
     tree,
+    pool,
+    stats,
+    catCounts,
     rails,
     showcase,
     heroItems: [...rails.featured, ...rails.bestselling, ...rails.newest].filter((x, i, a) => a.findIndex((y) => y.id === x.id) === i).slice(0, 4),
@@ -58,7 +66,7 @@ export default async function HomePage() {
           </div>
         </div>
       )}
-      {theme === "light" ? <HomeLight d={d} /> : <HomePremium d={d} />}
+      {theme === "light" ? <HomeLight d={d} /> : theme === "neo" ? <HomeNeo d={d} /> : theme === "sunrise" ? <HomeSunrise d={d} /> : <HomePremium d={d} />}
     </>
   );
 }
