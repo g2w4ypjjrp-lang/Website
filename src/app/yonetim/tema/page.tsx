@@ -15,7 +15,7 @@ const TRAITS: Record<ThemeId, string[]> = {
   light: ["Sade iki sütunlu giriş, ölçülü başlık boyutları", "İkonlu 8 kategori kartı, öne çıkan uzmanlar", "4 adımlı “Nasıl çalışır?”, “İşini güvenle yaptır.”", "Açık kurumsal alt bilgi, ince çerçeveler"],
   neo: ["Koyu lacivert zemin, mor vurgu, ışıltılı giriş", "Dizüstü ve telefon görünümünde canlı ürün arayüzü", "Sağda “Nasıl çalışır?” kartı, gerçek verili istatistik şeridi", "İkonlu kategori sekmeleriyle filtrelenen popüler hizmetler"],
   sunrise: ["Beyaz zemin, canlı turuncu vurgu, hap düğmeler", "Cihaz görünümlü giriş ve “Güvenli ödeme” kartı", "5 maddelik özellik şeridi, uzman sayılı kategori kartları", "Sekmelerle filtrelenen öne çıkan hizmetler"],
-  ultra: ["Lacivert üst bilgi şeridi, kurumsal mavi vurgu", "Girişte çalışan “Teklif alın” formu (kategori ve il)", "Alt hizmetli kategori dizini, 4 adımlı süreç", "Kurumsal bölüm ve doğrulanmış uzmanlardan kısa liste"],
+  ultra: ["Koyu, ışıltılı giriş; degrade başlık, koyu menü", "Kenarında ışık dolaşan çalışan “Teklif alın” formu", "Kayan hizmet şeridi, hareketli süreç çizgisi, bento güvenceler", "Kurumsal bölüm ve doğrulanmış uzmanlardan kısa liste"],
 };
 
 export default async function ThemePage() {
@@ -76,18 +76,19 @@ function ThemePreview({ id }: { id: ThemeId }) {
     light: "Dijital işlerin için doğru uzmanı bul.",
     neo: <>Dijital projenizi hayata geçirecek <span className="text-accent-bright">doğru uzmanı bulun.</span></>,
     sunrise: <>Dijital projelerin için doğru uzman, <span className="text-accent">doğru çözüm.</span></>,
-    ultra: <>Dijital işleriniz için doğrulanmış uzmanlar, <span className="text-accent">güvenceli süreç.</span></>,
+    ultra: <>Dijital işleriniz için doğrulanmış uzmanlar, <span className="ultra-gradient-text">güvenceli süreç.</span></>,
   };
   return (
     <div data-theme={id} className="pointer-events-none select-none bg-paper text-ink" aria-hidden>
-      {form && <div className="flex h-4 items-center justify-end gap-3 bg-[#0a1628] px-4 text-[8px] text-white/60"><span>Kurumsal çözümler</span><span>Yardım</span></div>}
-      <div className="flex items-center gap-3 border-b border-line bg-surface px-4 py-2.5 text-[11px]">
+      {form && <div className="flex h-4 items-center justify-end gap-3 bg-[#040b18] px-4 text-[8px] text-white/60"><span>Kurumsal çözümler</span><span>Yardım</span></div>}
+      <div className={`flex items-center gap-3 border-b px-4 py-2.5 text-[11px] ${form ? "ultra-dark-scope border-white/10 bg-[#071226]" : "border-line bg-surface"}`}>
         <LogoMark size={16} /><span className="font-semibold">eksen</span>
         <span className="text-ink-2">Hizmetler</span><span className="text-ink-2">Uzmanlar</span>
         <span className="ml-auto rounded-full bg-paper-2 px-3 py-1 text-muted">Hizmet veya uzman ara</span>
         <span className={`rounded-[var(--radius-btn)] px-2.5 py-1 font-medium text-white ${id === "sunrise" || id === "neo" || id === "ultra" ? "bg-accent" : "bg-ink"}`}>{id === "neo" ? "+ Proje oluştur" : id === "ultra" ? "Ücretsiz başlayın" : "Ücretsiz kayıt"}</span>
       </div>
-      <div className={`grid gap-3 px-5 pb-5 pt-6 ${device || form ? "grid-cols-[1.3fr_1fr] items-center" : ""} ${centered || form ? "bg-surface" : "bg-paper"} ${centered ? "text-center" : ""}`}>
+      <div className={`relative isolate grid gap-3 overflow-hidden px-5 pb-5 pt-6 ${device || form ? "grid-cols-[1.3fr_1fr] items-center" : ""} ${form ? "bg-[#060f22] text-white" : centered ? "bg-surface" : "bg-paper"} ${centered ? "text-center" : ""}`}>
+        {form && <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_20%_0%,rgb(43_92_255/0.55),transparent),radial-gradient(50%_70%_at_90%_10%,rgb(25_195_255/0.3),transparent)]" />}
         <div>
           <p className={`font-semibold leading-tight tracking-[-0.03em] ${centered ? "text-[24px]" : "text-[18px]"}`}>{title[id]}</p>
           <div className={`mt-3 flex items-center gap-2 rounded-[var(--radius-search)] border border-line bg-surface p-1.5 pl-3 text-[11px] text-muted shadow-xs ${centered ? "mx-auto max-w-[320px]" : "max-w-[300px]"}`}>
@@ -99,7 +100,7 @@ function ThemePreview({ id }: { id: ThemeId }) {
           </div>
         </div>
         {form && (
-          <div className="rounded-lg border border-line bg-surface p-2.5 shadow-lift">
+          <div className="rounded-lg border border-[#5b8cff]/60 bg-surface p-2.5 text-ink shadow-[0_10px_30px_-8px_rgb(43_92_255/0.7)]">
             <p className="text-[9px] font-semibold text-accent">Ücretsiz teklif alın</p>
             <div className="mt-1.5 h-4 rounded border border-line bg-paper" />
             <div className="mt-1 h-4 rounded border border-line bg-paper" />

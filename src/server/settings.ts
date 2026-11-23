@@ -76,7 +76,7 @@ export const THEMES: { id: ThemeId; no: number; name: string; summary: string }[
   { id: "light", no: 2, name: "Light Professional", summary: "Aydınlık ve kurumsal: ölçülü başlıklar, ince çerçeveler, geniş boşluklar, açık alt bilgi." },
   { id: "neo", no: 3, name: "Gece Moru", summary: "Koyu lacivert zemin, mor vurgu ve ışıltılar; cihaz görünümlü giriş, “Nasıl çalışır?” kartı, kategori sekmeleri." },
   { id: "sunrise", no: 4, name: "Gün Işığı", summary: "Beyaz zemin, canlı turuncu vurgu, hap biçimli düğmeler; cihaz görünümlü giriş, özellik şeridi, filtreli hizmetler." },
-  { id: "ultra", no: 5, name: "Ultra Profesyonel", summary: "Lacivert ve kurumsal mavi; üst bilgi şeridi, teklif formlu giriş, kategori dizini, kurumsal bölüm. Ölçülü tipografi, ince çizgiler." },
+  { id: "ultra", no: 5, name: "Ultra Profesyonel", summary: "Koyu lacivert, ışıltılı giriş ve kurumsal mavi; kenarında ışık dolaşan teklif formu, kayan hizmet şeridi, hareketli süreç çizgisi, bento güvenceler." },
 ];
 export const THEME_IDS = THEMES.map((t) => t.id);
 export type SocialLinks = { instagram?: string; linkedin?: string; x?: string; youtube?: string; facebook?: string };

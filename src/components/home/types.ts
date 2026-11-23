@@ -7,6 +7,8 @@ export type HomeData = {
   showcase: ServiceCardData[];
   heroItems: ServiceCardData[];
   providers: Awaited<ReturnType<typeof listProviders>>["items"];
+  /** Kimliği doğrulanmış uzman ve ajansların toplam sayısı */
+  verifiedTotal: number;
   stories: Awaited<ReturnType<typeof homeStories>>;
   otherReviews: Awaited<ReturnType<typeof homeReviews>>;
   posts: Awaited<ReturnType<typeof latestPosts>>;

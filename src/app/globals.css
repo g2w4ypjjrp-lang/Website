@@ -146,6 +146,66 @@
 [data-theme="ultra"] svg.cover-grid [fill]:not([fill="none"]):not([fill="#fff"]), [data-theme="ultra"] svg.glyph [fill]:not([fill="none"]):not([fill="#fff"]) { fill: #1f4ed8; }
 [data-theme="ultra"] .auth-aside { background: #0a1628; }
 [data-theme="ultra"] .section-cta { border-radius: var(--radius-btn); }
+[data-theme="ultra"] .card-hover:hover { border-color: #c7d5fb; box-shadow: 0 24px 50px -24px rgb(31 78 216 / 0.42); }
+
+/* ───── Tema 5 efektleri: yalnızca Tema 5 bileşenlerinde; "hareketi azalt" tercihinde hepsi durur ───── */
+/* Koyu başlık ve koyu bölümler: aynı bileşenler koyu zemine uygun değişkenlerle çizilir */
+.ultra-dark-scope {
+  --color-surface: #0e1b35; --color-paper: #0a1529; --color-paper-2: rgb(255 255 255 / 0.07);
+  --color-ink: #ffffff; --color-ink-2: rgb(255 255 255 / 0.8); --color-muted: rgb(255 255 255 / 0.62); --color-faint: rgb(255 255 255 / 0.5);
+  --color-line: rgb(255 255 255 / 0.12); --color-line-2: rgb(255 255 255 / 0.08);
+  --color-accent-soft: rgb(91 140 255 / 0.18);
+  --shadow-pop: 0 24px 60px -20px rgb(0 0 0 / 0.65);
+  color: var(--color-ink);
+}
+.ultra-dark-scope .bg-ink { background-color: var(--color-accent); }
+.ultra-dark-scope .text-accent, .ultra-dark-scope .text-accent-strong, .ultra-dark-scope .hover\:text-accent-strong:hover { color: #8fb0ff; }
+
+/* Işıltılı arka plan: iki yumuşak ışık lekesi yavaşça kayar (yalnızca transform, ek boyama yok) */
+.ultra-aurora { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.ultra-aurora::before, .ultra-aurora::after { content: ""; position: absolute; border-radius: 50%; will-change: transform; }
+.ultra-aurora::before { width: 980px; height: 980px; left: -300px; top: -560px; background: radial-gradient(closest-side, rgb(43 92 255 / 0.55), transparent); animation: ultra-drift-a 20s ease-in-out infinite alternate; }
+.ultra-aurora::after { width: 800px; height: 800px; right: -240px; top: -320px; background: radial-gradient(closest-side, rgb(25 195 255 / 0.3), transparent); animation: ultra-drift-b 24s ease-in-out infinite alternate; }
+@keyframes ultra-drift-a { to { transform: translate3d(160px, 100px, 0) scale(1.08); } }
+@keyframes ultra-drift-b { to { transform: translate3d(-140px, 140px, 0) scale(0.92); } }
+
+/* Kenarında dolaşan ışık: kart dönen konik degradenin önünde; yalnızca 1.5 px'lik çerçeve görünür */
+.ultra-glow-border { position: relative; isolation: isolate; overflow: hidden; border-radius: 20px; padding: 1.5px; background: rgb(255 255 255 / 0.16); }
+.ultra-glow-border::before { content: ""; position: absolute; z-index: -1; left: 50%; top: 50%; width: 220%; aspect-ratio: 1; translate: -50% -50%; background: conic-gradient(from 0deg, transparent 0deg 240deg, #5b8cff 295deg, #38d6ff 325deg, transparent 360deg); animation: ultra-rotate 7s linear infinite; }
+@keyframes ultra-rotate { to { rotate: 1turn; } }
+
+/* Yüzen rozetler */
+@keyframes ultra-float { 50% { translate: 0 -9px; } }
+.ultra-float { animation: ultra-float 6s ease-in-out infinite; }
+.ultra-float-late { animation: ultra-float 7s ease-in-out -3s infinite; }
+
+/* Parlayan degrade yazı */
+.ultra-gradient-text { background: linear-gradient(100deg, #8fb0ff 0%, #38d6ff 28%, #eaf1ff 50%, #38d6ff 72%, #8fb0ff 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: ultra-sheen 7s linear infinite; }
+@keyframes ultra-sheen { to { background-position: -200% 0; } }
+
+/* Kayan hizmet şeridi (iki kopya; üzerine gelince durur) */
+.ultra-marquee { mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+.ultra-marquee-track { display: flex; width: max-content; animation: ultra-marquee 70s linear infinite; }
+.ultra-marquee:hover .ultra-marquee-track, .ultra-marquee:focus-within .ultra-marquee-track { animation-play-state: paused; }
+@keyframes ultra-marquee { to { translate: -50% 0; } }
+
+/* Süreç çizgisinde ilerleyen ışık */
+.ultra-sweep { background: linear-gradient(90deg, transparent, #5b8cff, #38d6ff, transparent) no-repeat; background-size: 35% 100%; animation: ultra-sweep 4.5s ease-in-out infinite; }
+@keyframes ultra-sweep { from { background-position: -40% 0; } to { background-position: 140% 0; } }
+
+/* Korunan ödeme çizimi: ödeme önce havuzda bekler, onayla uzmana geçer */
+@keyframes ultra-escrow { 0%, 10% { left: 0%; } 34%, 64% { left: calc(50% - 15px); } 88%, 100% { left: calc(100% - 30px); } }
+.ultra-escrow-token { position: absolute; top: 50%; translate: 0 -50%; animation: ultra-escrow 6.5s cubic-bezier(.65,0,.35,1) infinite; }
+
+/* Kartta üzerine gelince degrade çerçeve */
+.ultra-card { position: relative; }
+.ultra-card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: linear-gradient(135deg, #5b8cff, transparent 38%, transparent 62%, #38d6ff); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+.ultra-card:hover::after { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ultra-aurora::before, .ultra-aurora::after, .ultra-glow-border::before, .ultra-float, .ultra-float-late, .ultra-gradient-text, .ultra-marquee-track, .ultra-sweep, .ultra-escrow-token { animation: none; }
+  .ultra-escrow-token { left: calc(50% - 15px); }
+}
 
 /* Koyu temada "mürekkep" dolgulu düğme ve rozetler mor olur (metin rengiyle çakışmasın diye) */
 [data-theme="neo"] .bg-ink { background-color: var(--color-accent); }

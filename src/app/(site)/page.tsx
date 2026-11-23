@@ -50,6 +50,7 @@ export default async function HomePage() {
     showcase,
     heroItems: [...rails.featured, ...rails.bestselling, ...rails.newest].filter((x, i, a) => a.findIndex((y) => y.id === x.id) === i).slice(0, 4),
     providers: providers.items,
+    verifiedTotal: providers.total,
     stories,
     otherReviews: reviews.filter(({ r }) => !storyIds.has(r.id)),
     posts,

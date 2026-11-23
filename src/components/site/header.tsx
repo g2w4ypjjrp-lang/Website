@@ -24,7 +24,7 @@ export async function SiteHeader() {
     <>
       {theme === "ultra" && (
         // Kurumsal üst bilgi şeridi: sayfayla birlikte kayar, yapışkan başlık altında kalır
-        <div className="hidden bg-[#0a1628] text-[12.5px] text-white/70 md:block">
+        <div className="hidden border-b border-white/[0.07] bg-[#040b18] text-[12.5px] text-white/65 md:block">
           <div className="container-x flex h-9 items-center justify-between gap-6">
             <p className="flex items-center gap-2"><IconShield size={13} className="text-[#8fb0ff]" /> Ödemeniz, teslimatı onaylayana kadar güvende.</p>
             <nav aria-label="Kurumsal bağlantılar" className="flex items-center gap-5">
@@ -35,7 +35,7 @@ export async function SiteHeader() {
           </div>
         </div>
       )}
-      <header className={cn("sticky top-0 z-40 border-b border-line/80 backdrop-blur-md", theme === "neo" ? "bg-paper/85" : "bg-surface/95 supports-[backdrop-filter]:bg-surface/80")}>
+      <header className={cn("sticky top-0 z-40 border-b backdrop-blur-md", theme === "neo" ? "border-line/80 bg-paper/85" : theme === "ultra" ? "ultra-dark-scope border-white/10 bg-[#071226]/92" : "border-line/80 bg-surface/95 supports-[backdrop-filter]:bg-surface/80")}>
         <div className="container-x flex h-16 items-center gap-4 md:gap-6">
           <Logo variant={variant} />
           {(theme === "sunrise" || theme === "ultra") && <span aria-hidden className="hidden h-7 w-px bg-line lg:block" />}
