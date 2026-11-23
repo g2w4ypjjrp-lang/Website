@@ -309,20 +309,28 @@ export function CategoryIcon({ slug, size = 20, className }: { slug: string; siz
 }
 
 /** Sade hizmet kartı (Tema 3 ve 4 vitrinleri): görsel, rozet, favori, başlık, fiyat ve puan. */
-export function CompactServiceCard({ s }: { s: ServiceCardData }) {
+/**
+ * Kompakt hizmet kartı. `art`: kapak görseli olmayan hizmetler için temaya özgü çizim (yüklenen görsel her zaman önceliklidir).
+ * `showProvider`: uzman adını gösterir (bazı vitrinlerde yalnızca başlık, fiyat ve puan).
+ */
+export function CompactServiceCard({ s, art, showProvider = true }: { s: ServiceCardData; art?: React.ReactNode; showProvider?: boolean }) {
   const featured = (s.featuredUntil && new Date(s.featuredUntil) > new Date()) || s.sponsored;
   return (
     <article className="card card-hover group relative flex flex-col overflow-hidden">
       <div className="relative overflow-hidden">
-        <ServiceCover rootSlug={s.rootSlug} coverId={s.coverId} title={s.title} aspect="aspect-[16/10]" className="transition-transform duration-700 ease-out group-hover:scale-[1.04]" />
-        {featured && <span className="absolute left-3 top-3 rounded-full bg-accent-soft px-2.5 py-1 text-[11.5px] font-semibold leading-none text-accent-strong shadow-xs">{s.sponsored ? "Sponsorlu" : "Öne Çıkan"}</span>}
+        {art && !s.coverId ? (
+          <div className="transition-transform duration-700 ease-out group-hover:scale-[1.04]">{art}</div>
+        ) : (
+          <ServiceCover rootSlug={s.rootSlug} coverId={s.coverId} title={s.title} aspect="aspect-[16/10]" className="transition-transform duration-700 ease-out group-hover:scale-[1.04]" />
+        )}
+        {featured && <span className="badge-featured absolute left-3 top-3 rounded-full bg-accent-soft px-2.5 py-1 text-[11.5px] font-semibold leading-none text-accent-strong shadow-xs">{s.sponsored ? "Sponsorlu" : "Öne Çıkan"}</span>}
         <FavoriteButton id={s.id} className="absolute right-3 top-3" />
       </div>
       <div className="flex flex-1 flex-col px-4 pb-4 pt-3.5">
         <h3 className="line-clamp-1 text-[15px] font-semibold">
           <Link href={`/hizmet/${s.slug}`} className="after:absolute after:inset-0 after:rounded-xl">{s.title}</Link>
         </h3>
-        <p className="mt-0.5 truncate text-[12.5px] text-muted">{s.providerName}</p>
+        {showProvider && <p className="mt-0.5 truncate text-[12.5px] text-muted">{s.providerName}</p>}
         <div className="mt-auto flex items-end justify-between gap-2 pt-3">
           <span className="price text-[18px] text-ink">{formatTRY(s.startingPriceKurus)}</span>
           {s.ratingCount > 0 ? (

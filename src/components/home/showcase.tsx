@@ -23,9 +23,15 @@ function MountainSite() {
           <linearGradient id="mt-neo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#8f7cf0" /><stop offset="1" stopColor="#2c2170" /></linearGradient>
         </defs>
         <rect width="320" height="200" fill="url(#sky-neo)" />
+        <circle cx="262" cy="40" r="30" fill="#c4b5fd" opacity=".1" />
+        {[[22, 70], [40, 96], [62, 58], [88, 84], [112, 64], [140, 40], [168, 70], [196, 30], [214, 58], [282, 22], [300, 60], [128, 92], [178, 46], [230, 80], [60, 112]].map(([x, y], i) => (
+          <circle key={i} cx={x} cy={y} r={i % 3 ? 0.8 : 1.3} fill="#fff" opacity={i % 2 ? 0.55 : 0.85} />
+        ))}
+        <path d="M140 200 L200 110 L228 140 L262 98 L320 160 L320 200Z" fill="#2a2070" opacity=".9" />
         <path d="M120 200 L190 70 L215 105 L240 60 L300 150 L320 135 L320 200Z" fill="url(#mt-neo)" />
         <path d="M240 60 L229 78 L238 74 L245 84 L251 76Z M190 70 L181 87 L190 82 L196 91 L201 82Z" fill="#ece8ff" />
         <path d="M100 200 L170 130 L205 160 L245 120 L320 185 L320 200Z" fill="#1d1652" />
+        <rect y="150" width="320" height="50" fill="url(#sky-neo)" opacity=".35" />
       </svg>
       <div className="relative flex items-center gap-1.5 px-3 py-2 text-[7px]">
         <span className="font-bold">Eksen</span>
@@ -106,7 +112,7 @@ function LaptopDeck({ neo }: { neo: boolean }) {
   return (
     <div
       aria-hidden
-      className={`absolute -left-[6%] top-[calc(100%-3px)] h-[74%] w-[112%] origin-top rounded-b-[26px] rounded-t-[6px] [transform-style:preserve-3d] [transform:rotateX(60deg)] ${neo ? "bg-[linear-gradient(180deg,#2d3166,#1b1e44)]" : "bg-[linear-gradient(180deg,#eceef2,#cdd1d8)]"}`}
+      className={`absolute -left-[6%] top-[calc(100%-3px)] ${neo ? "h-[58%]" : "h-[74%]"} w-[112%] origin-top rounded-b-[26px] rounded-t-[6px] [transform-style:preserve-3d] [transform:rotateX(60deg)] ${neo ? "bg-[linear-gradient(180deg,#2d3166,#1b1e44)]" : "bg-[linear-gradient(180deg,#eceef2,#cdd1d8)]"}`}
     >
       <svg viewBox="0 0 300 180" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
         <defs>
@@ -133,10 +139,11 @@ export function DeviceShowcase({ variant }: { variant: "neo" | "sunrise" }) {
   const steps = neo ? ["Tasarım", "Geliştirme", "Test", "Teslimat"] : ["Ödeme Alındı", "Çalışma Devam Ediyor", "Teslimat Hazır", "Tamamlandı"];
   const done = 3;
   return (
-    <div className="relative mx-auto w-full max-w-[620px] select-none pb-[9%] [perspective:1500px]" aria-label="Örnek proje ve proje durumu ekranı">
+    <div className={`relative mx-auto w-full max-w-[620px] select-none ${neo ? "pb-[6%]" : "pb-[9%]"} [perspective:1500px]`} aria-label="Örnek proje ve proje durumu ekranı">
       {neo ? (
         <>
           <div aria-hidden className="pointer-events-none absolute -inset-10 rounded-full bg-[radial-gradient(closest-side,rgb(115_80_255/0.42),transparent)] blur-2xl" />
+          <div aria-hidden className="neo-pulse pointer-events-none absolute -left-[8%] -top-[4%] h-[92%] w-[60%] -rotate-[18deg] rounded-[48%] border-[7px] border-[#9b7dff]/40 blur-md" />
           <div aria-hidden className="pointer-events-none absolute -left-[8%] -top-[4%] h-[92%] w-[60%] -rotate-[18deg] rounded-[48%] border-[2.5px] border-[#9b7dff]/80 shadow-[0_0_28px_rgba(139,92,246,0.75),inset_0_0_22px_rgba(139,92,246,0.45)]" />
         </>
       ) : (
@@ -162,12 +169,12 @@ export function DeviceShowcase({ variant }: { variant: "neo" | "sunrise" }) {
       <div aria-hidden className={`pointer-events-none absolute bottom-[1%] left-[2%] h-[12%] w-[80%] rounded-[50%] blur-xl ${neo ? "bg-[#7350ff]/25" : "bg-black/15"}`} />
       <div className={`relative ${neo ? "w-[86%]" : "w-[80%]"} [transform-style:preserve-3d] [transform-origin:50%_100%] [transform:rotateZ(-5deg)_rotateX(8deg)_rotateY(18deg)_rotateX(10deg)]`}>
         <div className={`rounded-[16px] border-[7px] ${neo ? "border-[#1d2046] bg-[#0f1230]" : "border-[#23252b] bg-[#1d1f25]"} shadow-pop`}>
-          <div className="aspect-[16/10] overflow-hidden rounded-[8px]">{neo ? <MountainSite /> : <CorporateSite />}</div>
+          <div className={`${neo ? "aspect-[16/9.4]" : "aspect-[16/10]"} overflow-hidden rounded-[8px]`}>{neo ? <MountainSite /> : <CorporateSite />}</div>
         </div>
         <LaptopDeck neo={neo} />
       </div>
       {/* Telefon */}
-      <div className={`absolute top-[14%] w-[31%] min-w-[146px] rounded-[28px] ${neo ? "-right-[2%]" : "right-[11%]"} border-[6px] ${neo ? "border-[#1d2046] bg-[#12152f]" : "border-[#23252b] bg-white"} p-3 text-left shadow-pop [transform:rotateZ(3deg)_rotateY(-10deg)]`}>
+      <div className={`absolute top-[14%] w-[31%] min-w-[146px] rounded-[28px] ${neo ? "neo-float -right-[2%]" : "right-[11%]"} border-[6px] ${neo ? "border-[#1d2046] bg-[#12152f]" : "border-[#23252b] bg-white"} p-3 text-left shadow-pop [transform:rotateZ(3deg)_rotateY(-10deg)]`}>
         <div className="mx-auto mb-2.5 h-[9px] w-[38%] rounded-full bg-[#0b0c10]" />
         {neo && <p className="mb-1 flex items-center gap-1 text-[9px] font-bold"><LogoMarkLayers size={11} /> Eksen</p>}
         <p className="text-[10.5px] font-semibold">Proje Durumu</p>

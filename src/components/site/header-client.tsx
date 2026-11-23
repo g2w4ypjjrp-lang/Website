@@ -78,7 +78,7 @@ export function CategoryMenu({ categories }: { categories: Cat[] }) {
   );
 }
 
-export function UserMenu({ user }: { user: { name: string; email: string; role: string; avatar: string | null; providerSlug: string | null } }) {
+export function UserMenu({ user, label }: { user: { name: string; email: string; role: string; avatar: string | null; providerSlug: string | null }; label?: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -96,6 +96,7 @@ export function UserMenu({ user }: { user: { name: string; email: string; role: 
     <div ref={ref} className="relative hidden md:block">
       <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex items-center gap-1.5 rounded-md p-1 pr-1.5 hover:bg-paper-2">
         <Avatar name={user.name} src={user.avatar} size={30} />
+        {label && <span className="pl-0.5 text-[14px] font-medium text-ink">{label}</span>}
         <IconChevronDown size={14} className="text-muted" />
       </button>
       {open && (

@@ -36,7 +36,7 @@ export async function SiteHeader() {
         </div>
       )}
       <header className={cn("sticky top-0 z-40 border-b backdrop-blur-md", theme === "neo" ? "border-line/80 bg-paper/85" : theme === "ultra" ? "ultra-dark-scope border-white/10 bg-[#071226]/92" : "border-line/80 bg-surface/95 supports-[backdrop-filter]:bg-surface/80")}>
-        <div className="container-x flex h-16 items-center gap-4 md:gap-6">
+        <div className={cn("container-x flex h-16 items-center gap-4 md:gap-6", theme === "neo" && "2xl:max-w-[1560px]")}>
           <Logo variant={variant} />
           {(theme === "sunrise" || theme === "ultra") && <span aria-hidden className="hidden h-7 w-px bg-line lg:block" />}
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Ana menü">

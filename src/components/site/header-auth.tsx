@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
-import { IconBell, IconChat } from "@/components/icons";
+import { IconBell, IconChat, IconUser } from "@/components/icons";
 import { UserMenu } from "./header-client";
 import type { LogoVariant } from "@/components/logo";
 import { useMe } from "./use-me";
@@ -20,9 +20,20 @@ export function HeaderAuth({ variant = "default" }: { variant?: LogoVariant }) {
             <span className="mx-1.5 hidden h-6 w-px bg-line md:block" aria-hidden />
           </>
         )}
-        <Link href="/giris" className="hidden rounded-md px-3 py-2 text-[14.5px] font-medium text-ink hover:bg-paper-2 sm:block">{variant === "sunrise" ? "Giriş Yap" : "Giriş yap"}</Link>
+        {variant === "neo" && (
+          <>
+            {/* Görseldeki simgeler; ziyaretçide sahte bildirim noktası yok, tıklanınca girişe gider */}
+            <Link href="/giris?sonra=%2Fpanel%2Fbildirimler" aria-label="Bildirimler" className="hidden h-9 w-9 items-center justify-center rounded-lg text-ink-2 transition-colors hover:bg-paper-2 hover:text-ink min-[1440px]:flex"><IconBell size={18} /></Link>
+            <Link href="/giris?sonra=%2Fpanel%2Fmesajlar" aria-label="Mesajlar" className="hidden h-9 w-9 items-center justify-center rounded-lg text-ink-2 transition-colors hover:bg-paper-2 hover:text-ink min-[1440px]:flex"><IconChat size={18} /></Link>
+          </>
+        )}
         {variant === "neo" ? (
-          <ButtonLink href="/proje-olustur" size="sm" variant="accent" className="hidden sm:inline-flex">+ Proje oluştur</ButtonLink>
+          <Link href="/giris" className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-2 py-1.5 text-[14.5px] font-medium text-ink hover:bg-paper-2 sm:flex"><span className="flex h-8 w-8 items-center justify-center rounded-full bg-paper-2 text-ink-2"><IconUser size={16} /></span>Giriş yap</Link>
+        ) : (
+          <Link href="/giris" className="hidden rounded-md px-3 py-2 text-[14.5px] font-medium text-ink hover:bg-paper-2 sm:block">{variant === "sunrise" ? "Giriş Yap" : "Giriş yap"}</Link>
+        )}
+        {variant === "neo" ? (
+          <ButtonLink href="/proje-olustur" size="sm" variant="accent" className="hidden !h-10 shrink-0 whitespace-nowrap !px-4 sm:inline-flex">+ Proje Oluştur</ButtonLink>
         ) : variant === "sunrise" ? (
           <ButtonLink href="/kayit" size="sm" variant="accent" className="hidden !h-10 !px-5 sm:inline-flex">Ücretsiz Kayıt Ol</ButtonLink>
         ) : variant === "ultra" ? (
@@ -40,8 +51,8 @@ export function HeaderAuth({ variant = "default" }: { variant?: LogoVariant }) {
         <IconBell size={18} />
         {unread > 0 && <span className="num absolute right-1 top-1 min-w-[16px] rounded-full bg-accent px-1 text-center text-[10px] leading-4 text-white">{unread > 9 ? "9+" : unread}</span>}
       </Link>
-      <UserMenu user={me.user} />
-      {variant === "neo" && <ButtonLink href="/proje-olustur" size="sm" variant="accent" className="ml-1 hidden lg:inline-flex">+ Proje oluştur</ButtonLink>}
+      <UserMenu user={me.user} label={variant === "neo" ? "Hesabım" : undefined} />
+      {variant === "neo" && <ButtonLink href="/proje-olustur" size="sm" variant="accent" className="ml-1 hidden !h-10 !px-4 lg:inline-flex">+ Proje Oluştur</ButtonLink>}
     </>
   );
 }
