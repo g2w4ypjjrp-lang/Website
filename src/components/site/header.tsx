@@ -20,7 +20,8 @@ export async function SiteHeader() {
   return (
     <header className={cn("sticky top-0 z-40 border-b border-line/80 backdrop-blur-md", theme === "neo" ? "bg-paper/85" : "bg-surface/95 supports-[backdrop-filter]:bg-surface/80")}>
       <div className="container-x flex h-16 items-center gap-4 md:gap-6">
-        <Logo />
+        <Logo variant={theme === "neo" ? "neo" : theme === "sunrise" ? "sunrise" : "default"} />
+        {theme === "sunrise" && <span aria-hidden className="hidden h-7 w-px bg-line lg:block" />}
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Ana menü">
           <CategoryMenu categories={cats} />
           {links.map(([href, label, bp]) => (
@@ -29,8 +30,8 @@ export async function SiteHeader() {
         </nav>
         <div className="flex-1">
           {theme === "sunrise" ? (
-            <div className="hidden justify-end md:flex">
-              <Link href="/ara" aria-label="Ara" className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-2 shadow-xs transition-colors hover:border-ink/30 hover:text-ink"><IconSearch size={17} /></Link>
+            <div className="hidden items-center justify-end gap-2 md:flex">
+              <Link href="/ara" aria-label="Ara" className="flex h-10 w-10 items-center justify-center rounded-full bg-paper-2 text-ink-2 transition-colors hover:text-ink"><IconSearch size={17} /></Link>
             </div>
           ) : (
             <HeaderSearch shortcut={theme === "neo"} placeholder={theme === "neo" ? "Hizmet, uzman veya proje ara…" : undefined} />

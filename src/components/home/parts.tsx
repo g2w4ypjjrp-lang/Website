@@ -102,3 +102,8 @@ export function shortName(full: string) {
   const [a, b] = full.split(" ");
   return `${a}${b?.[0] ? ` ${b[0]}.` : ""}`;
 }
+
+/** Üç sütunlu ızgarada yarım satır bırakmamak için öğe sayısını 3 ya da 6'ya indirir (3'ten azsa olduğu gibi). */
+export function fullRows<T>(items: T[]): T[] {
+  return items.length >= 6 ? items.slice(0, 6) : items.length >= 3 ? items.slice(0, 3) : items;
+}

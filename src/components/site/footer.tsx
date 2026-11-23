@@ -37,7 +37,7 @@ export async function SiteFooter() {
     <footer className={cn("mt-24 pb-24 lg:pb-0", t.wrap)}>
       <div className="container-x grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div className="max-w-xs sm:col-span-2 lg:col-span-1">
-          <Logo tone={dark ? "light" : "ink"} />
+          <Logo tone={dark ? "light" : "ink"} variant={theme === "neo" ? "neo" : theme === "sunrise" ? "sunrise" : "default"} />
           <p className={cn("mt-4 text-[14px]", t.text)}>Türkiye’deki işletmelerin dijital işlerini doğru uzmanla buluşturan pazaryeri. Ödemeniz, siz teslimatı onaylayana kadar güvencede tutulur.</p>
           <div className="mt-6 space-y-2.5 text-[13px]">
             <p className="flex items-center gap-2.5"><span className={cn("flex h-7 w-7 items-center justify-center rounded-lg", t.chip)}><IconShield size={14} className={t.icon} /></span> Onaylanana kadar korunan ödeme</p>

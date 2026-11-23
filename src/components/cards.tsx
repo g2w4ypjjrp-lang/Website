@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { Avatar, Rating, Badge } from "@/components/ui/primitives";
 import { IconClock, IconShield } from "@/components/icons";
-import { formatTRY, cn } from "@/lib/utils";
+import { formatTRY, formatRating, cn } from "@/lib/utils";
 import { LEVEL_LABEL } from "@/lib/order-status";
 import { fileUrl } from "@/lib/utils";
 import { isOnline, type ServiceCardData } from "@/server/queries";
 import { FavoriteButton } from "@/components/favorite-button";
-import { IconGlobe, IconPhone, IconPen, IconChart, IconPlay, IconCpu, IconBriefcase, IconDoc, IconLayers } from "@/components/icons";
+import { IconGlobe, IconPhone, IconPen, IconChart, IconPlay, IconCpu, IconBriefcase, IconDoc, IconLayers, IconMonitor, IconBuilding, IconStar } from "@/components/icons";
 
 const MOTIFS: Record<string, { bg: string; fg: string; draw: (fg: string) => React.ReactNode }> = {
   "web-ve-yazilim": {
@@ -292,13 +292,13 @@ export function ProviderCard({ p }: { p: ProviderCardData }) {
 }
 
 const CATEGORY_ICONS: Record<string, (p: { size?: number; className?: string }) => React.ReactNode> = {
-  "web-ve-yazilim": (p) => <IconGlobe {...p} />,
+  "web-ve-yazilim": (p) => <IconMonitor {...p} />,
   "mobil-uygulama": (p) => <IconPhone {...p} />,
   "grafik-tasarim": (p) => <IconPen {...p} />,
   "dijital-pazarlama": (p) => <IconChart {...p} />,
   "video-ve-icerik": (p) => <IconPlay {...p} />,
   "yapay-zeka": (p) => <IconCpu {...p} />,
-  "is-ve-danismanlik": (p) => <IconBriefcase {...p} />,
+  "is-ve-danismanlik": (p) => <IconBuilding {...p} />,
   "yazi-ve-icerik": (p) => <IconDoc {...p} />,
 };
 
@@ -306,4 +306,32 @@ const CATEGORY_ICONS: Record<string, (p: { size?: number; className?: string }) 
 export function CategoryIcon({ slug, size = 20, className }: { slug: string; size?: number; className?: string }) {
   const I = CATEGORY_ICONS[slug];
   return I ? <>{I({ size, className })}</> : <IconLayers size={size} className={className} />;
+}
+
+/** Sade hizmet kartı (Tema 3 ve 4 vitrinleri): görsel, rozet, favori, başlık, fiyat ve puan. */
+export function CompactServiceCard({ s }: { s: ServiceCardData }) {
+  const featured = (s.featuredUntil && new Date(s.featuredUntil) > new Date()) || s.sponsored;
+  return (
+    <article className="card card-hover group relative flex flex-col overflow-hidden">
+      <div className="relative overflow-hidden">
+        <ServiceCover rootSlug={s.rootSlug} coverId={s.coverId} title={s.title} aspect="aspect-[16/10]" className="transition-transform duration-700 ease-out group-hover:scale-[1.04]" />
+        {featured && <span className="absolute left-3 top-3 rounded-full bg-accent-soft px-2.5 py-1 text-[11.5px] font-semibold leading-none text-accent-strong shadow-xs">{s.sponsored ? "Sponsorlu" : "Öne Çıkan"}</span>}
+        <FavoriteButton id={s.id} className="absolute right-3 top-3" />
+      </div>
+      <div className="flex flex-1 flex-col px-4 pb-4 pt-3.5">
+        <h3 className="line-clamp-1 text-[15px] font-semibold">
+          <Link href={`/hizmet/${s.slug}`} className="after:absolute after:inset-0 after:rounded-xl">{s.title}</Link>
+        </h3>
+        <p className="mt-0.5 truncate text-[12.5px] text-muted">{s.providerName}</p>
+        <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+          <span className="price text-[18px] text-ink">{formatTRY(s.startingPriceKurus)}</span>
+          {s.ratingCount > 0 ? (
+            <span className="flex items-center gap-1 text-[13px] font-medium"><IconStar filled size={13} className="text-[#f5b400]" />{formatRating(s.ratingAvg)}<span className="font-normal text-muted">({s.ratingCount})</span></span>
+          ) : (
+            <span className="text-[12.5px] text-muted">Yeni</span>
+          )}
+        </div>
+      </div>
+    </article>
+  );
 }

@@ -164,3 +164,27 @@ export const IconYoutube = ({ size, ...p }: P) => (
 export const IconFacebook = ({ size, ...p }: P) => (
   <svg {...sbase(size)} {...p}><path d="M13.5 21v-7.6h2.6l.4-3h-3V8.5c0-.9.2-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4V10.4H7.8v3h2.6V21h3.1Z" /></svg>
 );
+export const IconMonitor = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}><path d="M1.5 2.5h13v8.5h-13zM5.5 14h5M8 11v3" /></svg>
+);
+export const IconBuilding = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}><path d="M3 14.5V2h7v12.5M10 6h3v8.5M1.5 14.5h13M5 4.5h1M7.5 4.5h1M5 7h1M7.5 7h1M5 9.5h1M7.5 9.5h1M6.2 14.5v-2.5h1.6v2.5" /></svg>
+);
+export const IconBolt = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}><path d="M9 1.5 3.5 9H8l-1 5.5L12.5 7H8z" /></svg>
+);
+export const IconHeadset = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}><path d="M2.5 9.5V8a5.5 5.5 0 0 1 11 0v1.5M2.5 9.5h2v3.5h-2zM11.5 9.5h2v3.5h-2zM13.5 13a2.5 2.5 0 0 1-2.5 2H9" /></svg>
+);
+export const IconTrophy = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}><path d="M4.5 2h7v4a3.5 3.5 0 0 1-7 0zM4.5 3.5H2a2.5 2.5 0 0 0 2.6 3M11.5 3.5H14a2.5 2.5 0 0 1-2.6 3M8 9.5V12M5.5 14.5h5M6 12h4" /></svg>
+);
+export const IconCart = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}><path d="M1.5 2h2l1.6 8h7.4l1.5-5.5H4.2M6 13.5h.01M12 13.5h.01" /></svg>
+);
+export const IconUsers = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}><circle cx="6" cy="5" r="2.5" /><path d="M1.5 14a4.5 4.5 0 0 1 9 0M10.5 2.7a2.5 2.5 0 0 1 0 4.6M12 9.8a4.5 4.5 0 0 1 2.5 4.2" /></svg>
+);
+export const IconCard = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}><path d="M1.5 3.5h13v9h-13zM1.5 6.5h13M4 10h2.5" /></svg>
+);

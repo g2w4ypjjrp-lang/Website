@@ -34,7 +34,7 @@ export function useSuggestions(q: string) {
   return { items, loading };
 }
 
-export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun?", autoFocus, defaultValue = "", buttonLabel = "Ara" }: { size?: "md" | "lg"; placeholder?: string; autoFocus?: boolean; defaultValue?: string; buttonLabel?: React.ReactNode }) {
+export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun?", autoFocus, defaultValue = "", buttonLabel = "Ara", divider }: { size?: "md" | "lg"; placeholder?: string; autoFocus?: boolean; defaultValue?: string; buttonLabel?: React.ReactNode; divider?: boolean }) {
   const router = useRouter();
   const [q, setQ] = useState(defaultValue);
   const [open, setOpen] = useState(false);
@@ -97,6 +97,7 @@ export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun
           autoComplete="off"
           className={cn("min-w-0 flex-1 bg-transparent outline-none placeholder:text-faint [&::-webkit-search-cancel-button]:hidden", lg ? "px-3 text-[15.5px] sm:text-[17px]" : "px-2 text-[14.5px]")}
         />
+        {lg && divider && <span aria-hidden className="mx-2 hidden h-7 w-px shrink-0 bg-line sm:block" />}
         {lg && (
           <button type="submit" className="flex h-12 shrink-0 items-center gap-1.5 rounded-[var(--radius-btn)] bg-accent px-4 text-[15px] font-semibold text-white shadow-xs transition-colors hover:bg-accent-strong sm:px-6">
             {buttonLabel}

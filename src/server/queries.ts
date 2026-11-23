@@ -311,15 +311,17 @@ export async function homeStories() {
  * rakam yerine niteliksel bir güven maddesi gösterir (uydurma sayı yok).
  */
 export const platformStats = cache(async () => {
-  const [[p], [o], [r]] = await Promise.all([
+  const [[p], [o], [r], [c]] = await Promise.all([
     db.select({ n: sql<number>`count(*)::int` }).from(providerProfiles).innerJoin(users, eq(users.id, providerProfiles.userId)).where(and(eq(users.status, "active"), eq(users.role, "provider"))),
     db.select({ n: sql<number>`count(*)::int` }).from(orders).where(eq(orders.status, "completed")),
     db
       .select({ n: sql<number>`count(*)::int`, avg: sql<number>`coalesce(avg(${reviews.rating}), 0)::float`, good: sql<number>`(count(*) filter (where ${reviews.rating} >= 4))::int` })
       .from(reviews)
       .where(eq(reviews.isHidden, false)),
+    // En az bir siparişi tamamlanmış farklı müşteri sayısı ("Eksen üzerinden iş tamamladı")
+    db.select({ n: sql<number>`count(distinct ${orders.buyerId})::int` }).from(orders).where(eq(orders.status, "completed")),
   ]);
-  return { providers: p.n, completed: o.n, reviews: r.n, avgRating: r.avg, satisfaction: r.n ? Math.round((r.good / r.n) * 100) : null };
+  return { providers: p.n, completed: o.n, customers: c.n, reviews: r.n, avgRating: r.avg, satisfaction: r.n ? Math.round((r.good / r.n) * 100) : null };
 });
 
 /** Ana kategori başına yayında hizmeti olan uzman sayısı (kategori kartları için). */

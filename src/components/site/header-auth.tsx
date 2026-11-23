@@ -13,6 +13,12 @@ export function HeaderAuth({ variant = "default" }: { variant?: "default" | "neo
     return (
       <>
         {variant === "default" && <Link href="/uzman-ol" className="hidden px-2 text-[14.5px] text-ink-2 hover:text-ink xl:block">Uzman olarak katıl</Link>}
+        {variant === "sunrise" && (
+          <>
+            <Link href="/giris?sonra=%2Fpanel%2Fbildirimler" aria-label="Bildirimler" className="relative hidden h-10 w-10 items-center justify-center rounded-full bg-paper-2 text-ink-2 transition-colors hover:text-ink md:flex"><IconBell size={17} /><span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-accent-bright ring-2 ring-paper-2" /></Link>
+            <span className="mx-1.5 hidden h-6 w-px bg-line md:block" aria-hidden />
+          </>
+        )}
         <Link href="/giris" className="hidden rounded-md px-3 py-2 text-[14.5px] font-medium text-ink hover:bg-paper-2 sm:block">{variant === "sunrise" ? "Giriş Yap" : "Giriş yap"}</Link>
         {variant === "neo" ? (
           <ButtonLink href="/proje-olustur" size="sm" variant="accent" className="hidden sm:inline-flex">+ Proje oluştur</ButtonLink>
