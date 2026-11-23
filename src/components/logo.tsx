@@ -35,12 +35,19 @@ export function LogoMarkBolt({ size = 26 }: { size?: number }) {
   );
 }
 
-export function Logo({ href = "/", className = "", tone = "ink", variant = "default" }: { href?: string; className?: string; tone?: "ink" | "light"; variant?: "default" | "neo" | "sunrise" }) {
+export type LogoVariant = "default" | "neo" | "sunrise" | "ultra";
+
+/** Temaya göre logo biçimi (başlık ve alt bilgi aynı eşlemeyi kullanır). */
+export const logoVariant = (theme: string): LogoVariant => (theme === "neo" || theme === "sunrise" || theme === "ultra" ? theme : "default");
+
+export function Logo({ href = "/", className = "", tone = "ink", variant = "default" }: { href?: string; className?: string; tone?: "ink" | "light"; variant?: LogoVariant }) {
   return (
     <Link href={href} className={`inline-flex items-center gap-2 ${tone === "light" ? "text-white" : "text-ink"} ${className}`} aria-label="Eksen ana sayfa">
       {variant === "neo" ? <LogoMarkLayers /> : variant === "sunrise" ? <LogoMarkBolt /> : <LogoMark />}
       {variant === "default" ? (
         <span className="font-display text-[21px] font-bold leading-none tracking-[-0.045em]">eksen</span>
+      ) : variant === "ultra" ? (
+        <span className="font-display text-[22px] font-semibold leading-none tracking-[-0.035em]">Eksen</span>
       ) : (
         <span className="font-display text-[24px] font-bold leading-none tracking-[-0.035em]">Eksen</span>
       )}

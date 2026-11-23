@@ -58,7 +58,7 @@ Zamanlanmış görev (saatte bir): Cloudflare'de Cron Trigger ile otomatik çal�
 
 ## Temalar
 
-Dört tema vardır ve **Yönetim → Tema ve görünüm** ekranından tek tıkla değiştirilir; varsayılan Tema 1'dir. Seçim veritabanında saklanır, kök düzende `<html data-theme="…">` olarak uygulanır ve tüm sayfalar (panel ve yönetim dahil) aynı tasarım değişkenlerini kullanır.
+Beş tema vardır ve **Yönetim → Tema ve görünüm** ekranından tek tıkla değiştirilir; varsayılan Tema 1'dir. Seçim veritabanında saklanır, kök düzende `<html data-theme="…">` olarak uygulanır ve tüm sayfalar (panel ve yönetim dahil) aynı tasarım değişkenlerini kullanır.
 
 | Tema | Özellikler |
 | --- | --- |
@@ -66,6 +66,7 @@ Dört tema vardır ve **Yönetim → Tema ve görünüm** ekranından tek tıkla
 | **Tema 2 · Light Professional** (`light`) | Sade iki sütunlu giriş, ölçülü başlıklar, ikonlu 8 kategori kartı, öne çıkan uzmanlar, 4 adımlı “Nasıl çalışır?”, “İşini güvenle yaptır.”, iki çağrı alanı, açık kurumsal alt bilgi |
 | **Tema 3 · Gece Moru** (`neo`) | Koyu lacivert zemin ve mor vurgu (tüm sayfalar koyu), dizüstü + telefon görünümünde canlı arayüz, “Nasıl Çalışır?” kartı, gerçek verili istatistik şeridi, ikonlu kategori sekmeleriyle süzülen popüler hizmetler, ⌘K arama |
 | **Tema 4 · Gün Işığı** (`sunrise`) | Beyaz zemin, canlı turuncu vurgu, hap biçimli düğmeler, cihaz görünümlü giriş ve “Güvenli ödeme” kartı, 5 maddelik özellik şeridi, uzman sayılı kategori kartları, sekmeli öne çıkan hizmetler |
+| **Tema 5 · Ultra Profesyonel** (`ultra`) | Lacivert ve kurumsal mavi, serin gri zemin, ince çizgiler; lacivert üst bilgi şeridi, girişte çalışan “Teklif alın” formu (seçilen kategori ve il proje formunu doldurur, kayıt/giriş sonrasında da korunur), alt hizmetli kategori dizini, 4 adımlı süreç, kurumsal bölüm ve doğrulanmış uzmanlardan kısa liste, mavi tonlu hizmet kapakları, lacivert alt bilgi |
 
 İstatistik ve sayılar yalnızca veritabanındaki gerçek kayıtlardan gelir (aktif uzman, tamamlanan sipariş, olumlu değerlendirme oranı); anlamlı eşiğin altındaysa rakam yerine niteliksel bir güven maddesi gösterilir.
 

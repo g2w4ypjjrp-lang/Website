@@ -3,9 +3,10 @@ import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
 import { IconBell, IconChat } from "@/components/icons";
 import { UserMenu } from "./header-client";
+import type { LogoVariant } from "@/components/logo";
 import { useMe } from "./use-me";
 
-export function HeaderAuth({ variant = "default" }: { variant?: "default" | "neo" | "sunrise" }) {
+export function HeaderAuth({ variant = "default" }: { variant?: LogoVariant }) {
   const me = useMe();
   // Yüklenirken sabit genişlikte boş alan: düzen kaymaz
   if (me === undefined) return <div className="hidden h-9 w-[200px] sm:block" aria-hidden />;
@@ -24,6 +25,8 @@ export function HeaderAuth({ variant = "default" }: { variant?: "default" | "neo
           <ButtonLink href="/proje-olustur" size="sm" variant="accent" className="hidden sm:inline-flex">+ Proje oluştur</ButtonLink>
         ) : variant === "sunrise" ? (
           <ButtonLink href="/kayit" size="sm" variant="accent" className="hidden !h-10 !px-5 sm:inline-flex">Ücretsiz Kayıt Ol</ButtonLink>
+        ) : variant === "ultra" ? (
+          <ButtonLink href="/kayit" size="sm" variant="accent" className="hidden !h-9 !px-4 sm:inline-flex">Ücretsiz başlayın</ButtonLink>
         ) : (
           <ButtonLink href="/kayit" size="sm" className="hidden sm:inline-flex">Ücretsiz kayıt</ButtonLink>
         )}

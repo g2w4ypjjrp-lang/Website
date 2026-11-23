@@ -27,7 +27,8 @@ const password = z
 
 function safeNext(next: unknown) {
   const n = typeof next === "string" ? next : "";
-  return n.startsWith("/") && !n.startsWith("//") && !n.startsWith("/yonetim") ? n : null;
+  // Yalnızca site içi yol. Ters bölü ve kontrol karakterleri tarayıcıda "//başka-alan" gibi yorumlanabildiği için reddedilir.
+  return n.startsWith("/") && !n.startsWith("//") && !/[\\\u0000-\u001f\u007f]/.test(n) && !n.startsWith("/yonetim") ? n : null;
 }
 
 async function issueToken(userId: string, type: "verify_email" | "reset_password", hours: number) {

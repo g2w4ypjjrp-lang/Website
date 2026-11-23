@@ -1,10 +1,10 @@
-import { Logo } from "@/components/logo";
+import { ThemedLogo } from "@/components/themed-logo";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid min-h-dvh lg:grid-cols-[1fr_minmax(0,520px)]">
       <div className="flex flex-col px-4 py-6 sm:px-10">
-        <Logo />
+        <ThemedLogo />
         <main className="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center py-10">{children}</main>
         <p className="text-[12.5px] text-muted">Ödemeler lisanslı ödeme kuruluşu üzerinden alınır. Kart bilgileriniz Eksen’de saklanmaz.</p>
       </div>

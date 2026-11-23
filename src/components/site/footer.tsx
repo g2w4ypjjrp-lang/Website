@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getCategoryTree } from "@/server/queries";
 import { getThemeSettings, type SocialLinks } from "@/server/settings";
-import { Logo } from "@/components/logo";
+import { Logo, logoVariant } from "@/components/logo";
 import { IconFacebook, IconInstagram, IconLinkedin, IconLock, IconShield, IconXSocial, IconYoutube } from "@/components/icons";
 import { CITIES } from "@/lib/tr-cities";
 import { cn } from "@/lib/utils";
@@ -20,16 +20,16 @@ const SOCIAL: [keyof SocialLinks, string, (p: { size?: number }) => React.ReactN
  */
 export async function SiteFooter() {
   const [tree, { theme, social }] = await Promise.all([getCategoryTree(), getThemeSettings()]);
-  const dark = theme === "premium" || theme === "neo";
+  const dark = theme === "premium" || theme === "neo" || theme === "ultra";
   const t = {
     // Koyu temada "ink" dolgusu mor olduğu için alt bilgi sabit koyu lacivert
-    wrap: theme === "neo" ? "border-t border-line bg-[#080a1c] text-white/70" : dark ? "bg-ink text-white/70" : "border-t border-line bg-paper-2/70 text-ink-2",
+    wrap: theme === "neo" ? "border-t border-line bg-[#080a1c] text-white/70" : theme === "ultra" ? "bg-[#0a1628] text-white/70" : dark ? "bg-ink text-white/70" : "border-t border-line bg-paper-2/70 text-ink-2",
     text: dark ? "text-white/60" : "text-muted",
     head: dark ? "text-white" : "text-ink",
     link: dark ? "text-white/60 hover:text-white" : "text-ink-2 hover:text-ink",
     rule: dark ? "border-white/10" : "border-line",
     chip: dark ? "bg-white/10" : "bg-surface border border-line",
-    icon: dark ? "text-[#6fd0b9]" : "text-trust",
+    icon: theme === "ultra" ? "text-[#8fb0ff]" : dark ? "text-[#6fd0b9]" : "text-trust",
     social: dark ? "border-white/15 text-white/70 hover:border-white/40 hover:text-white" : "border-line bg-surface text-ink-2 hover:border-ink/40 hover:text-ink",
   };
   const socials = SOCIAL.filter(([k]) => social[k]);
@@ -37,7 +37,7 @@ export async function SiteFooter() {
     <footer className={cn("mt-24 pb-24 lg:pb-0", t.wrap)}>
       <div className="container-x grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div className="max-w-xs sm:col-span-2 lg:col-span-1">
-          <Logo tone={dark ? "light" : "ink"} variant={theme === "neo" ? "neo" : theme === "sunrise" ? "sunrise" : "default"} />
+          <Logo tone={dark ? "light" : "ink"} variant={logoVariant(theme)} />
           <p className={cn("mt-4 text-[14px]", t.text)}>Türkiye’deki işletmelerin dijital işlerini doğru uzmanla buluşturan pazaryeri. Ödemeniz, siz teslimatı onaylayana kadar güvencede tutulur.</p>
           <div className="mt-6 space-y-2.5 text-[13px]">
             <p className="flex items-center gap-2.5"><span className={cn("flex h-7 w-7 items-center justify-center rounded-lg", t.chip)}><IconShield size={14} className={t.icon} /></span> Onaylanana kadar korunan ödeme</p>

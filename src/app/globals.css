@@ -120,6 +120,33 @@
   --hero-size: clamp(36px, 3.6vw, 50px);
   --h2-size: clamp(26px, 2.8vw, 34px);
 }
+/* Tema 5 · Ultra Profesyonel: lacivert mürekkep, kurumsal mavi vurgu, serin gri zemin, ince çizgiler, ölçülü gölgeler */
+[data-theme="ultra"] {
+  --color-paper: #f6f8fb; --color-paper-2: #eef2f7; --color-surface: #ffffff;
+  --color-ink: #0b1526; --color-ink-2: #2c3a50; --color-muted: #586579; --color-faint: #657185;
+  --color-line: #e1e6ee; --color-line-2: #edf1f6;
+  --color-accent: #1f4ed8; --color-accent-strong: #193fae; --color-accent-soft: #edf2fe; --color-accent-bright: #3a6cf0;
+  --color-ink-hover: #1a2740;
+  --color-trust: #0b7a59; --color-trust-soft: #e4f4ed;
+  --color-info: #1f4ed8; --color-info-soft: #edf2fe;
+  --radius-md: 8px; --radius-lg: 10px; --radius-xl: 12px; --radius-2xl: 16px;
+  --radius-btn: 8px; --radius-search: 10px;
+  --shadow-xs: 0 1px 2px rgb(11 21 38 / 0.05);
+  --shadow-card: 0 1px 2px rgb(11 21 38 / 0.04);
+  --shadow-lift: 0 1px 2px rgb(11 21 38 / 0.05), 0 12px 32px -16px rgb(11 21 38 / 0.22);
+  --shadow-pop: 0 2px 4px -2px rgb(11 21 38 / 0.06), 0 30px 64px -30px rgb(11 21 38 / 0.34);
+  --hero-size: clamp(36px, 4vw, 54px);
+  --h2-size: clamp(26px, 2.6vw, 36px);
+}
+/* Kapak çizimleri tek renk ailesine (lacivert ve mavi) çekilir; yüklenen fotoğraflar etkilenmez */
+[data-theme="ultra"] svg.cover-grid, [data-theme="ultra"] svg.glyph {
+  background: linear-gradient(rgb(31 78 216 / 0.06) 1px, transparent 1px) 0 0 / 5% 7.142%, linear-gradient(90deg, rgb(31 78 216 / 0.06) 1px, transparent 1px) 0 0 / 5% 7.142%, linear-gradient(160deg, #f3f6fd, #e5ebf8) !important;
+}
+[data-theme="ultra"] svg.cover-grid [stroke]:not([stroke="none"]), [data-theme="ultra"] svg.glyph [stroke]:not([stroke="none"]) { stroke: #0f2a5c; }
+[data-theme="ultra"] svg.cover-grid [fill]:not([fill="none"]):not([fill="#fff"]), [data-theme="ultra"] svg.glyph [fill]:not([fill="none"]):not([fill="#fff"]) { fill: #1f4ed8; }
+[data-theme="ultra"] .auth-aside { background: #0a1628; }
+[data-theme="ultra"] .section-cta { border-radius: var(--radius-btn); }
+
 /* Koyu temada "mürekkep" dolgulu düğme ve rozetler mor olur (metin rengiyle çakışmasın diye) */
 [data-theme="neo"] .bg-ink { background-color: var(--color-accent); }
 [data-theme="neo"] .text-accent-strong, [data-theme="neo"] .eyebrow { color: var(--color-accent-bright); }

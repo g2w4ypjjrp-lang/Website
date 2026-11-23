@@ -9,6 +9,7 @@ import { HomePremium } from "@/components/home/home-premium";
 import { HomeLight } from "@/components/home/home-light";
 import { HomeNeo } from "@/components/home/home-neo";
 import { HomeSunrise } from "@/components/home/home-sunrise";
+import { HomeUltra } from "@/components/home/home-ultra";
 import type { HomeData } from "@/components/home/types";
 import { JsonLd } from "@/components/json-ld";
 import { buildMetadata, ld } from "@/lib/seo";
@@ -66,7 +67,7 @@ export default async function HomePage() {
           </div>
         </div>
       )}
-      {theme === "light" ? <HomeLight d={d} /> : theme === "neo" ? <HomeNeo d={d} /> : theme === "sunrise" ? <HomeSunrise d={d} /> : <HomePremium d={d} />}
+      {theme === "light" ? <HomeLight d={d} /> : theme === "neo" ? <HomeNeo d={d} /> : theme === "sunrise" ? <HomeSunrise d={d} /> : theme === "ultra" ? <HomeUltra d={d} /> : <HomePremium d={d} />}
     </>
   );
 }

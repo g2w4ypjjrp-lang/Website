@@ -15,6 +15,7 @@ const TRAITS: Record<ThemeId, string[]> = {
   light: ["Sade iki sütunlu giriş, ölçülü başlık boyutları", "İkonlu 8 kategori kartı, öne çıkan uzmanlar", "4 adımlı “Nasıl çalışır?”, “İşini güvenle yaptır.”", "Açık kurumsal alt bilgi, ince çerçeveler"],
   neo: ["Koyu lacivert zemin, mor vurgu, ışıltılı giriş", "Dizüstü ve telefon görünümünde canlı ürün arayüzü", "Sağda “Nasıl çalışır?” kartı, gerçek verili istatistik şeridi", "İkonlu kategori sekmeleriyle filtrelenen popüler hizmetler"],
   sunrise: ["Beyaz zemin, canlı turuncu vurgu, hap düğmeler", "Cihaz görünümlü giriş ve “Güvenli ödeme” kartı", "5 maddelik özellik şeridi, uzman sayılı kategori kartları", "Sekmelerle filtrelenen öne çıkan hizmetler"],
+  ultra: ["Lacivert üst bilgi şeridi, kurumsal mavi vurgu", "Girişte çalışan “Teklif alın” formu (kategori ve il)", "Alt hizmetli kategori dizini, 4 adımlı süreç", "Kurumsal bölüm ve doğrulanmış uzmanlardan kısa liste"],
 };
 
 export default async function ThemePage() {
@@ -68,22 +69,25 @@ export default async function ThemePage() {
 function ThemePreview({ id }: { id: ThemeId }) {
   const centered = id === "premium";
   const device = id === "neo" || id === "sunrise";
-  const darkFooter = id === "premium" || id === "neo";
+  const form = id === "ultra";
+  const darkFooter = id === "premium" || id === "neo" || id === "ultra";
   const title: Record<ThemeId, React.ReactNode> = {
     premium: "İşin için doğru uzmanı bul.",
     light: "Dijital işlerin için doğru uzmanı bul.",
     neo: <>Dijital projenizi hayata geçirecek <span className="text-accent-bright">doğru uzmanı bulun.</span></>,
     sunrise: <>Dijital projelerin için doğru uzman, <span className="text-accent">doğru çözüm.</span></>,
+    ultra: <>Dijital işleriniz için doğrulanmış uzmanlar, <span className="text-accent">güvenceli süreç.</span></>,
   };
   return (
     <div data-theme={id} className="pointer-events-none select-none bg-paper text-ink" aria-hidden>
+      {form && <div className="flex h-4 items-center justify-end gap-3 bg-[#0a1628] px-4 text-[8px] text-white/60"><span>Kurumsal çözümler</span><span>Yardım</span></div>}
       <div className="flex items-center gap-3 border-b border-line bg-surface px-4 py-2.5 text-[11px]">
         <LogoMark size={16} /><span className="font-semibold">eksen</span>
         <span className="text-ink-2">Hizmetler</span><span className="text-ink-2">Uzmanlar</span>
         <span className="ml-auto rounded-full bg-paper-2 px-3 py-1 text-muted">Hizmet veya uzman ara</span>
-        <span className={`rounded-[var(--radius-btn)] px-2.5 py-1 font-medium text-white ${id === "sunrise" || id === "neo" ? "bg-accent" : "bg-ink"}`}>{id === "neo" ? "+ Proje oluştur" : "Ücretsiz kayıt"}</span>
+        <span className={`rounded-[var(--radius-btn)] px-2.5 py-1 font-medium text-white ${id === "sunrise" || id === "neo" || id === "ultra" ? "bg-accent" : "bg-ink"}`}>{id === "neo" ? "+ Proje oluştur" : id === "ultra" ? "Ücretsiz başlayın" : "Ücretsiz kayıt"}</span>
       </div>
-      <div className={`grid gap-3 px-5 pb-5 pt-6 ${device ? "grid-cols-[1.3fr_1fr] items-center" : ""} ${centered ? "bg-surface text-center" : "bg-paper"}`}>
+      <div className={`grid gap-3 px-5 pb-5 pt-6 ${device || form ? "grid-cols-[1.3fr_1fr] items-center" : ""} ${centered || form ? "bg-surface" : "bg-paper"} ${centered ? "text-center" : ""}`}>
         <div>
           <p className={`font-semibold leading-tight tracking-[-0.03em] ${centered ? "text-[24px]" : "text-[18px]"}`}>{title[id]}</p>
           <div className={`mt-3 flex items-center gap-2 rounded-[var(--radius-search)] border border-line bg-surface p-1.5 pl-3 text-[11px] text-muted shadow-xs ${centered ? "mx-auto max-w-[320px]" : "max-w-[300px]"}`}>
@@ -94,6 +98,14 @@ function ThemePreview({ id }: { id: ThemeId }) {
             {["Web sitesi", "Logo", "SEO"].map((c) => <span key={c} className="rounded-full border border-line bg-surface px-2 py-0.5 text-[10px] text-ink-2">{c}</span>)}
           </div>
         </div>
+        {form && (
+          <div className="rounded-lg border border-line bg-surface p-2.5 shadow-lift">
+            <p className="text-[9px] font-semibold text-accent">Ücretsiz teklif alın</p>
+            <div className="mt-1.5 h-4 rounded border border-line bg-paper" />
+            <div className="mt-1 h-4 rounded border border-line bg-paper" />
+            <div className="mt-1.5 flex h-5 items-center justify-center rounded bg-accent text-[9px] font-semibold text-white">Teklif almaya başla</div>
+          </div>
+        )}
         {device && (
           <div className="relative h-[92px]">
             <div className="absolute inset-x-1 top-1 h-[68px] rounded-md border-[3px] border-[#2a2d3a] bg-surface shadow-lift"><div className="m-1 h-3 rounded-sm bg-accent-soft" /><div className="mx-1 h-1.5 w-3/4 rounded bg-ink/60" /></div>
@@ -113,7 +125,7 @@ function ThemePreview({ id }: { id: ThemeId }) {
           </div>
         ))}
       </div>
-      <div className={`flex items-center justify-between px-5 py-3 text-[10px] ${darkFooter ? "bg-[#0d0f1a] text-white/60" : "border-t border-line bg-paper-2 text-muted"}`}>
+      <div className={`flex items-center justify-between px-5 py-3 text-[10px] ${darkFooter ? (form ? "bg-[#0a1628] text-white/60" : "bg-[#0d0f1a] text-white/60") : "border-t border-line bg-paper-2 text-muted"}`}>
         <span className="flex items-center gap-1.5"><LogoMark size={12} className={darkFooter ? "text-white" : "text-ink"} /> Kurumsal alt bilgi</span>
         <span>Hakkımızda · Yardım · İletişim · KVKK</span>
       </div>

@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { Logo } from "@/components/logo";
+import { ThemedLogo } from "@/components/themed-logo";
 import { SearchBox } from "@/components/site/header-search";
 
 export default function NotFound() {
   return (
     <div className="flex min-h-dvh flex-col">
-      <div className="container-x py-5"><Logo /></div>
+      <div className="container-x py-5"><ThemedLogo /></div>
       <main className="container-x flex flex-1 flex-col justify-center pb-24">
         <p className="num text-[13px] text-accent">404</p>
         <h1 className="mt-3 max-w-xl text-[36px] font-semibold sm:text-[48px]">Bu sayfa yerinde yok.</h1>

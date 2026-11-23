@@ -14,7 +14,7 @@ export function SectionHead({ eyebrow, title, sub, href, cta, center }: { eyebro
         {sub && <p className="mt-3 text-[15.5px] text-muted">{sub}</p>}
       </div>
       {href && cta && (
-        <Link href={href} className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 text-[14px] font-medium shadow-xs transition-colors hover:border-ink">
+        <Link href={href} className="section-cta inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 text-[14px] font-medium shadow-xs transition-colors hover:border-ink">
           {cta} <IconArrowRight size={15} />
         </Link>
       )}

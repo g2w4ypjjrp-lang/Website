@@ -12,6 +12,12 @@ export default async function CreateProjectPage({ searchParams }: { searchParams
   const { kategori, il } = await searchParams;
   const [user, tree] = await Promise.all([getCurrentUser(), getCategoryTree()]);
   const pre = tree.flatMap((c) => [c, ...c.children]).find((c) => c.slug === kategori);
+  // Giriş yapmamış ziyaretçinin seçtiği kategori ve il, kayıt ya da giriş sonrasında korunur
+  const q = new URLSearchParams();
+  if (pre) q.set("kategori", pre.slug);
+  if (il && /^[a-z0-9-]{2,40}$/.test(il)) q.set("il", il);
+  const qs = q.toString();
+  const next = encodeURIComponent(`/proje-olustur${qs ? `?${qs}` : ""}`);
   return (
     <div className="container-x pt-10">
       <div className="grid gap-12 lg:grid-cols-[1fr_minmax(0,640px)]">
@@ -37,8 +43,8 @@ export default async function CreateProjectPage({ searchParams }: { searchParams
               <p className="text-[18px] font-semibold">Önce hesabını oluştur</p>
               <p className="mt-2 text-muted">Teklifleri takip edebilmen ve uzmanlarla mesajlaşabilmen için ücretsiz bir hesap gerekiyor.</p>
               <div className="mt-6 flex gap-3">
-                <ButtonLink href="/kayit?sonra=/proje-olustur">Kaydol</ButtonLink>
-                <ButtonLink href="/giris?sonra=/proje-olustur" variant="outline">Giriş yap</ButtonLink>
+                <ButtonLink href={`/kayit?sonra=${next}`}>Kaydol</ButtonLink>
+                <ButtonLink href={`/giris?sonra=${next}`} variant="outline">Giriş yap</ButtonLink>
               </div>
             </div>
           ) : user.role !== "customer" ? (
