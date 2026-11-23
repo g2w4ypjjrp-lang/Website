@@ -41,6 +41,7 @@ export const serviceCardSelect = {
   rootSlug: sql<string>`coalesce((select pc.slug from categories pc where pc.id = ${categories.parentId}), ${categories.slug})`,
   providerName: providerProfiles.displayName,
   providerSlug: providerProfiles.slug,
+  providerHeadline: providerProfiles.headline,
   providerLevel: providerProfiles.level,
   providerVerified: providerProfiles.verifiedAt,
   providerAvatarId: users.avatarId,
@@ -166,6 +167,10 @@ export const providerCardSelect = {
   lastSeenAt: users.lastSeenAt,
   accountType: users.accountType,
   createdAt: users.createdAt,
+  /** Kartlarda kısa tanıtım (ilk 160 karakter) */
+  bioExcerpt: sql<string>`left(coalesce(${providerProfiles.bio}, ''), 160)`,
+  /** Yayındaki hizmetlerinin en düşük başlangıç fiyatı (kuruş); hizmeti yoksa null */
+  fromKurus: sql<number | null>`(select min(s.starting_price_kurus) from services s where s.provider_id = ${providerProfiles.userId} and s.status = 'active')`,
 };
 
 export async function listProviders(opts: { ids?: string[]; cityIn?: string[]; q?: string; categoryId?: string; verifiedOnly?: boolean; accountType?: "individual" | "agency" | "company"; city?: string; sort?: string; limit?: number; page?: number }) {

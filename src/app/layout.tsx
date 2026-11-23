@@ -3,6 +3,7 @@ import "./fonts.css";
 import "./globals.css";
 import { site } from "@/lib/site";
 import { SWRegister } from "@/components/sw-register";
+import { getThemeSettings } from "@/server/settings";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -19,17 +20,19 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f6f4ef",
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Etkin tema (Yönetim → Tema); okunamazsa varsayılan "premium"
+  const { theme } = await getThemeSettings();
   // LCP metni için kritik yazı tipleri önceden yüklenir (Türkçe ğ, ş, ı karakterleri latin-ext alt kümesinde)
   const fonts = ["inter-latin-var", "inter-latin-ext-var"].map((f) => `/fonts/${f}.woff2`);
   return (
-    <html lang="tr">
+    <html lang="tr" data-theme={theme}>
       <head>
         {fonts.map((f) => (
           <link key={f} rel="preload" href={f} as="font" type="font/woff2" crossOrigin="anonymous" />

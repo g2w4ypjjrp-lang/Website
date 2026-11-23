@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { settings } from "@/db/schema";
@@ -63,6 +64,40 @@ export async function saveLocalSeoSettings(patch: Partial<LocalSeoSettings>) {
   await db
     .insert(settings)
     .values({ key: "localSeo", value: next })
+    .onConflictDoUpdate({ target: settings.key, set: { value: next, updatedAt: new Date() } });
+  return next;
+}
+
+/* ───────────── Tema ve görünüm ───────────── */
+
+export type ThemeId = "premium" | "light";
+export const THEMES: { id: ThemeId; name: string; summary: string }[] = [
+  { id: "premium", name: "Modern Premium", summary: "Güçlü tipografi, ortalanmış arama, ürün arayüzü hissi veren hizmet kartları, koyu alt bilgi." },
+  { id: "light", name: "Light Professional", summary: "Aydınlık ve kurumsal: ölçülü başlıklar, ince çerçeveler, geniş boşluklar, açık alt bilgi." },
+];
+export type SocialLinks = { instagram?: string; linkedin?: string; x?: string; youtube?: string; facebook?: string };
+export type ThemeSettings = { theme: ThemeId; social: SocialLinks };
+export const DEFAULT_THEME: ThemeSettings = { theme: "premium", social: {} };
+
+/**
+ * Etkin tema. Kök düzende her sayfada okunur; istek içinde tek sorguya iner (React cache).
+ * Veritabanına ulaşılamazsa varsayılan temayla devam edilir: tema okuması hiçbir sayfayı düşürmez.
+ */
+export const getThemeSettings = cache(async (): Promise<ThemeSettings> => {
+  try {
+    const row = await db.query.settings.findFirst({ where: eq(settings.key, "theme") });
+    const v = (row?.value as Partial<ThemeSettings>) ?? {};
+    return { theme: v.theme === "light" ? "light" : "premium", social: { ...(v.social ?? {}) } };
+  } catch {
+    return DEFAULT_THEME;
+  }
+});
+
+export async function saveThemeSettings(patch: Partial<ThemeSettings>) {
+  const next = { ...(await getThemeSettings()), ...patch };
+  await db
+    .insert(settings)
+    .values({ key: "theme", value: next })
     .onConflictDoUpdate({ target: settings.key, set: { value: next, updatedAt: new Date() } });
   return next;
 }

@@ -16,14 +16,14 @@ export function HeroShowcase({ items }: { items: ServiceCardData[] }) {
     <div className="relative mx-auto w-full min-w-0 max-w-[460px] lg:mx-0" aria-label="Örnek hizmet ve güvenli ödeme akışı">
       {/* arkadaki kartlar: derinlik */}
       {rest.slice(0, 2).map((r, i) => (
-        <div key={r.id} aria-hidden className="absolute inset-x-4 top-4 hidden overflow-hidden rounded-[22px] border border-line bg-surface p-2 shadow-lift sm:block" style={{ transform: i === 0 ? "translate(-34px, 10px) rotate(-5deg)" : "translate(34px, 22px) rotate(4deg)", zIndex: 0 }}>
-          <ServiceCover rootSlug={r.rootSlug} coverId={r.coverId} title="" className="rounded-[14px]" />
+        <div key={r.id} aria-hidden className="absolute inset-x-4 top-4 hidden overflow-hidden rounded-2xl border border-line bg-surface p-2 shadow-lift sm:block" style={{ transform: i === 0 ? "translate(-34px, 10px) rotate(-5deg)" : "translate(34px, 22px) rotate(4deg)", zIndex: 0 }}>
+          <ServiceCover rootSlug={r.rootSlug} coverId={r.coverId} title="" className="rounded-lg" />
           <div className="h-24" />
         </div>
       ))}
 
-      <article className="relative z-10 overflow-hidden rounded-[22px] border border-line bg-surface p-2 shadow-pop">
-        <div className="relative overflow-hidden rounded-[14px]">
+      <article className="relative z-10 overflow-hidden rounded-2xl border border-line bg-surface p-2 shadow-pop">
+        <div className="relative overflow-hidden rounded-lg">
           <ServiceCover rootSlug={main.rootSlug} coverId={main.coverId} title={main.title} priority />
           <span className="absolute left-3 top-3 rounded-full bg-surface/95 px-2.5 py-1 text-[11.5px] font-medium leading-none text-ink-2 shadow-xs">{main.categoryName}</span>
         </div>

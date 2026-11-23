@@ -14,7 +14,7 @@ export function HeaderAuth() {
       <>
         <Link href="/uzman-ol" className="hidden px-2 text-[14.5px] text-ink-2 hover:text-ink xl:block">Uzman olarak katıl</Link>
         <Link href="/giris" className="hidden rounded-md px-3 py-2 text-[14.5px] font-medium text-ink hover:bg-paper-2 sm:block">Giriş yap</Link>
-        <ButtonLink href="/kayit" size="sm" className="hidden sm:inline-flex">Ücretsiz kaydol</ButtonLink>
+        <ButtonLink href="/kayit" size="sm" className="hidden sm:inline-flex">Ücretsiz kayıt</ButtonLink>
       </>
     );
   const unread = me.unread ?? 0;

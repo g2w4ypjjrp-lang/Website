@@ -587,3 +587,47 @@ export async function updateLeadAction(form: FormData) {
   revalidatePath("/yonetim/kurumsal");
   revalidatePath("/yonetim", "layout");
 }
+
+/* ───────────── Tema ve görünüm ───────────── */
+
+const SOCIAL_HOSTS: Record<string, string[]> = {
+  instagram: ["instagram.com", "www.instagram.com"],
+  linkedin: ["linkedin.com", "www.linkedin.com", "tr.linkedin.com"],
+  x: ["x.com", "twitter.com", "www.x.com", "www.twitter.com"],
+  youtube: ["youtube.com", "www.youtube.com"],
+  facebook: ["facebook.com", "www.facebook.com"],
+};
+
+export async function setThemeAction(form: FormData) {
+  const admin = await requireAdmin();
+  const { saveThemeSettings } = await import("@/server/settings");
+  const theme = form.get("theme") === "light" ? "light" : "premium";
+  await saveThemeSettings({ theme });
+  await audit(admin.id, "admin.theme.changed", "settings", "theme", { theme });
+  // Tema kök düzende okunduğu için tüm sayfalar yeniden üretilir
+  revalidatePath("/", "layout");
+}
+
+export async function saveSocialLinksAction(_: FormState, form: FormData): Promise<FormState> {
+  const admin = await requireAdmin();
+  const { saveThemeSettings } = await import("@/server/settings");
+  const social: Record<string, string> = {};
+  const errors: Record<string, string[]> = {};
+  for (const [key, hosts] of Object.entries(SOCIAL_HOSTS)) {
+    const raw = String(form.get(key) ?? "").trim();
+    if (!raw) continue;
+    try {
+      const u = new URL(raw);
+      // Yalnızca https ve ilgili ağın alan adı: javascript: vb. bağlantılar alt bilgiye giremez
+      if (u.protocol !== "https:" || !hosts.includes(u.hostname)) throw new Error();
+      social[key] = u.toString();
+    } catch {
+      errors[key] = [`Geçerli bir ${hosts[0]} adresi girin (https://…).`];
+    }
+  }
+  if (Object.keys(errors).length) return { fieldErrors: errors };
+  await saveThemeSettings({ social });
+  await audit(admin.id, "admin.social.updated", "settings", "theme", { keys: Object.keys(social) });
+  revalidatePath("/", "layout");
+  return { ok: "Sosyal medya bağlantıları kaydedildi." };
+}

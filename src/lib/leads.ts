@@ -14,3 +14,6 @@ export const BUDGETS = ["Aylık 50.000 TL altı", "Aylık 50.000–150.000 TL", 
 
 export const LEAD_STATUSES = { new: "Yeni", contacted: "Görüşülüyor", won: "Kazanıldı", lost: "Kaybedildi" } as const;
 export type LeadStatus = keyof typeof LEAD_STATUSES;
+
+/** İletişim formu konuları */
+export const CONTACT_TOPICS = ["Genel soru", "Sipariş ve teslimat", "Ödeme ve iade", "Uzman hesabı", "Kurumsal", "Teknik sorun", "Diğer"] as const;

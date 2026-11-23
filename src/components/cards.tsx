@@ -5,6 +5,8 @@ import { formatTRY, cn } from "@/lib/utils";
 import { LEVEL_LABEL } from "@/lib/order-status";
 import { fileUrl } from "@/lib/utils";
 import { isOnline, type ServiceCardData } from "@/server/queries";
+import { FavoriteButton } from "@/components/favorite-button";
+import { IconGlobe, IconPhone, IconPen, IconChart, IconPlay, IconCpu, IconBriefcase, IconDoc, IconLayers } from "@/components/icons";
 
 const MOTIFS: Record<string, { bg: string; fg: string; draw: (fg: string) => React.ReactNode }> = {
   "web-ve-yazilim": {
@@ -74,6 +76,29 @@ const MOTIFS: Record<string, { bg: string; fg: string; draw: (fg: string) => Rea
       </>
     ),
   },
+  "is-ve-danismanlik": {
+    bg: "#eceae3",
+    fg: "#3a3f47",
+    draw: (c) => (
+      <>
+        <rect x="30" y="34" width="44" height="28" rx="3" fill="none" stroke={c} strokeWidth="2" />
+        <rect x="126" y="34" width="44" height="28" rx="3" fill="none" stroke={c} strokeWidth="2" />
+        <rect x="78" y="90" width="44" height="28" rx="3" fill="#c63e22" />
+        <path d="M52 62v14h96V62M100 76v14" fill="none" stroke={c} strokeWidth="2" />
+      </>
+    ),
+  },
+  "yazi-ve-icerik": {
+    bg: "#f1ece4",
+    fg: "#5b4632",
+    draw: (c) => (
+      <>
+        <rect x="50" y="18" width="78" height="104" rx="3" fill="#fff" stroke={c} strokeWidth="2" />
+        {[0, 1, 2, 3, 4].map((i) => <rect key={i} x="62" y={36 + i * 14} width={i === 4 ? 30 : 54} height="4" fill={c} opacity=".35" />)}
+        <path d="M150 34l14 14-38 38h-14V72z" fill="#c63e22" />
+      </>
+    ),
+  },
   "yapay-zeka": {
     bg: "#e3ece9",
     fg: "#0e5a4e",
@@ -92,15 +117,15 @@ const MOTIFS: Record<string, { bg: string; fg: string; draw: (fg: string) => Rea
 };
 
 /** Kapak görseli olmayan hizmetler için kategoriye özgü çizimsel kapak. Stok fotoğraf yerine tutarlı bir dil. */
-export function ServiceCover({ rootSlug, coverId, title, className, priority }: { rootSlug: string; coverId?: string | null; title: string; className?: string; priority?: boolean }) {
+export function ServiceCover({ rootSlug, coverId, title, className, priority, aspect = "aspect-[10/7]" }: { rootSlug: string; coverId?: string | null; title: string; className?: string; priority?: boolean; aspect?: string }) {
   if (coverId)
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={fileUrl(coverId, 640)!} srcSet={`${fileUrl(coverId, 480)} 480w, ${fileUrl(coverId, 960)} 960w`} sizes="(min-width: 1024px) 300px, 100vw" alt={title} width={600} height={420} loading={priority ? "eager" : "lazy"} decoding="async" className={cn("aspect-[10/7] w-full object-cover", className)} />
+      <img src={fileUrl(coverId, 640)!} srcSet={`${fileUrl(coverId, 480)} 480w, ${fileUrl(coverId, 960)} 960w`} sizes="(min-width: 1024px) 300px, 100vw" alt={title} width={600} height={420} loading={priority ? "eager" : "lazy"} decoding="async" className={cn(aspect, "w-full object-cover", className)} />
     );
   const m = MOTIFS[rootSlug] ?? MOTIFS["web-ve-yazilim"]!;
   return (
-    <svg viewBox="0 0 200 140" className={cn("cover-grid aspect-[10/7] w-full", className)} role="img" aria-label={title} style={{ backgroundColor: m.bg }}>
+    <svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice" className={cn("cover-grid w-full", aspect, className)} role="img" aria-label={title} style={{ backgroundColor: m.bg }}>
       {m.draw(m.fg)}
     </svg>
   );
@@ -120,12 +145,13 @@ export function ServiceCard({ s, className }: { s: ServiceCardData; className?: 
   const featured = s.featuredUntil && new Date(s.featuredUntil) > new Date();
   return (
     <article className={cn("card card-hover group relative flex flex-col p-2", className)}>
-      <div className="relative overflow-hidden rounded-[12px]">
+      <div className="relative overflow-hidden rounded-lg">
         <ServiceCover rootSlug={s.rootSlug} coverId={s.coverId} title={s.title} className="transition-transform duration-700 ease-out group-hover:scale-[1.035]" />
         <span className="absolute bottom-2.5 left-2.5 rounded-full bg-surface/95 px-2.5 py-1 text-[11.5px] font-medium leading-none text-ink-2 shadow-xs">{s.categoryName}</span>
         {(s.sponsored || featured) && (
-          <span className="absolute right-2.5 top-2.5 rounded-full bg-ink px-2.5 py-1 text-[11.5px] font-medium leading-none text-white">{s.sponsored ? "Sponsorlu" : "Öne çıkan"}</span>
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-ink px-2.5 py-1 text-[11.5px] font-medium leading-none text-white">{s.sponsored ? "Sponsorlu" : "Öne çıkan"}</span>
         )}
+        <FavoriteButton id={s.id} className="absolute right-2.5 top-2.5" />
       </div>
       <div className="flex flex-1 flex-col px-2.5 pb-2 pt-3.5">
         <div className="flex items-center gap-2">
@@ -135,7 +161,7 @@ export function ServiceCard({ s, className }: { s: ServiceCardData; className?: 
           <span className="ml-auto shrink-0 text-[11.5px] text-faint">{LEVEL_LABEL[s.providerLevel]}</span>
         </div>
         <h3 className="mt-2.5 line-clamp-2 text-[15.5px] font-semibold leading-snug tracking-[-0.01em] text-ink">
-          <Link href={`/hizmet/${s.slug}`} className="after:absolute after:inset-0 after:rounded-[18px]">
+          <Link href={`/hizmet/${s.slug}`} className="after:absolute after:inset-0 after:rounded-xl">
             {s.title}
           </Link>
         </h3>
@@ -190,6 +216,8 @@ type ProviderCardData = {
   lastSeenAt: Date | null;
   accountType: "individual" | "agency" | "company";
   premiumUntil?: Date | null;
+  bioExcerpt?: string | null;
+  fromKurus?: number | null;
 };
 
 export function ProviderRow({ p, compact }: { p: ProviderCardData; compact?: boolean }) {
@@ -225,6 +253,7 @@ export function ProviderRow({ p, compact }: { p: ProviderCardData; compact?: boo
 /** Ana sayfa ve vitrinler için uzman kartı (listelerde ProviderRow kullanılır). */
 export function ProviderCard({ p }: { p: ProviderCardData }) {
   const premium = p.premiumUntil && new Date(p.premiumUntil) > new Date();
+  const about = (p.bioExcerpt ?? "").replace(/\s+/g, " ").trim();
   return (
     <article className="card card-hover group relative flex flex-col p-5">
       <div className="flex items-start gap-3.5">
@@ -232,24 +261,49 @@ export function ProviderCard({ p }: { p: ProviderCardData }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             <h3 className="truncate text-[16px] font-semibold">
-              <Link href={`/uzman/${p.slug}`} className="after:absolute after:inset-0 after:rounded-[18px]">{p.displayName}</Link>
+              <Link href={`/uzman/${p.slug}`} className="after:absolute after:inset-0 after:rounded-xl">{p.displayName}</Link>
             </h3>
             {p.verifiedAt && <IconShield size={14} className="shrink-0 text-trust" aria-label="Doğrulanmış" />}
           </div>
-          <p className="mt-0.5 line-clamp-2 text-[13.5px] leading-snug text-ink-2">{p.headline || "Profilini hazırlıyor"}</p>
+          <p className="mt-0.5 truncate text-[13.5px] font-medium text-ink-2">{p.headline || "Profilini hazırlıyor"}</p>
+          <div className="mt-1"><Rating value={p.ratingAvg} count={p.ratingCount} /></div>
         </div>
       </div>
+      {about && <p className="mt-4 line-clamp-2 text-[13.5px] leading-relaxed text-muted">{about}</p>}
       <div className="mt-4 flex flex-wrap items-center gap-1.5">
+        {p.verifiedAt && <Badge tone="ok">Doğrulanmış</Badge>}
         {premium && <Badge tone="ink">Premium</Badge>}
         {p.accountType !== "individual" && <Badge>{p.accountType === "agency" ? "Ajans" : "Şirket"}</Badge>}
-        <Badge tone="ok">{LEVEL_LABEL[p.level]}</Badge>
+        <Badge>{LEVEL_LABEL[p.level]}</Badge>
         {p.city && <Badge>{p.city}</Badge>}
       </div>
       <div className="min-h-4 flex-1" />
-      <div className="flex items-center justify-between gap-3 border-t border-line-2 pt-3.5 text-[13px] text-muted">
-        <Rating value={p.ratingAvg} count={p.ratingCount} />
-        {p.completedOrders > 0 && <span>{p.completedOrders} iş</span>}
+      <div className="flex items-end justify-between gap-3 border-t border-line-2 pt-3.5 text-[13px] text-muted">
+        <span>{p.completedOrders > 0 ? `${p.completedOrders} tamamlanan iş` : "Yeni uzman"}</span>
+        {p.fromKurus != null && (
+          <span className="text-right leading-none">
+            <span className="mr-1.5 text-[12px]">Başlangıç</span>
+            <span className="price text-[16px] text-ink">{formatTRY(p.fromKurus)}</span>
+          </span>
+        )}
       </div>
     </article>
   );
+}
+
+const CATEGORY_ICONS: Record<string, (p: { size?: number; className?: string }) => React.ReactNode> = {
+  "web-ve-yazilim": (p) => <IconGlobe {...p} />,
+  "mobil-uygulama": (p) => <IconPhone {...p} />,
+  "grafik-tasarim": (p) => <IconPen {...p} />,
+  "dijital-pazarlama": (p) => <IconChart {...p} />,
+  "video-ve-icerik": (p) => <IconPlay {...p} />,
+  "yapay-zeka": (p) => <IconCpu {...p} />,
+  "is-ve-danismanlik": (p) => <IconBriefcase {...p} />,
+  "yazi-ve-icerik": (p) => <IconDoc {...p} />,
+};
+
+/** Kategori için sade çizgi ikon (Light Professional teması ve menüler). */
+export function CategoryIcon({ slug, size = 20, className }: { slug: string; size?: number; className?: string }) {
+  const I = CATEGORY_ICONS[slug];
+  return I ? <>{I({ size, className })}</> : <IconLayers size={size} className={className} />;
 }

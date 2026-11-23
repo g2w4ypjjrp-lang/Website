@@ -34,7 +34,7 @@ export function useSuggestions(q: string) {
   return { items, loading };
 }
 
-export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun?", autoFocus, defaultValue = "" }: { size?: "md" | "lg"; placeholder?: string; autoFocus?: boolean; defaultValue?: string }) {
+export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun?", autoFocus, defaultValue = "", buttonLabel = "Ara" }: { size?: "md" | "lg"; placeholder?: string; autoFocus?: boolean; defaultValue?: string; buttonLabel?: string }) {
   const router = useRouter();
   const [q, setQ] = useState(defaultValue);
   const [open, setOpen] = useState(false);
@@ -95,11 +95,11 @@ export function SearchBox({ size = "md", placeholder = "Ne yaptırmak istiyorsun
           aria-autocomplete="list"
           aria-expanded={open && items.length > 0}
           autoComplete="off"
-          className={cn("min-w-0 flex-1 bg-transparent outline-none placeholder:text-faint [&::-webkit-search-cancel-button]:hidden", lg ? "px-3 text-[17px]" : "px-2 text-[14.5px]")}
+          className={cn("min-w-0 flex-1 bg-transparent outline-none placeholder:text-faint [&::-webkit-search-cancel-button]:hidden", lg ? "px-3 text-[15.5px] sm:text-[17px]" : "px-2 text-[14.5px]")}
         />
         {lg && (
-          <button type="submit" className="h-12 rounded-xl bg-accent px-6 text-[15px] font-semibold text-white shadow-xs transition-colors hover:bg-accent-strong">
-            Ara
+          <button type="submit" className="h-12 shrink-0 rounded-lg bg-accent px-4 text-[15px] font-semibold text-white shadow-xs transition-colors hover:bg-accent-strong sm:px-6">
+            {buttonLabel}
           </button>
         )}
       </form>

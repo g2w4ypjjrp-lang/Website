@@ -134,4 +134,42 @@ export const CATEGORIES: CatSeed[] = [
     ],
     faqs: [{ q: "API kullanım ücretleri kime ait?", a: "Yapay zekâ sağlayıcılarının (OpenAI, Anthropic, Google vb.) kullanım ücretleri hizmet bedeline dahil değildir ve sizin hesabınıza faturalanır." }],
   },
+  {
+    slug: "is-ve-danismanlik",
+    name: "İş ve danışmanlık",
+    short: "İş planı, dijital dönüşüm, e-ticaret ve proje yönetimi danışmanlığı.",
+    intro:
+      "Danışmanlık hizmetlerinde çıktı çoğu zaman bir dosya değil, **bir karar ve onu uygulama planıdır**. Bu yüzden işe başlamadan önce danışmandan neyi teslim edeceğini yazılı istemek önemlidir: rapor, yol haritası, sunum ya da belirli sayıda görüşme.\n\nŞirketinizin mevcut durumunu anlatan verileri (satış rakamları, kullandığınız yazılımlar, ekip yapısı) baştan paylaşmak, genel geçer tavsiyeler yerine size özel bir plan almanızı sağlar.",
+    subs: [
+      ["is-plani", "İş planı"],
+      ["dijital-donusum-danismanligi", "Dijital dönüşüm danışmanlığı"],
+      ["e-ticaret-danismanligi", "E-ticaret danışmanlığı"],
+      ["pazar-arastirmasi", "Pazar araştırması"],
+      ["sunum-ve-yatirimci-dosyasi", "Sunum ve yatırımcı dosyası"],
+      ["proje-yonetimi", "Proje yönetimi"],
+    ],
+    faqs: [
+      { q: "Danışmanlık ücreti nasıl belirlenir?", a: "Paketlerde teslim edilecek çıktı (rapor, yol haritası, görüşme sayısı) ve süre yazılıdır. Kapsam belirsizse proje oluşturup birden fazla danışmandan teklif alabilirsiniz." },
+      { q: "Görüşmeler nasıl yapılır?", a: "Görüşmeler sipariş sayfasındaki mesajlaşma üzerinden planlanır. Görüşme notlarını ve teslim dosyalarını aynı sayfada saklamanız, olası bir anlaşmazlıkta kayıt olur." },
+    ],
+  },
+  {
+    slug: "yazi-ve-icerik",
+    name: "Yazı ve içerik",
+    short: "Blog ve SEO içerikleri, metin yazarlığı, ürün açıklaması ve çeviri.",
+    intro:
+      "İyi bir içerik siparişi **hedef okuru ve amacı** net tanımlar: Yazı satış mı yapacak, arama motorundan trafik mi getirecek, yoksa bir ürünü mü anlatacak? Bu cevap; dil, uzunluk ve yapı tercihlerini belirler.\n\nMarkanızın ses tonunu gösteren iki üç örnek metin ve hedeflediğiniz anahtar kelimeler, ilk taslağın beklentinize çok daha yakın gelmesini sağlar.",
+    subs: [
+      ["blog-yazisi", "Blog yazısı"],
+      ["seo-icerik-yazarligi", "SEO içerik yazarlığı"],
+      ["metin-yazarligi", "Metin yazarlığı"],
+      ["urun-aciklamasi", "Ürün açıklaması"],
+      ["ceviri", "Çeviri"],
+      ["teknik-yazarlik", "Teknik yazarlık"],
+    ],
+    faqs: [
+      { q: "İçerikler özgün mü olacak?", a: "Siparişte aksi yazmadıkça teslim edilen metinlerin özgün olması ve başka bir yerde yayımlanmamış olması gerekir. Teslimatta intihal kontrol sonucunu isteyebilirsiniz." },
+      { q: "Revizyon hakkı nasıl kullanılır?", a: "Paketteki revizyon sayısı kadar düzeltme isteyebilirsiniz. Düzeltme taleplerinizi madde madde yazmak, revizyonun tek seferde doğru yapılmasını sağlar." },
+    ],
+  },
 ];

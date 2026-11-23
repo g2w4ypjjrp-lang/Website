@@ -56,6 +56,17 @@ Zamanlanmış görev (saatte bir): Cloudflare'de Cron Trigger ile otomatik çal�
 - **İnce sayfa üretilmez:** hizmet × il sayfası yalnızca 30 büyükşehirde veya o ilde yeterli uzman olduğunda indekslenir. Diğerleri `noindex, follow` kalır. Eşikler **Yönetim → Yerel SEO** ekranından değiştirilir.
 - Aramada il adı algılanır ("izmir web sitesi" → ilgili il sayfası önerilir). Profil, fatura ve proje formlarında il serbest metin değil, 81 il listesinden seçilir.
 
+## Temalar
+
+İki tema vardır ve **Yönetim → Tema ve görünüm** ekranından tek tıkla değiştirilir; varsayılan Tema 1'dir. Seçim veritabanında saklanır, kök düzende `<html data-theme="…">` olarak uygulanır ve tüm sayfalar (panel ve yönetim dahil) aynı tasarım değişkenlerini kullanır.
+
+| Tema | Özellikler |
+| --- | --- |
+| **Tema 1 · Modern Premium** (`premium`, varsayılan) | Ortalanmış güçlü başlık ve “Uzman bul” araması, gerçek hizmetlerden ürün arayüzü önizlemesi, kategori çizimleri, güven sistemi kartları, koyu alt bilgi |
+| **Tema 2 · Light Professional** (`light`) | Sade iki sütunlu giriş, ölçülü başlıklar, ikonlu 8 kategori kartı, öne çıkan uzmanlar, 4 adımlı “Nasıl çalışır?”, “İşini güvenle yaptır.”, iki çağrı alanı, açık kurumsal alt bilgi |
+
+Renk, köşe, gölge ve başlık boyutları `src/app/globals.css` içindeki `[data-theme]` bloklarındadır; ana sayfa düzenleri `src/components/home/home-premium.tsx` ve `home-light.tsx`. Sosyal medya bağlantıları aynı ekrandan girilir ve yalnızca girilen hesaplar alt bilgide görünür.
+
 ## Yönetim paneli
 
 `/yonetim` (`/admin` da yönlenir). Yalnızca yönetici rolü girebilir; diğer kullanıcılar giriş sayfasına yönlendirilir ve sayfalar `noindex` olarak işaretlenir. **Güvenlik** sayfasından iki adımlı doğrulama kurulur. `ADMIN_2FA_REQUIRED=true` iken kurulum yapılmadan diğer yönetim sayfaları açılmaz. Açık oturumlar listelenir ve diğer cihazlardaki oturumlar kapatılabilir. **Kurumsal başvurular** ekranı `/kurumsal` formundan gelen talepleri durum ve iç notla takip eder.

@@ -12,9 +12,9 @@ export function AdminNav({ name, pending, open, leads = 0 }: { name: string; pen
   const [mobile, setMobile] = useState(false);
   const groups: [string, [string, string, number?][]][] = [
     ["Genel", [["/yonetim", "Özet ve analitik"], ["/yonetim/talepler", "İade ve şikâyetler", open]]],
-    ["Pazaryeri", [["/yonetim/kullanicilar", "Kullanıcılar"], ["/yonetim/hizmetler", "Hizmetler", pending], ["/yonetim/siparisler", "Siparişler"], ["/yonetim/degerlendirmeler", "Değerlendirmeler"], ["/yonetim/finans", "Finans"], ["/yonetim/kurumsal", "Kurumsal başvurular", leads]]],
+    ["Pazaryeri", [["/yonetim/kullanicilar", "Kullanıcılar"], ["/yonetim/hizmetler", "Hizmetler", pending], ["/yonetim/siparisler", "Siparişler"], ["/yonetim/degerlendirmeler", "Değerlendirmeler"], ["/yonetim/finans", "Finans"], ["/yonetim/kurumsal", "Başvurular ve mesajlar", leads]]],
     ["İçerik", [["/yonetim/kategoriler", "Kategoriler"], ["/yonetim/seo", "SEO"], ["/yonetim/yerel-seo", "Yerel SEO · 81 il"], ["/yonetim/blog", "Blog"], ["/yonetim/icerik", "Sayfalar ve bannerlar"]]],
-    ["Sistem", [["/yonetim/ayarlar", "Ayarlar"], ["/yonetim/guvenlik", "Güvenlik ve 2FA"], ["/yonetim/duyuru", "Sistem duyurusu"], ["/yonetim/loglar", "Denetim kayıtları"]]],
+    ["Sistem", [["/yonetim/tema", "Tema ve görünüm"], ["/yonetim/ayarlar", "Ayarlar"], ["/yonetim/guvenlik", "Güvenlik ve 2FA"], ["/yonetim/duyuru", "Sistem duyurusu"], ["/yonetim/loglar", "Denetim kayıtları"]]],
   ];
   const active = (h: string) => (h === "/yonetim" ? p === h : p.startsWith(h));
   const nav = (

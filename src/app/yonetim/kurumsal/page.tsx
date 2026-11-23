@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { leads } from "@/db/schema";
 import { requireAdmin } from "@/server/auth";
@@ -9,25 +9,37 @@ import { Badge } from "@/components/ui/primitives";
 import { LEAD_STATUSES, type LeadStatus } from "@/lib/leads";
 import { formatDateTime } from "@/lib/utils";
 
-export const metadata = { title: "Kurumsal başvurular" };
+export const metadata = { title: "Başvurular ve mesajlar" };
 
 const TONE: Record<LeadStatus, "warn" | "neutral" | "ok" | "bad"> = { new: "warn", contacted: "neutral", won: "ok", lost: "bad" };
 
-export default async function LeadsPage({ searchParams }: { searchParams: Promise<{ durum?: string }> }) {
+export default async function LeadsPage({ searchParams }: { searchParams: Promise<{ durum?: string; tur?: string }> }) {
   await requireAdmin();
   const sp = await searchParams;
+  const kind = sp.tur === "iletisim" ? "iletisim" : "kurumsal";
+  const base = `/yonetim/kurumsal${kind === "iletisim" ? "?tur=iletisim" : ""}`;
+  const withStatus = (k: string) => `${base}${base.includes("?") ? "&" : "?"}durum=${k}`;
   const status = sp.durum && sp.durum in LEAD_STATUSES ? (sp.durum as LeadStatus) : undefined;
-  const [rows, counts] = await Promise.all([
-    db.select().from(leads).where(status ? eq(leads.status, status) : undefined).orderBy(desc(leads.createdAt)).limit(200),
-    db.select({ status: leads.status, n: sql<number>`count(*)::int` }).from(leads).groupBy(leads.status),
+  const [rows, counts, kinds] = await Promise.all([
+    db.select().from(leads).where(and(eq(leads.kind, kind), status ? eq(leads.status, status) : undefined)).orderBy(desc(leads.createdAt)).limit(200),
+    db.select({ status: leads.status, n: sql<number>`count(*)::int` }).from(leads).where(eq(leads.kind, kind)).groupBy(leads.status),
+    db.select({ kind: leads.kind, n: sql<number>`count(*)::int` }).from(leads).where(eq(leads.status, "new")).groupBy(leads.kind),
   ]);
+  const newOf = (k: string) => kinds.find((x) => x.kind === k)?.n ?? 0;
   const count = (s: string) => counts.find((c) => c.status === s)?.n ?? 0;
   const total = counts.reduce((a, c) => a + c.n, 0);
   const closed = count("won") + count("lost");
 
   return (
     <>
-      <AHead title="Kurumsal başvurular" sub={<>Kurumsal üyelik formundan gelen talepler · <Link href="/kurumsal" className="underline" target="_blank">başvuru sayfası</Link></>} />
+      <AHead title="Başvurular ve mesajlar" sub={kind === "iletisim" ? <>İletişim formundan gelen mesajlar · <Link href="/iletisim" className="underline" target="_blank">iletişim sayfası</Link></> : <>Kurumsal üyelik formundan gelen talepler · <Link href="/kurumsal" className="underline" target="_blank">başvuru sayfası</Link></>} />
+      <nav className="mb-6 flex gap-1 border-b border-line text-[14px]">
+        {([["kurumsal", "Kurumsal başvurular", "/yonetim/kurumsal"], ["iletisim", "İletişim mesajları", "/yonetim/kurumsal?tur=iletisim"]] as const).map(([k, l, href]) => (
+          <Link key={k} href={href} className={`-mb-px flex items-center gap-2 border-b-2 px-3 py-2.5 ${kind === k ? "border-ink font-medium text-ink" : "border-transparent text-muted hover:text-ink"}`}>
+            {l}{newOf(k) > 0 && <span className="num rounded-full bg-accent px-1.5 text-[11px] font-medium text-white">{newOf(k)}</span>}
+          </Link>
+        ))}
+      </nav>
       <div className="mb-8 grid gap-4 sm:grid-cols-4">
         <KPI label="Toplam başvuru" value={total} />
         <KPI label="Yanıt bekleyen" value={count("new")} accent={count("new") > 0} />
@@ -35,8 +47,8 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
         <KPI label="Kazanma oranı" value={closed ? `%${Math.round((count("won") / closed) * 100)}` : "—"} sub={`${count("won")} kazanıldı · ${count("lost")} kaybedildi`} />
       </div>
       <Tabs
-        current={status ? `/yonetim/kurumsal?durum=${status}` : "/yonetim/kurumsal"}
-        items={[["/yonetim/kurumsal", "Tümü", total], ...Object.entries(LEAD_STATUSES).map(([k, l]): [string, string, number] => [`/yonetim/kurumsal?durum=${k}`, l, count(k)])]}
+        current={status ? withStatus(status) : base}
+        items={[[base, "Tümü", total], ...Object.entries(LEAD_STATUSES).map(([k, l]): [string, string, number] => [withStatus(k), l, count(k)])]}
       />
 
       {rows.length === 0 ? (
@@ -47,9 +59,9 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
             <li key={l.id} id={l.id} className="scroll-mt-24 rounded-lg border border-line bg-surface p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[16px] font-semibold">{l.company}</p>
+                  <p className="text-[16px] font-semibold">{kind === "iletisim" ? <>{l.contactName} <span className="ml-1 rounded-full bg-paper-2 px-2 py-0.5 align-middle text-[12px] font-medium text-ink-2">{l.company}</span></> : l.company}</p>
                   <p className="mt-0.5 text-[13.5px] text-ink-2">
-                    {l.contactName} · <a href={`mailto:${l.email}`} className="underline">{l.email}</a>
+                    {kind === "kurumsal" && <>{l.contactName} · </>}<a href={`mailto:${l.email}`} className="underline">{l.email}</a>
                     {l.phone && <> · <a href={`tel:${l.phone.replace(/\s/g, "")}`} className="underline">{l.phone}</a></>}
                   </p>
                 </div>
@@ -58,11 +70,11 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
                   {formatDateTime(l.createdAt)}
                 </div>
               </div>
-              <dl className="mt-4 grid gap-x-6 gap-y-2 text-[13.5px] sm:grid-cols-3">
+              {kind === "kurumsal" && <dl className="mt-4 grid gap-x-6 gap-y-2 text-[13.5px] sm:grid-cols-3">
                 <div><dt className="text-muted">İl</dt><dd>{l.city ?? "—"}</dd></div>
                 <div><dt className="text-muted">Çalışan sayısı</dt><dd>{l.teamSize ?? "—"}</dd></div>
                 <div><dt className="text-muted">Bütçe</dt><dd>{l.monthlyBudget ?? "—"}</dd></div>
-              </dl>
+              </dl>}
               {l.needs && <p className="mt-4 whitespace-pre-line rounded-md bg-paper-2 px-4 py-3 text-[14px]">{l.needs}</p>}
               <form action={updateLeadAction} className="mt-4 flex flex-wrap items-end gap-3 border-t border-line-2 pt-4">
                 <input type="hidden" name="id" value={l.id} />

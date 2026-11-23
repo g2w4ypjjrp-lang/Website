@@ -10,22 +10,25 @@
   --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  --color-paper: #f8f8f6;
-  --color-paper-2: #f0f0ec;
+  /* Tema 1 · Modern Premium (varsayılan) */
+  --color-paper: #f7f7f5;
+  --color-paper-2: #efefec;
   --color-surface: #ffffff;
-  --color-ink: #111318;
+  --color-ink: #0f1115;
   --color-ink-2: #383c44;
   --color-muted: #5b5f68;
-  --color-faint: #6a6e77;
-  --color-line: #e5e5e0;
-  --color-line-2: #eeeeea;
+  --color-faint: #686c75;
+  --color-line: #e5e5e1;
+  --color-line-2: #eeeeeb;
 
-  --color-accent: #c63e22;
-  --color-accent-strong: #a8321b;
-  --color-accent-soft: #fcebe5;
+  /* Kontrollü turuncu: accent beyaz yazıyla AA kontrast (4.8:1); bright yalnızca dekoratif öğelerde */
+  --color-accent: #c9450c;
+  --color-accent-strong: #a8380a;
+  --color-accent-soft: #fff0e6;
+  --color-accent-bright: #f26419;
 
-  --color-trust: #0e5a4e;
-  --color-trust-soft: #e3f0eb;
+  --color-trust: #0f6b55;
+  --color-trust-soft: #e4f3ee;
 
   --color-warn: #9a6512;
   --color-warn-soft: #f9efd9;
@@ -38,13 +41,13 @@
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
-  --radius-xl: 18px;
-  --radius-2xl: 24px;
+  --radius-xl: 16px;
+  --radius-2xl: 22px;
 
-  --shadow-xs: 0 1px 2px rgb(17 19 24 / 0.05);
-  --shadow-card: 0 1px 2px rgb(17 19 24 / 0.04), 0 2px 8px -2px rgb(17 19 24 / 0.06);
-  --shadow-lift: 0 2px 4px -2px rgb(17 19 24 / 0.06), 0 14px 32px -12px rgb(17 19 24 / 0.2);
-  --shadow-pop: 0 2px 6px -2px rgb(17 19 24 / 0.08), 0 24px 56px -20px rgb(17 19 24 / 0.35);
+  --shadow-xs: 0 1px 2px rgb(15 17 21 / 0.05);
+  --shadow-card: 0 1px 2px rgb(15 17 21 / 0.04), 0 2px 8px -2px rgb(15 17 21 / 0.06);
+  --shadow-lift: 0 2px 4px -2px rgb(15 17 21 / 0.06), 0 14px 32px -12px rgb(15 17 21 / 0.2);
+  --shadow-pop: 0 2px 6px -2px rgb(15 17 21 / 0.08), 0 24px 56px -20px rgb(15 17 21 / 0.35);
 
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 
@@ -58,6 +61,40 @@
     from { background-position: -200% 0; }
     to { background-position: 200% 0; }
   }
+}
+
+/*
+ * Tema setleri. Etkin tema <html data-theme="…"> ile seçilir (Yönetim → Tema).
+ * Önizlemelerde iç içe kullanılabilmesi için her iki tema da açıkça tanımlıdır.
+ */
+:root { --hero-size: clamp(42px, 6.4vw, 72px); --h2-size: clamp(28px, 3.4vw, 40px); }
+[data-theme="premium"] {
+  --color-paper: #f7f7f5; --color-paper-2: #efefec; --color-surface: #ffffff;
+  --color-ink: #0f1115; --color-ink-2: #383c44; --color-muted: #5b5f68; --color-faint: #686c75;
+  --color-line: #e5e5e1; --color-line-2: #eeeeeb;
+  --color-accent: #c9450c; --color-accent-strong: #a8380a; --color-accent-soft: #fff0e6; --color-accent-bright: #f26419;
+  --color-trust: #0f6b55; --color-trust-soft: #e4f3ee;
+  --radius-md: 10px; --radius-lg: 14px; --radius-xl: 16px; --radius-2xl: 22px;
+  --shadow-xs: 0 1px 2px rgb(15 17 21 / 0.05);
+  --shadow-card: 0 1px 2px rgb(15 17 21 / 0.04), 0 2px 8px -2px rgb(15 17 21 / 0.06);
+  --shadow-lift: 0 2px 4px -2px rgb(15 17 21 / 0.06), 0 14px 32px -12px rgb(15 17 21 / 0.2);
+  --shadow-pop: 0 2px 6px -2px rgb(15 17 21 / 0.08), 0 24px 56px -20px rgb(15 17 21 / 0.35);
+  --hero-size: clamp(42px, 6.4vw, 72px);
+  --h2-size: clamp(28px, 3.4vw, 40px);
+}
+[data-theme="light"] {
+  --color-paper: #fbfbfa; --color-paper-2: #f3f3f1; --color-surface: #ffffff;
+  --color-ink: #16181d; --color-ink-2: #41454d; --color-muted: #5f636b; --color-faint: #6b6f77;
+  --color-line: #e7e7e3; --color-line-2: #f0f0ed;
+  --color-accent: #c0530f; --color-accent-strong: #9f450c; --color-accent-soft: #fdf1e7; --color-accent-bright: #f07a2a;
+  --color-trust: #1f7a4f; --color-trust-soft: #eaf6ef;
+  --radius-md: 8px; --radius-lg: 10px; --radius-xl: 12px; --radius-2xl: 16px;
+  --shadow-xs: 0 1px 1px rgb(22 24 29 / 0.04);
+  --shadow-card: 0 1px 2px rgb(22 24 29 / 0.04);
+  --shadow-lift: 0 1px 2px rgb(22 24 29 / 0.04), 0 8px 24px -12px rgb(22 24 29 / 0.16);
+  --shadow-pop: 0 2px 6px -2px rgb(22 24 29 / 0.06), 0 18px 40px -18px rgb(22 24 29 / 0.26);
+  --hero-size: clamp(36px, 4.6vw, 52px);
+  --h2-size: clamp(26px, 2.8vw, 34px);
 }
 
 @layer base {

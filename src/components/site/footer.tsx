@@ -1,75 +1,121 @@
 import Link from "next/link";
 import { getCategoryTree } from "@/server/queries";
+import { getThemeSettings, type SocialLinks } from "@/server/settings";
 import { Logo } from "@/components/logo";
-import { IconLock, IconShield } from "@/components/icons";
+import { IconFacebook, IconInstagram, IconLinkedin, IconLock, IconShield, IconXSocial, IconYoutube } from "@/components/icons";
 import { CITIES } from "@/lib/tr-cities";
+import { cn } from "@/lib/utils";
 
+const SOCIAL: [keyof SocialLinks, string, (p: { size?: number }) => React.ReactNode][] = [
+  ["instagram", "Instagram", (p) => <IconInstagram {...p} />],
+  ["linkedin", "LinkedIn", (p) => <IconLinkedin {...p} />],
+  ["x", "X", (p) => <IconXSocial {...p} />],
+  ["youtube", "YouTube", (p) => <IconYoutube {...p} />],
+  ["facebook", "Facebook", (p) => <IconFacebook {...p} />],
+];
+
+/**
+ * Kurumsal alt bilgi. Modern Premium temasında koyu, Light Professional temasında açık zemin.
+ * Sosyal ağ bağlantıları yalnızca Yönetim → Tema ekranında girilen hesaplar için gösterilir.
+ */
 export async function SiteFooter() {
-  const tree = await getCategoryTree();
+  const [tree, { theme, social }] = await Promise.all([getCategoryTree(), getThemeSettings()]);
+  const dark = theme === "premium";
+  const t = {
+    wrap: dark ? "bg-ink text-white/70" : "border-t border-line bg-paper-2/70 text-ink-2",
+    text: dark ? "text-white/60" : "text-muted",
+    head: dark ? "text-white" : "text-ink",
+    link: dark ? "text-white/60 hover:text-white" : "text-ink-2 hover:text-ink",
+    rule: dark ? "border-white/10" : "border-line",
+    chip: dark ? "bg-white/10" : "bg-surface border border-line",
+    icon: dark ? "text-[#6fd0b9]" : "text-trust",
+    social: dark ? "border-white/15 text-white/70 hover:border-white/40 hover:text-white" : "border-line bg-surface text-ink-2 hover:border-ink/40 hover:text-ink",
+  };
+  const socials = SOCIAL.filter(([k]) => social[k]);
   return (
-    <footer className="mt-24 bg-ink pb-24 text-white/70 lg:pb-0">
-      <div className="container-x grid gap-10 py-16 md:grid-cols-[1.3fr_repeat(4,1fr)]">
-        <div className="max-w-xs">
-          <Logo tone="light" />
-          <p className="mt-4 text-[14px] text-white/60">
-            Türkiye’deki işletmelerin dijital işlerini doğru uzmanla buluşturan pazaryeri. Ödemeniz, siz teslimatı onaylayana kadar güvencede tutulur.
-          </p>
-          <div className="mt-6 space-y-2.5 text-[13px] text-white/75">
-            <p className="flex items-center gap-2.5"><span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10"><IconShield size={14} className="text-[#5fc3ad]" /></span> Onaylanana kadar korunan ödeme</p>
-            <p className="flex items-center gap-2.5"><span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10"><IconLock size={14} className="text-[#5fc3ad]" /></span> Kart bilgisi Eksen sunucularında tutulmaz</p>
+    <footer className={cn("mt-24 pb-24 lg:pb-0", t.wrap)}>
+      <div className="container-x grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
+        <div className="max-w-xs sm:col-span-2 lg:col-span-1">
+          <Logo tone={dark ? "light" : "ink"} />
+          <p className={cn("mt-4 text-[14px]", t.text)}>Türkiye’deki işletmelerin dijital işlerini doğru uzmanla buluşturan pazaryeri. Ödemeniz, siz teslimatı onaylayana kadar güvencede tutulur.</p>
+          <div className="mt-6 space-y-2.5 text-[13px]">
+            <p className="flex items-center gap-2.5"><span className={cn("flex h-7 w-7 items-center justify-center rounded-lg", t.chip)}><IconShield size={14} className={t.icon} /></span> Onaylanana kadar korunan ödeme</p>
+            <p className="flex items-center gap-2.5"><span className={cn("flex h-7 w-7 items-center justify-center rounded-lg", t.chip)}><IconLock size={14} className={t.icon} /></span> Kart bilgisi Eksen sunucularında tutulmaz</p>
           </div>
+          {socials.length > 0 && (
+            <ul className="mt-6 flex gap-2" aria-label="Sosyal medya">
+              {socials.map(([k, label, I]) => (
+                <li key={k}>
+                  <a href={social[k]} target="_blank" rel="noopener me" aria-label={label} className={cn("flex h-9 w-9 items-center justify-center rounded-full border transition-colors", t.social)}>{I({ size: 16 })}</a>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-        <FooterCol title="Hizmetler" links={tree.slice(0, 6).map((c) => [`/kategori/${c.slug}`, c.name])} />
+        <FooterCol t={t} title="Hizmet kategorileri" links={tree.slice(0, 8).map((c) => [`/kategori/${c.slug}`, c.name])} />
         <FooterCol
-          title="Popüler"
+          t={t}
+          title="Uzmanlar"
           links={[
-            ["/web-sitesi-yaptirma", "Web sitesi yaptırma"],
-            ["/e-ticaret-sitesi", "E-ticaret sitesi"],
-            ["/mobil-uygulama-gelistirme", "Mobil uygulama"],
-            ["/logo-tasarimi", "Logo tasarımı"],
-            ["/seo-hizmeti", "SEO hizmeti"],
-            ["/qr-menu", "QR menü"],
+            ["/uzmanlar", "Uzmanları keşfet"],
+            ["/uzman-ol", "Freelancer olmak"],
+            ["/projeler", "Proje ilanları"],
+            ["/ara?tur=ajanslar", "Ajanslar"],
+            ["/kurumsal", "Kurumsal üyelik"],
           ]}
         />
         <FooterCol
+          t={t}
           title="Eksen"
           links={[
-            ["/nasil-calisir", "Nasıl çalışır?"],
-            ["/uzman-ol", "Uzman olarak katıl"],
-            ["/kurumsal", "Kurumsal üyelik"],
-            ["/projeler", "Proje ilanları"],
-            ["/uzmanlar", "Uzmanlar"],
-            ["/blog", "Rehberler"],
             ["/sayfa/hakkimizda", "Hakkımızda"],
+            ["/nasil-calisir", "Nasıl çalışır?"],
+            ["/yardim", "Yardım merkezi"],
+            ["/iletisim", "İletişim"],
+            ["/blog", "Rehberler"],
           ]}
         />
         <FooterCol
+          t={t}
           title="Yasal"
           links={[
+            ["/sayfa/gizlilik-politikasi", "Gizlilik"],
             ["/sayfa/kullanim-kosullari", "Kullanım koşulları"],
-            ["/sayfa/gizlilik-politikasi", "Gizlilik politikası"],
-            ["/sayfa/kvkk-aydinlatma-metni", "KVKK aydınlatma metni"],
+            ["/sayfa/kvkk-aydinlatma-metni", "KVKK"],
             ["/sayfa/mesafeli-satis-sozlesmesi", "Mesafeli satış sözleşmesi"],
-            ["/sayfa/iade-ve-iptal", "İade ve iptal koşulları"],
+            ["/sayfa/iade-ve-iptal", "İade ve iptal"],
             ["/sayfa/cerez-politikasi", "Çerez politikası"],
           ]}
         />
       </div>
-      <nav aria-label="İllere göre dijital hizmetler" className="border-t border-white/10">
-        <div className="container-x py-7">
-          <p className="mb-3 text-[13px] font-semibold text-white">İllere göre</p>
-          <ul className="flex flex-wrap gap-x-4 gap-y-1.5 text-[13px]">
-            {CITIES.filter((c) => c.metro)
-              .sort((a, b) => a.name.localeCompare(b.name, "tr"))
-              .map((c) => (
-                <li key={c.slug}><Link href={`/il/${c.slug}`} className="text-white/60 transition-colors hover:text-white">{c.name}</Link></li>
-              ))}
-            <li><Link href="/il" className="font-medium text-white underline decoration-accent underline-offset-4">Tüm 81 il</Link></li>
-          </ul>
+      <nav aria-label="Popüler hizmetler ve iller" className={cn("border-t", t.rule)}>
+        <div className="container-x grid gap-6 py-7 text-[13px] lg:grid-cols-[1fr_2fr]">
+          <div>
+            <p className={cn("mb-3 font-semibold", t.head)}>Popüler hizmetler</p>
+            <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
+              {[
+                ["/web-sitesi-yaptirma", "Web sitesi yaptırma"],
+                ["/e-ticaret-sitesi", "E-ticaret sitesi"],
+                ["/mobil-uygulama-gelistirme", "Mobil uygulama"],
+                ["/logo-tasarimi", "Logo tasarımı"],
+                ["/seo-hizmeti", "SEO hizmeti"],
+                ["/sosyal-medya-yonetimi", "Sosyal medya yönetimi"],
+              ].map(([href, l]) => <li key={href}><Link href={href} className={cn("transition-colors", t.link)}>{l}</Link></li>)}
+            </ul>
+          </div>
+          <div>
+            <p className={cn("mb-3 font-semibold", t.head)}>İllere göre</p>
+            <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
+              {CITIES.filter((c) => c.metro)
+                .sort((a, b) => a.name.localeCompare(b.name, "tr"))
+                .map((c) => <li key={c.slug}><Link href={`/il/${c.slug}`} className={cn("transition-colors", t.link)}>{c.name}</Link></li>)}
+              <li><Link href="/il" className={cn("font-medium underline decoration-accent-bright underline-offset-4", t.head)}>Tüm 81 il</Link></li>
+            </ul>
+          </div>
         </div>
       </nav>
-      <div className="border-t border-white/10">
-        <div className="container-x flex flex-col gap-2 py-6 text-[12.5px] text-white/50 sm:flex-row sm:items-center sm:justify-between">
+      <div className={cn("border-t", t.rule)}>
+        <div className={cn("container-x flex flex-col gap-2 py-6 text-[12.5px] sm:flex-row sm:items-center sm:justify-between", t.text)}>
           <p>© {new Date().getFullYear()} Eksen. Tüm hakları saklıdır.</p>
           <p>Fiyatlara KDV dahildir. Ödemeler lisanslı ödeme kuruluşu aracılığıyla alınır.</p>
         </div>
@@ -78,15 +124,13 @@ export async function SiteFooter() {
   );
 }
 
-function FooterCol({ title, links }: { title: string; links: [string, string][] }) {
+function FooterCol({ title, links, t }: { title: string; links: [string, string][]; t: { head: string; link: string } }) {
   return (
     <div>
-      <p className="mb-4 text-[13px] font-semibold text-white">{title}</p>
+      <p className={cn("mb-4 text-[13px] font-semibold", t.head)}>{title}</p>
       <ul className="space-y-2.5">
         {links.map(([href, label]) => (
-          <li key={href}>
-            <Link href={href} className="text-[14px] text-white/60 transition-colors hover:text-white">{label}</Link>
-          </li>
+          <li key={href}><Link href={href} className={cn("text-[14px] transition-colors", t.link)}>{label}</Link></li>
         ))}
       </ul>
     </div>
